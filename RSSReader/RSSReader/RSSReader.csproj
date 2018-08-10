@@ -36,6 +36,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\social_rss.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -78,6 +81,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Pages\RSSEditPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="StyleSheet.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -92,6 +99,9 @@
     </Compile>
     <Compile Include="Pages\FeedViewPage.xaml.cs">
       <DependentUpon>FeedViewPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\RSSEditPage.xaml.cs">
+      <DependentUpon>RSSEditPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Project\DataBase\SQLite.cs" />
     <Compile Include="Project\DataBase\SQLiteEnums.cs" />

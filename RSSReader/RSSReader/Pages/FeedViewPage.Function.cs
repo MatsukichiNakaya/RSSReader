@@ -13,10 +13,20 @@ namespace RSSReader.Pages
     {
         private const String MASTER_PATH = @".\rss_log.db";
 
+        #region ComboBox
         /// <summary>
         /// コンボボックスの中身を設定する
         /// </summary>
         public void ReLoadSiteItems()
+        {
+            this.SiteSelectBox.ItemsSource = GetSiteInfo();
+        }
+
+        /// <summary>
+        /// コンボボックスに設定するデータを取得する
+        /// </summary>
+        /// <returns></returns>
+        private IEnumerable<RssSiteInfo> GetSiteInfo()
         {
             var cmbItems = new List<RssSiteInfo>();
             using (var db = new SQLite(MASTER_PATH))
@@ -35,9 +45,11 @@ namespace RSSReader.Pages
                     });
                 }
             }
-            this.SiteSelectBox.ItemsSource = cmbItems;
+            return cmbItems;
         }
+        #endregion
 
+        #region ListBox
         /// <summary>
         /// RSS フィードリストの更新を行う
         /// </summary>
@@ -45,7 +57,8 @@ namespace RSSReader.Pages
         private void UpdateListBox(RssSiteInfo item)
         {
             String url = item?.Link;
-            if (url == null) { return; }
+            if (url == null)
+            { return; }
 
             Int32 masterID = item.ID;
             IEnumerable<FeedItem> feedItems = null;
@@ -150,7 +163,7 @@ namespace RSSReader.Pages
         {
             var result = GetLogItems(db, masterID).ToList();
             // RSS記事のページURLからかぶりがないか確認する
-            var urlHash = new HashSet<String>(result.Select(l => l.Link));
+            var urlHash = new HashSet<String>(result.Select(l => l.Link.AbsoluteUri));
             var newItems = GetNewcomer(feedItems, urlHash);
 
             db.BeginTransaction();
@@ -159,7 +172,7 @@ namespace RSSReader.Pages
             try
             {
                 LogUpdate(db, newItems, masterID);
-                
+
                 isCommit = true;
             }
             catch (Exception)
@@ -191,9 +204,9 @@ namespace RSSReader.Pages
                     Title = ret["title"][i],
                     PublishDate = ret["reg_date"][i],
                     Summary = ret["summary"][i]?.Replace("'", ""),
-                    Link = ret["page_url"][i],
+                    Link = new Uri(ret["page_url"][i]),
                     IsRead = Int32.Parse(ret["is_read"][i]) == 1,
-                    ThumbUri = String.IsNullOrEmpty(ret["thumb_url"][i]) 
+                    ThumbUri = String.IsNullOrEmpty(ret["thumb_url"][i])
                                 ? null : new Uri(ret["thumb_url"][i]),
                 };
             }
@@ -212,7 +225,8 @@ namespace RSSReader.Pages
                 foreach (var feed in feedItems)
                 {
                     // 重複するものは除外
-                    if (hash.Contains(feed.Link)) { continue; }
+                    if (hash.Contains(feed.Link.AbsoluteUri))
+                    { continue; }
 
                     yield return feed;
                 }
@@ -220,14 +234,14 @@ namespace RSSReader.Pages
         }
 
         /// <summary>
-        /// 
+        /// 新しい項目をDBに登録する
         /// </summary>
         /// <returns></returns>
         private Boolean LogUpdate(SQLite db, IEnumerable<FeedItem> feedItems, Int32 masterID)
         {
             Int32 regCount = TableRegistRowCount(db, masterID);
             Int32 delCount = (regCount + feedItems.Count()) - 100;
-            
+
             // 上限に合わせてログを削除
             DeleteLogItems(db, masterID, delCount);
 
@@ -235,14 +249,14 @@ namespace RSSReader.Pages
             foreach (var item in feedItems)
             {
                 db.Update($"insert into log(master_id, title, page_url, summary, is_read, reg_date, thumb_url) values(" +
-                          $"{masterID}, '{item.Title}', '{item.Link}', '{item.Summary.Replace("'", "")}', " +
+                          $"{masterID}, '{item.Title}', '{item.Link.AbsoluteUri}', '{item.Summary.Replace("'", "")}', " +
                           $"{(item.IsRead ? 1 : 0)}, '{item.PublishDate}', '{item.ThumbUri}')");
             }
             return true;
         }
 
         /// <summary>
-        /// 
+        /// 登録してあるmaster_idの件数を取得する
         /// </summary>
         /// <param name="db"></param>
         /// <param name="masterID"></param>
@@ -254,7 +268,7 @@ namespace RSSReader.Pages
         }
 
         /// <summary>
-        /// 
+        /// 古いログを削除する
         /// </summary>
         /// <param name="db"></param>
         /// <param name="masterID"></param>
@@ -272,5 +286,7 @@ namespace RSSReader.Pages
                 }
             }
         }
+        #endregion
+
     }
 }

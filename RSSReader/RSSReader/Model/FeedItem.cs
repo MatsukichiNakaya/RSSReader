@@ -22,11 +22,11 @@ namespace RSSReader.Model
         /// <summary>サマリー</summary>
         public String Summary { get; set; }
         /// <summary>記事へのリンク</summary>
-        public String Link { get; set; }
+        public Uri Link { get; set; }
         /// <summary>既読有無</summary>
         public Boolean IsRead { get; set; }
         /// <summary>記事元のホスト名</summary>
-        public String Host { get { return this.ThumbUri.Host; } }
+        public String Host { get { return this.Link.Host; } }
         /// <summary>サムネイルのUrl</summary>
         public Uri ThumbUri { get; set; }
         /// <summary>サムネイル画像のソース</summary>
@@ -62,7 +62,7 @@ namespace RSSReader.Model
                 Title = item.Title.Text,
                 PublishDate = item.PublishDate.ToString(DATE_FORMAT),
                 Summary = item.Summary?.Text ?? String.Empty,
-                Link = 0 < item.Links.Count ? item.Links[0].Uri.AbsoluteUri : String.Empty,
+                Link = 0 < item.Links.Count ? item.Links[0].Uri : null,
             };
         }
 
@@ -81,7 +81,7 @@ namespace RSSReader.Model
                 Title = node.SelectNodes("rss:title", nsmgr)[0].InnerText,
                 PublishDate = DateTime.Parse(node.SelectNodes("dc:date", nsmgr)[0].InnerText).ToString(DATE_FORMAT),
                 Summary = node.SelectNodes("rss:description", nsmgr)[0].InnerText,
-                Link = node.SelectNodes("rss:link", nsmgr)[0].InnerText,
+                Link = new Uri(node.SelectNodes("rss:link", nsmgr)[0].InnerText),
                 // サムネイル情報
                 ThumbUri = String.IsNullOrEmpty(url) ? null : new Uri(url),
                 ThumbWidth = String.IsNullOrEmpty(url) ? 0 : 160
@@ -188,7 +188,7 @@ namespace RSSReader.Model
             imageSource.UriSource = new Uri(url);
             imageSource.EndInit();
 
-            // ダウンロード完了しないと保存できる画像データがないので完了イベントで保存を行う
+            // ダウンロード完了しないと保存できるデータがないので完了イベントで保存を行う
             imageSource.DownloadCompleted += new EventHandler((Object sender, EventArgs e) => {
                 if (sender is ImageSource source)
                 {
@@ -208,6 +208,5 @@ namespace RSSReader.Model
             });
             return imageSource;
         }
-
     }
 }

@@ -106,7 +106,9 @@ namespace RSSReader.Pages
         /// </summary>
         private void SiteReloadButton_Click(Object sender, RoutedEventArgs e)
         {
+            if (!(this.SiteSelectBox.SelectedItem is RssSiteInfo item)) { return; }
 
+            UpdateListBox(item);
         }
 
         /// <summary>
@@ -122,7 +124,7 @@ namespace RSSReader.Pages
         /// </summary>
         private void FabButton_Click(Object sender, RoutedEventArgs e)
         {
-
+            this.NavigationService.Navigate(new RSSEditPage(this, GetSiteInfo()));
         }
 
         /// <summary>
