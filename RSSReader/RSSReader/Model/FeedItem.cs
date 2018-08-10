@@ -58,12 +58,41 @@ namespace RSSReader.Model
         /// <returns></returns>
         public static FeedItem ReadRSS20(SyndicationItem item)
         {
-            return new FeedItem() {
+            var result = new FeedItem() {
                 Title = item.Title.Text,
                 PublishDate = item.PublishDate.ToString(DATE_FORMAT),
                 Summary = item.Summary?.Text ?? String.Empty,
                 Link = 0 < item.Links.Count ? item.Links[0].Uri : null,
             };
+
+            // youtube 用サムネ　読み込み
+            XmlElement element = null;
+            for (Int32 i = 0; i < item.ElementExtensions.Count; i++)
+            {
+                if (item.ElementExtensions[i].OuterName == "group")
+                {
+                    element = item.ElementExtensions[i].GetObject<XmlElement>();
+                    break;
+                }
+            }
+            if (element == null) { return result; }
+            
+            // データが有ればセットする
+            result.Summary = element.InnerText;
+            XmlNode node = null;
+            for (Int32 i = 0; i < element.ChildNodes.Count; i++)
+            {
+                if (element.ChildNodes[i].LocalName == "thumbnail")
+                {
+                    node = element.ChildNodes[i];
+                    break;
+                }
+            }
+            String uri = node?.Attributes["url"]?.InnerText ?? String.Empty;
+            if (String.IsNullOrEmpty(uri)) { return result; }
+
+            result.ThumbUri = new Uri(uri);
+            return result;
         }
 
         /// <summary>

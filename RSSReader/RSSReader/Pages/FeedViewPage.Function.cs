@@ -196,8 +196,12 @@ namespace RSSReader.Pages
         private IEnumerable<FeedItem> GetLogItems(SQLite db, Int32 masterID)
         {
             var ret = db.Select($"select * from log where master_id = {masterID}");
-
+            //var ret = db.Select($"select l.log_id, l.master_id, l.title, l.reg_date, l.summary, l.page_url, " +
+            //    $"l.is_read, l.thumb_url, r.url from log as l " +
+            //    $"inner join rss_master as r on r.id = l.master_id where master_id = {masterID};");
             Int32 count = ret["log_id"].Count;
+            //String host = new Uri(ret["url"][0]).Host;
+
             for (Int32 i = 0; i < count; i++)
             {
                 yield return new FeedItem() {
