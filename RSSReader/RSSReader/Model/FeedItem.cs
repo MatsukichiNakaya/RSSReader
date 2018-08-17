@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.ServiceModel.Syndication;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -73,41 +72,59 @@ namespace RSSReader.Model
             XmlElement element = null;
             for (Int32 i = 0; i < item.ElementExtensions.Count; i++)
             {
-                if (item.ElementExtensions[i].OuterName == "group")
+                switch (result.Link.Host)
                 {
-                    element = item.ElementExtensions[i].GetObject<XmlElement>();
-                    // データが有ればセットする
-                    result.Summary = element.InnerText;
-                    break;
+                    case HOST_YOUTUBE:
+                        if (item.ElementExtensions[i].OuterName == "group")
+                        {
+                            element = item.ElementExtensions[i].GetObject<XmlElement>();
+                            // データが有ればセットする
+                            result.Summary = element.InnerText;
+                        }
+                        break;
+                    default:
+                        if (item.ElementExtensions[i].OuterName == "encoded")
+                        {
+                            element = item.ElementExtensions[i].GetObject<XmlElement>();
+                        }
+                        break;
                 }
-                else if (item.ElementExtensions[i].OuterName == "encoded")
-                {
-                    element = item.ElementExtensions[i].GetObject<XmlElement>();
-                    break;
-                }
+                if(element != null) { break; }
             }
+            // 最終的に何も割り当てられなかったらここで終了
             if (element == null) { return result; }
 
             XmlNode node = null;
             for (Int32 i = 0; i < element.ChildNodes.Count; i++)
             {
-                if (element.ChildNodes[i].LocalName == "thumbnail")
+                switch (result.Link.Host)
                 {
-                    node = element.ChildNodes[i];
-                    String uri = node?.Attributes["url"]?.InnerText ?? String.Empty;
-                    if (String.IsNullOrEmpty(uri)) { return result; }
+                    case HOST_YOUTUBE:
+                        // サムネイル用のリンクがあるのでそちらから取得
+                        if (element.ChildNodes[i].LocalName == "thumbnail")
+                        {
+                            node = element.ChildNodes[i];
+                            String uri = node?.Attributes["url"]?.InnerText ?? String.Empty;
+                            if (String.IsNullOrEmpty(uri))
+                            { return result; }
 
-                    result.ThumbUri = new Uri(uri);
-                    return result;
-                }
-                else if (element.ChildNodes[i].LocalName == "#text")
-                {
-                    node = element.ChildNodes[i];
-                    String uri = GetImgTagSource(node.InnerText);
-                    if (String.IsNullOrEmpty(uri)) { return result; }
+                            result.ThumbUri = new Uri(uri);
+                            return result;
+                        }
+                        break;
+                    default:
+                        // [CDATA] からデータ取得する
+                        if (element.ChildNodes[i].LocalName == "#text")
+                        {
+                            node = element.ChildNodes[i];
+                            String uri = GetImgTagSource(node.InnerText);
+                            if (String.IsNullOrEmpty(uri))
+                            { return result; }
 
-                    result.ThumbUri = new Uri(uri);
-                    return result;
+                            result.ThumbUri = new Uri(uri);
+                            return result;
+                        }
+                        break;
                 }
             }
             return result;
@@ -209,6 +226,7 @@ namespace RSSReader.Model
             switch (host)
             {
                 case HOST_YOUTUBE:
+                    if (String.IsNullOrEmpty(url)) { return null; }
                     // URLからファイル名と親ディレクトリ名を取得
                     var uri = new Uri(url);
                     var subDir = uri.Segments[uri.Segments.Length - 2].Replace("/", "");
@@ -276,6 +294,7 @@ namespace RSSReader.Model
                         try
                         {   // ローカルパス取得
                             String localPath = System.Web.HttpUtility.UrlDecode(GetChashPath(url, masterID, host));
+                            if (String.IsNullOrEmpty(localPath)) { return; }
 
                             using (var stream = new FileStream(localPath, FileMode.Create))
                             {

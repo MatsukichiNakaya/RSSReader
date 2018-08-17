@@ -1,19 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using RSSReader.Model;
 using Project.DataBase;
+using RSSReader.Model;
 
 namespace RSSReader.Pages
 {
@@ -27,6 +18,12 @@ namespace RSSReader.Pages
         private Define.EditMode EditMode { get; set; }
         private Int32 EditingNo { get; set; }
 
+        private enum DBCommandType
+        {
+            Insert = 0,
+            Update,
+        }
+
         public RSSEditPage(FeedViewPage page, IEnumerable<RssSiteInfo> sites)
         {
             InitializeComponent();
@@ -36,7 +33,7 @@ namespace RSSReader.Pages
         }
 
         /// <summary>
-        /// 
+        /// 追加ボタン
         /// </summary>
         private void AddButton_Click(Object sender, RoutedEventArgs e)
         {
@@ -48,28 +45,9 @@ namespace RSSReader.Pages
                 return;
             }
 
-            Int32 id;
-            String title;
-
-            using (var db = new SQLite(Define.MASTER_PATH))
+            if (!UpdateRSS(DBCommandType.Insert, url, out Int32 id, out String title))
             {
-                db.Open();
-
-                // DB登録有無確認 
-                if (SiteExists(db, url))
-                {
-                    MessageBox.Show("It is already registered.");
-                    return;
-                }
-                // RSSを一度取得する
-                title = RSS.ReadFeedTitle(url);
-                if (title == null)
-                {
-                    MessageBox.Show("Failed to get information.");
-                    return;
-                }
-                // DBに登録
-                id = SiteRegist(db, title, url);
+                return;
             }
             // 改めて要素を取得
             var items = new List<RssSiteInfo>(GetEditItems());
@@ -84,7 +62,7 @@ namespace RSSReader.Pages
         }
 
         /// <summary>
-        /// 
+        /// 編集ボタン
         /// </summary>
         private void EditButton_Click(Object sender, RoutedEventArgs e)
         {
@@ -92,24 +70,64 @@ namespace RSSReader.Pages
 
             this.RssInputBox.Text = item.Link;
             this.EditingNo = item.ID;
+            this.SiteName.Text = item.SiteName;
 
             ChangeEditMode(Define.EditMode.Editing);
         }
 
         /// <summary>
-        /// 
+        /// 削除ボタン
         /// </summary>
         private void DelButton_Click(Object sender, RoutedEventArgs e)
         {
+            if (!(this.FavEditBox.SelectedItem is RssSiteInfo item)) { return; }
+            
+            using (var db = new SQLite(Define.MASTER_PATH))
+            {
+                db.Open();
+                db.BeginTransaction();
+                try
+                {
+                    // rss_masterからの削除
+                    db.Update($"delete from rss_master where id={item.ID}");
+                    // logからの削除
+                    db.Update($"delete from log where master_id={item.ID}");
+                    // syncからの削除
+                    db.Update($"delete from sync where master_id={item.ID}");
 
+                    // コミット
+                    db.EndTransaction(true);
+                }
+                catch (Exception)
+                {
+                    // ロールバック
+                    db.EndTransaction(false);
+                }
+            } //*/
+
+            // 表示から削除
+            this.FavEditBox.ItemsSource = GetEditItems(item.ID);
         }
 
         /// <summary>
-        /// 
+        /// 戻るボタン
         /// </summary>
         private void ReturnButton_Click(Object sender, RoutedEventArgs e)
         {
-            this.NavigationService.Navigate(this.InnerViewPage);
+            if (this.EditMode == Define.EditMode.Editing)
+            {
+                if (MessageBoxResult.OK == MessageBox.Show("Editing RSS. Do you want to end it?", "Exit",
+                                                            MessageBoxButton.OKCancel))
+                {
+                    this.InnerViewPage.ReLoadSiteItems();
+                    this.NavigationService.Navigate(this.InnerViewPage);
+                }
+            }
+            else
+            {
+                this.InnerViewPage.ReLoadSiteItems();
+                this.NavigationService.Navigate(this.InnerViewPage);
+            }
         }
 
         /// <summary>
@@ -155,17 +173,36 @@ namespace RSSReader.Pages
         }
 
         /// <summary>
-        /// 
+        /// リストボックスのアイテムをクラスに変換して取得
         /// </summary>
         /// <returns></returns>
-        private IEnumerable<RssSiteInfo> GetEditItems()
+        private IEnumerable<RssSiteInfo> GetEditItems(Int32? removeNo = null)
         {
-            foreach (var item in this.FavEditBox.Items)
+            if (removeNo == null)
             {
-                yield return item as RssSiteInfo;
-            } 
+                foreach (var item in this.FavEditBox.Items)
+                {
+                    yield return item as RssSiteInfo;
+                }
+            }
+            else
+            {
+                Int32 no = (Int32)removeNo;
+                foreach (var item in this.FavEditBox.Items)
+                {
+                    if (item is RssSiteInfo info)
+                    {
+                        if(info.ID == no) { continue; }
+                        yield return info;
+                    }
+                }
+            }
         }
 
+        /// <summary>
+        /// 編集モードを変更する
+        /// </summary>
+        /// <param name="mode"></param>
         private void ChangeEditMode(Define.EditMode mode)
         {
             this.EditMode = mode;
@@ -173,7 +210,7 @@ namespace RSSReader.Pages
         }
 
         /// <summary>
-        /// 
+        /// 編集モードに応じたボタンの切り替え
         /// </summary>
         /// <param name="mode"></param>
         private void SwitchButton(Define.EditMode mode)
@@ -183,13 +220,96 @@ namespace RSSReader.Pages
                 this.AddButton.IsEnabled = true;
                 this.EditButton.IsEnabled = true;
                 this.DelButton.IsEnabled = true;
+                this.AppendButton.Visibility = Visibility.Hidden;
+                this.CancelButton.Visibility = Visibility.Hidden;
             }
             else
             {
                 this.AddButton.IsEnabled = false;
                 this.EditButton.IsEnabled = false;
                 this.DelButton.IsEnabled = false;
+                this.AppendButton.Visibility = Visibility.Visible;
+                this.CancelButton.Visibility = Visibility.Visible;
             }
+        }
+
+        /// <summary>
+        /// 編集適用ボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AppendButton_Click(Object sender, RoutedEventArgs e)
+        {
+            var items = new List<RssSiteInfo>(GetEditItems());
+            Int32 id = this.EditingNo;
+
+            foreach (var item in items)
+            {
+                if (item.ID == id)
+                {                    
+                    // DB更新
+                    if (UpdateRSS(DBCommandType.Update, this.RssInputBox.Text, out id, out _))
+                    {
+                        // アイテム欄更新
+                        item.Link = this.RssInputBox.Text;
+                    }
+                }
+            }
+            
+            this.SiteName.Text = "";
+            this.RssInputBox.Text = "";
+            ChangeEditMode(Define.EditMode.None);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="masterID"></param>
+        /// <param name="url"></param>
+        private Boolean UpdateRSS(DBCommandType type, String url, out Int32 masterID, out String title)
+        {
+            masterID = -1;
+            title = null;
+            using (var db = new SQLite(Define.MASTER_PATH))
+            {
+                db.Open();
+
+                // DB登録有無確認 
+                if (SiteExists(db, url))
+                {
+                    MessageBox.Show("It is already registered.");
+                    return false;
+                }
+                // RSSを一度取得する
+                title = RSS.ReadFeedTitle(url);
+                if (title == null)
+                {
+                    MessageBox.Show("Failed to get information.");
+                    return false;
+                }
+
+                if (type == DBCommandType.Insert)
+                {
+                    masterID = SiteRegist(db, title, url);
+                }
+                else
+                {
+                    db.Update($"update rss_master set url='{url}' where id={masterID}");
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// 編集キャンセルボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CancelButton_Click(Object sender, RoutedEventArgs e)
+        {
+            this.SiteName.Text = "";
+            this.RssInputBox.Text = "";
+            ChangeEditMode(Define.EditMode.None);
         }
     }
 }

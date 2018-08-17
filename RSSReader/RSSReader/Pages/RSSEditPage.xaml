@@ -19,14 +19,21 @@
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="70"/>
+            <RowDefinition Height="80"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Margin="0">
-            <TextBlock Margin="10,10,0,0" Text="RSS feed URL"/>
+            <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
+                <TextBlock Text="RSS feed URL"/>
+                <TextBlock x:Name="SiteName" Margin="10,0,0,0"/>
+            </StackPanel>
             <TextBox x:Name="RssInputBox" Margin="10,5,10,0"/>
+            <StackPanel Orientation="Horizontal" Margin="0,5,10,0" HorizontalAlignment="Right">
+                <Button x:Name="AppendButton" Style="{StaticResource CommButtonKey}" Content="Append" Visibility="Hidden" Click="AppendButton_Click" Margin="0,0,5,0"/>
+                <Button x:Name="CancelButton" Style="{StaticResource CommButtonKey}" Content="Cancel" Visibility="Hidden" Click="CancelButton_Click"/>
+            </StackPanel>
         </StackPanel>
-        <Button x:Name="ReturnButton" Grid.Row="0" Style="{StaticResource PicButtonKey}" Margin="5" Content="r"
+        <Button x:Name="ReturnButton" Grid.Row="0" Style="{StaticResource PicButtonKey}" Margin="0,5,5,0" Content="r"
                 HorizontalAlignment="Right" VerticalAlignment="Top" Width="20" Height="20" FontFamily="Marlett"
                 Foreground="Red" Click="ReturnButton_Click"/>
         <DockPanel Grid.Row="1">
