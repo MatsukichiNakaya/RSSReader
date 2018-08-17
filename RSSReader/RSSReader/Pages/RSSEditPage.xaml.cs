@@ -22,15 +22,17 @@ namespace RSSReader.Pages
     /// </summary>
     public partial class RSSEditPage : Page
     {
-        private const String MASTER_PATH = @".\rss_log.db";
-
         private FeedViewPage InnerViewPage { get; set; }
+
+        private Define.EditMode EditMode { get; set; }
+        private Int32 EditingNo { get; set; }
 
         public RSSEditPage(FeedViewPage page, IEnumerable<RssSiteInfo> sites)
         {
             InitializeComponent();
             this.InnerViewPage = page;
             this.FavEditBox.ItemsSource = sites;
+            ChangeEditMode(Define.EditMode.None);
         }
 
         /// <summary>
@@ -39,13 +41,17 @@ namespace RSSReader.Pages
         private void AddButton_Click(Object sender, RoutedEventArgs e)
         {
             String url = this.RssInputBox.Text;
+
             if (String.IsNullOrWhiteSpace(url))
             {
                 MessageBox.Show("Please, Input the RSS feed location.");
                 return;
             }
 
-            using (var db = new SQLite(MASTER_PATH))
+            Int32 id;
+            String title;
+
+            using (var db = new SQLite(Define.MASTER_PATH))
             {
                 db.Open();
 
@@ -56,15 +62,25 @@ namespace RSSReader.Pages
                     return;
                 }
                 // RSSを一度取得する
-                String title = RSS.ReadFeedTitle(url);
+                title = RSS.ReadFeedTitle(url);
                 if (title == null)
                 {
                     MessageBox.Show("Failed to get information.");
                     return;
                 }
                 // DBに登録
-                SiteRegist(db, title, url);
+                id = SiteRegist(db, title, url);
             }
+            // 改めて要素を取得
+            var items = new List<RssSiteInfo>(GetEditItems());
+            // リストへ追加して表示する
+            items.Add(new RssSiteInfo() {
+                ID = id,
+                SiteName = title,
+                Link = url,
+            });
+            this.FavEditBox.ItemsSource = items;
+            this.RssInputBox.Text = "";
         }
 
         /// <summary>
@@ -72,7 +88,12 @@ namespace RSSReader.Pages
         /// </summary>
         private void EditButton_Click(Object sender, RoutedEventArgs e)
         {
+            if (!(this.FavEditBox.SelectedItem is RssSiteInfo item)) { return; }
 
+            this.RssInputBox.Text = item.Link;
+            this.EditingNo = item.ID;
+
+            ChangeEditMode(Define.EditMode.Editing);
         }
 
         /// <summary>
@@ -118,7 +139,7 @@ namespace RSSReader.Pages
         /// <summary>
         /// サイトDBに登録
         /// </summary>
-        private void SiteRegist(SQLite db, String title, String url)
+        private Int32 SiteRegist(SQLite db, String title, String url)
         {
             db.Update($"insert into rss_master(site, url) values('{title}', '{url}')");
             
@@ -129,6 +150,46 @@ namespace RSSReader.Pages
             // すぐに更新できるように指定の時刻分の余裕をもってDBに登録する
             db.Update($"insert into sync(master_id, last_update) values({masterID}, "
                         + $"'{(DateTime.Now - (new TimeSpan(0, 5, 0))).ToString(FeedItem.DATE_FORMAT)}')");
+
+            return Int32.Parse(masterID);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private IEnumerable<RssSiteInfo> GetEditItems()
+        {
+            foreach (var item in this.FavEditBox.Items)
+            {
+                yield return item as RssSiteInfo;
+            } 
+        }
+
+        private void ChangeEditMode(Define.EditMode mode)
+        {
+            this.EditMode = mode;
+            SwitchButton(mode);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="mode"></param>
+        private void SwitchButton(Define.EditMode mode)
+        {
+            if (mode == Define.EditMode.None)
+            {
+                this.AddButton.IsEnabled = true;
+                this.EditButton.IsEnabled = true;
+                this.DelButton.IsEnabled = true;
+            }
+            else
+            {
+                this.AddButton.IsEnabled = false;
+                this.EditButton.IsEnabled = false;
+                this.DelButton.IsEnabled = false;
+            }
         }
     }
 }

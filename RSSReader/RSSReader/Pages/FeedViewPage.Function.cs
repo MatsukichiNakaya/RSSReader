@@ -11,8 +11,6 @@ namespace RSSReader.Pages
 {
     public partial class FeedViewPage : Page
     {
-        private const String MASTER_PATH = @".\rss_log.db";
-
         #region ComboBox
         /// <summary>
         /// コンボボックスの中身を設定する
@@ -29,7 +27,7 @@ namespace RSSReader.Pages
         private IEnumerable<RssSiteInfo> GetSiteInfo()
         {
             var cmbItems = new List<RssSiteInfo>();
-            using (var db = new SQLite(MASTER_PATH))
+            using (var db = new SQLite(Define.MASTER_PATH))
             {
                 db.Open();
 
@@ -63,7 +61,7 @@ namespace RSSReader.Pages
             Int32 masterID = item.ID;
             IEnumerable<FeedItem> feedItems = null;
 
-            using (var db = new SQLite(MASTER_PATH))
+            using (var db = new SQLite(Define.MASTER_PATH))
             {
                 db.Open();
                 if (CanRSSRead(db, masterID))
@@ -122,7 +120,7 @@ namespace RSSReader.Pages
 
             foreach (var item in items)
             {
-                item.Thumbnail = GetImage(item.ThumbUri, masterID);
+                item.Thumbnail = GetImage(item.ThumbUri, masterID, item.Host);
                 if (item.ThumbUri != null)
                 {
                     item.ThumbWidth = 160;
@@ -138,17 +136,17 @@ namespace RSSReader.Pages
         /// <param name="url"></param>
         /// <param name="masterID"></param>
         /// <returns></returns>
-        private ImageSource GetImage(Uri url, Int32 masterID)
+        private ImageSource GetImage(Uri url, Int32 masterID, String host)
         {
-            String localPath = FeedItem.GetChashPath(url?.AbsoluteUri, masterID);
-
+            String localPath = FeedItem.GetChashPath(url?.AbsoluteUri, masterID, host);
+            
             if (File.Exists(localPath))
             {   // chashから読み込み
                 return FeedItem.ReadChashThumb(localPath);
             }
             else
             {   // ダウンロード
-                return FeedItem.DownloadThumb(url?.AbsoluteUri, masterID);
+                return FeedItem.DownloadThumb(url?.AbsoluteUri, masterID, host);
             }
         }
 
@@ -196,23 +194,21 @@ namespace RSSReader.Pages
         private IEnumerable<FeedItem> GetLogItems(SQLite db, Int32 masterID)
         {
             var ret = db.Select($"select * from log where master_id = {masterID}");
-            //var ret = db.Select($"select l.log_id, l.master_id, l.title, l.reg_date, l.summary, l.page_url, " +
-            //    $"l.is_read, l.thumb_url, r.url from log as l " +
-            //    $"inner join rss_master as r on r.id = l.master_id where master_id = {masterID};");
-            Int32 count = ret["log_id"].Count;
-            //String host = new Uri(ret["url"][0]).Host;
-
-            for (Int32 i = 0; i < count; i++)
+            if(0 < ret.Count)
             {
-                yield return new FeedItem() {
-                    Title = ret["title"][i],
-                    PublishDate = ret["reg_date"][i],
-                    Summary = ret["summary"][i]?.Replace("'", ""),
-                    Link = new Uri(ret["page_url"][i]),
-                    IsRead = Int32.Parse(ret["is_read"][i]) == 1,
-                    ThumbUri = String.IsNullOrEmpty(ret["thumb_url"][i])
-                                ? null : new Uri(ret["thumb_url"][i]),
-                };
+                Int32 count = ret["log_id"].Count;
+                for (Int32 i = 0; i < count; i++)
+                {
+                    yield return new FeedItem() {
+                        Title = ret["title"][i],
+                        PublishDate = ret["reg_date"][i],
+                        Summary = ret["summary"][i]?.Replace("'", ""),
+                        Link = new Uri(ret["page_url"][i]),
+                        IsRead = Int32.Parse(ret["is_read"][i]) == 1,
+                        ThumbUri = String.IsNullOrEmpty(ret["thumb_url"][i])
+                                    ? null : new Uri(ret["thumb_url"][i]),
+                    };
+                }
             }
         }
 

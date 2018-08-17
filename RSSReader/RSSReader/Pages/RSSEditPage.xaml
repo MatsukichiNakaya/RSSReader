@@ -41,10 +41,9 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
-                            <!--<CheckBox IsChecked="{Binding Checked, Mode=TwoWay}" Content="削除"/>-->
                             <TextBlock Text="{Binding ID}" Margin="5"/>
                             <TextBlock Text="{Binding SiteName}" Margin="5"/>
-                            <TextBlock Text="{Binding Link}" Margin="5"/>
+                            <TextBlock Text="{Binding Link, Mode=TwoWay}" Margin="5"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

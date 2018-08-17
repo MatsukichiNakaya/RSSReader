@@ -47,6 +47,7 @@
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -73,10 +74,15 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Define.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Pages\ConfigurePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\FeedViewPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -94,6 +100,9 @@
     <Compile Include="Model\FeedItem.cs" />
     <Compile Include="Model\RSS.cs" />
     <Compile Include="Model\RssSiteInfo.cs" />
+    <Compile Include="Pages\ConfigurePage.xaml.cs">
+      <DependentUpon>ConfigurePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\FeedViewPage.Function.cs">
       <DependentUpon>FeedViewPage.xaml</DependentUpon>
     </Compile>

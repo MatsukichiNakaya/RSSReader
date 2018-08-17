@@ -18,10 +18,10 @@ namespace RSSReader.Model
             {
                 var xml = new XmlDocument();
                 xml.Load(url);
-                XmlElement elem = xml.DocumentElement;
+                var elem = xml.DocumentElement;
 
                 // atom 形式
-                if (elem.Name == "feed")
+                if (elem.Name == Define.RSS_HEADER_ATOM)
                 {
                     return elem["title"].InnerText;
                 }
@@ -49,12 +49,12 @@ namespace RSSReader.Model
 
             switch (rssRootNodeTag)
             {   // RSS1.0の場合、ルートノードはrdf:RDFタグ
-                case "rdf:RDF":
+                case Define.RSS_HEADER_10:
                     return ReadRSS10(url);
                 // RSS2.0の場合、ルートノードはrssタグである。
-                case "rss":
+                case Define.RSS_HEADER_20:
                 // atomの場合、ルートノードはfeedタグである。
-                case "feed":
+                case Define.RSS_HEADER_ATOM:
                     // RSS 2.0 と atomは同ロジックで読み込める
                     return ReadRSS20(url);
             }

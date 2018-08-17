@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.ServiceModel.Syndication;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -14,6 +15,9 @@ namespace RSSReader.Model
         public const String DATE_FORMAT = "yyyy/MM/dd HH:mm:ss";
 
         public const String CHASH_DIR = "chash";
+
+        /// <summary>YouTubeのホスト名</summary>
+        public const String HOST_YOUTUBE = "www.youtube.com";
 
         /// <summary>記事のタイトル</summary>
         public String Title { get; set; }
@@ -72,26 +76,40 @@ namespace RSSReader.Model
                 if (item.ElementExtensions[i].OuterName == "group")
                 {
                     element = item.ElementExtensions[i].GetObject<XmlElement>();
+                    // データが有ればセットする
+                    result.Summary = element.InnerText;
+                    break;
+                }
+                else if (item.ElementExtensions[i].OuterName == "encoded")
+                {
+                    element = item.ElementExtensions[i].GetObject<XmlElement>();
                     break;
                 }
             }
             if (element == null) { return result; }
-            
-            // データが有ればセットする
-            result.Summary = element.InnerText;
+
             XmlNode node = null;
             for (Int32 i = 0; i < element.ChildNodes.Count; i++)
             {
                 if (element.ChildNodes[i].LocalName == "thumbnail")
                 {
                     node = element.ChildNodes[i];
-                    break;
+                    String uri = node?.Attributes["url"]?.InnerText ?? String.Empty;
+                    if (String.IsNullOrEmpty(uri)) { return result; }
+
+                    result.ThumbUri = new Uri(uri);
+                    return result;
+                }
+                else if (element.ChildNodes[i].LocalName == "#text")
+                {
+                    node = element.ChildNodes[i];
+                    String uri = GetImgTagSource(node.InnerText);
+                    if (String.IsNullOrEmpty(uri)) { return result; }
+
+                    result.ThumbUri = new Uri(uri);
+                    return result;
                 }
             }
-            String uri = node?.Attributes["url"]?.InnerText ?? String.Empty;
-            if (String.IsNullOrEmpty(uri)) { return result; }
-
-            result.ThumbUri = new Uri(uri);
             return result;
         }
 
@@ -145,14 +163,22 @@ namespace RSSReader.Model
         /// <returns></returns>
         protected static String GetImgTagSource(String document)
         {
-            var imgPattern = new Regex(@"<img src=""(?<text>.*?)"".*?>");
+            //var imgPattern = new Regex(@"<img src=""(?<text>.*?)"".*?>");
+            //var imgPattern = new Regex(@"<img\s*.*?\s*src=""(?<text>.*?)"".*?>");
+            var imgPattern = new Regex(@"<img\s*.*?\s*src=""(?<text>.*?)""");
+            String ext;
             foreach (Match item in imgPattern.Matches(document))
             {
-                if (String.IsNullOrEmpty(Path.GetExtension(item.Groups["text"].Value)))
+                ext = Path.GetExtension(item.Groups["text"].Value);
+                // 画像のリンクに拡張子があるか否かを判定する
+                if (String.IsNullOrEmpty(ext))
                 {
                     continue;
                 }
-                return item.Groups["text"].Value;
+                if (ext == @".png" || ext == @".jpg" || ext == @".jpeg")
+                {
+                    return item.Groups["text"].Value;
+                }
             }
             return null;
         }
@@ -173,13 +199,29 @@ namespace RSSReader.Model
         }
 
         /// <summary>
-        /// 
+        /// サムネイルキャッシュの保存先のパスを取得する
         /// </summary>
         /// <param name="url"></param>
         /// <param name="masterID"></param>
         /// <returns></returns>
-        public static String GetChashPath(String url, Int32 masterID)
-            => $@".\{CHASH_DIR}\{masterID}\{Path.GetFileName(url)}";
+        public static String GetChashPath(String url, Int32 masterID, String host)
+        {
+            switch (host)
+            {
+                case HOST_YOUTUBE:
+                    // URLからファイル名と親ディレクトリ名を取得
+                    var uri = new Uri(url);
+                    var subDir = uri.Segments[uri.Segments.Length - 2].Replace("/", "");
+                    var localPath = $@"{CHASH_DIR}\{masterID}\{subDir}";
+
+                    if (!Directory.Exists(localPath))
+                    {
+                        Directory.CreateDirectory(localPath);
+                    }
+                    return $@"{localPath}\{Path.GetFileName(url)}";
+            }
+            return $@".\{CHASH_DIR}\{masterID}\{Path.GetFileName(url)}";
+        }
 
         /// <summary>
         /// キャッシュからサムネを呼び出す
@@ -192,13 +234,21 @@ namespace RSSReader.Model
 
             var imageSource = new BitmapImage();
 
-            imageSource.BeginInit();
-            imageSource.UriSource = new Uri(Path.GetFullPath(path), UriKind.RelativeOrAbsolute);
-            imageSource.EndInit();
+            try
+            {
+                imageSource.BeginInit();
+                imageSource.UriSource = new Uri(Path.GetFullPath(path), UriKind.RelativeOrAbsolute);
+                imageSource.EndInit();
 
-            imageSource.DownloadCompleted += new EventHandler((Object sender, EventArgs e) => {
-                // 必要あれば画像読み込み後の処理を入れる
-            });
+                imageSource.DownloadCompleted += new EventHandler((Object sender, EventArgs e) => {
+                    // 必要あれば画像読み込み後の処理を入れる
+                });
+            }
+            catch (Exception)
+            {
+                imageSource = null;
+            }
+
             return imageSource;
         }
 
@@ -208,33 +258,41 @@ namespace RSSReader.Model
         /// <remarks>
         /// ダウンロードした画像はキャッシュ保存される
         /// </remarks>
-        public static BitmapImage DownloadThumb(String url, Int32 masterID)
+        public static BitmapImage DownloadThumb(String url, Int32 masterID, String host)
         {
             if (String.IsNullOrEmpty(url))　{ return null; }
 
             var imageSource = new BitmapImage();
-            imageSource.BeginInit();
-            imageSource.UriSource = new Uri(url);
-            imageSource.EndInit();
+            try
+            {
+                imageSource.BeginInit();
+                imageSource.UriSource = new Uri(url);
+                imageSource.EndInit();
 
-            // ダウンロード完了しないと保存できるデータがないので完了イベントで保存を行う
-            imageSource.DownloadCompleted += new EventHandler((Object sender, EventArgs e) => {
-                if (sender is ImageSource source)
-                {
-                    try
-                    {   // ローカルパス取得
-                        String localPath = GetChashPath(url, masterID);
+                // ダウンロード完了しないと保存できるデータがないので完了イベントで保存を行う
+                imageSource.DownloadCompleted += new EventHandler((Object sender, EventArgs e) => {
+                    if (sender is ImageSource source)
+                    {
+                        try
+                        {   // ローカルパス取得
+                            String localPath = System.Web.HttpUtility.UrlDecode(GetChashPath(url, masterID, host));
 
-                        using (var stream = new FileStream(localPath, FileMode.Create))
-                        {
-                            var enc = new JpegBitmapEncoder();
-                            enc.Frames.Add(BitmapFrame.Create((BitmapSource)source));
-                            enc.Save(stream);
+                            using (var stream = new FileStream(localPath, FileMode.Create))
+                            {
+                                var enc = new JpegBitmapEncoder();
+                                enc.Frames.Add(BitmapFrame.Create((BitmapSource)source));
+                                enc.Save(stream);
+                            }
                         }
+                        catch (Exception) { Console.WriteLine("Error Download"); }
                     }
-                    catch (Exception) { Console.WriteLine("Error Download"); }
-                }
-            });
+                });
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Error File path");
+                imageSource = null;
+            }
             return imageSource;
         }
     }
