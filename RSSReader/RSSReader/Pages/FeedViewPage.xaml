@@ -20,7 +20,7 @@
         <StackPanel Grid.Row="0" Orientation="Horizontal">
             <ComboBox x:Name="SiteSelectBox" Height="40" Width="500" Margin="10"
                       Style="{StaticResource ComboBoxFlatStyle}"
-                      HorizontalAlignment="Left" 
+                      HorizontalAlignment="Left"
                       VerticalAlignment="Center"
                       VerticalContentAlignment="Center"
                       ItemsSource="{Binding}"

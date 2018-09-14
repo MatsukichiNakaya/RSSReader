@@ -99,6 +99,7 @@
   <ItemGroup>
     <Compile Include="Model\FeedItem.cs" />
     <Compile Include="Model\RSS.cs" />
+    <Compile Include="Model\RssConfigure.cs" />
     <Compile Include="Model\RssSiteInfo.cs" />
     <Compile Include="Pages\ConfigurePage.xaml.cs">
       <DependentUpon>ConfigurePage.xaml</DependentUpon>
@@ -115,6 +116,7 @@
     <Compile Include="Project\DataBase\SQLite.cs" />
     <Compile Include="Project\DataBase\SQLiteEnums.cs" />
     <Compile Include="Project\IO\Registry.cs" />
+    <Compile Include="Project\Serialization\XmlSerializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

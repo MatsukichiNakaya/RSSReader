@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using Project.IO;
+using Project.Serialization.Xml;
 using RSSReader.Model;
 
 namespace RSSReader.Pages
@@ -33,6 +34,8 @@ namespace RSSReader.Pages
 
         /// <summary>アイテムの項目数</summary>
         public Int32 SiteItemCount { get { return this.SiteSelectBox.Items.Count; } }
+
+        private RssConfigure Config { get; set; }
         #endregion
 
         #region コンストラクタ
@@ -55,6 +58,8 @@ namespace RSSReader.Pages
             };
             this.AutoUpdateTimer.Tick += AutoUpdateTimer_Tick;
             this.AutoUpdateTimer.Start();
+
+            this.Config = XmlSerializer.Load<RssConfigure>(Define.XML_PATH);
         }
         #endregion
 
@@ -86,7 +91,8 @@ namespace RSSReader.Pages
         {
             if (sender is ComboBox cmb)
             {
-                if (!(cmb.SelectedItem is RssSiteInfo item)) { return; }
+                if (!(cmb.SelectedItem is RssSiteInfo item))
+                { return; }
                 UpdateListBox(item);
             }
         }
@@ -106,7 +112,7 @@ namespace RSSReader.Pages
         /// </summary>
         private void SettingButton_Click(Object sender, RoutedEventArgs e)
         {
-
+            this.NavigationService.Navigate(new ConfigurePage(this));
         }
 
         /// <summary>
@@ -126,9 +132,7 @@ namespace RSSReader.Pages
             {
                 if (item.Content is FeedItem feed)
                 {
-                    // Todo: 個人的な設定 設定画面で変更可能にする
-                    String option = "--profile-directory=\"Profile 1\" --incognito";
-                    Process.Start(this.ChromePath, $"{option} {feed.Link}");
+                    Process.Start(this.ChromePath, $"{this.Config?.BrowserOption ?? ""} {feed.Link}");
                 }
             }
         }
