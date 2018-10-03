@@ -3,4 +3,5 @@
   <BrowserOption>--profile-directory="Profile 1" --incognito</BrowserOption>
   <UpdateSpan>5</UpdateSpan>
   <ShowImage>false</ShowImage>
+  <KeepPage>false</KeepPage>
 </RssConfigure>

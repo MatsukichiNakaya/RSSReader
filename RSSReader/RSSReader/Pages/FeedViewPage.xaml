@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:RSSReader.Pages"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="FeedViewPage" Loaded="Page_Loaded">
+      Title="FeedViewPage" Loaded="Page_Loaded" Unloaded="Page_UnLoadeded">
     <Page.Resources>
         <Style x:Key="ListBoxItemStyle" TargetType="{x:Type ListBoxItem}">
             <EventSetter Event="MouseDoubleClick" Handler="ListBoxItem_MouseDoubleClick"/>
@@ -53,7 +53,8 @@
                     Click="FabButton_Click"/>
         </StackPanel>
         <ListBox x:Name="FeedList" Grid.Row="1" ItemsSource="{Binding}"
-                 ItemContainerStyle="{DynamicResource ListBoxItemStyle}">
+                 ItemContainerStyle="{DynamicResource ListBoxItemStyle}"
+                 PreviewKeyDown="FeedList_PreviewKeyDown">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <DockPanel Margin="5">

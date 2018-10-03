@@ -6,6 +6,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using Project.IO;
 using Project.Serialization.Xml;
+using Project.Windows;
 using RSSReader.Model;
 
 namespace RSSReader.Pages
@@ -76,6 +77,11 @@ namespace RSSReader.Pages
             }
         }
 
+        private void Page_UnLoadeded(Object sender, RoutedEventArgs e)
+        {
+            
+        }
+
         /// <summary>
         /// データ自動更新タイマ
         /// </summary>
@@ -94,6 +100,13 @@ namespace RSSReader.Pages
                 if (!(cmb.SelectedItem is RssSiteInfo item))
                 { return; }
                 UpdateListBox(item);
+
+                this.FeedList.SelectedIndex = 0;
+                this.FeedList.ScrollIntoView(this.FeedList.SelectedItem);
+
+                // ソフトへ終了メッセージを送信する
+                var bgw = (IntPtr)WindowInfo.FindWindowByName(null, "RssReader");
+                WinMessage.Send(bgw, 32770, (IntPtr)item.ID, IntPtr.Zero);
             }
         }
 
@@ -136,7 +149,22 @@ namespace RSSReader.Pages
                 }
             }
         }
-        #endregion
 
+        /// <summary>
+        /// 選択項目をキーで起動
+        /// </summary>
+        private void FeedList_PreviewKeyDown(Object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Return) { return; }
+
+            if (sender is ListBox box)
+            {
+                if (box.SelectedValue is FeedItem item)
+                {
+                    Process.Start(this.ChromePath, $"{this.Config?.BrowserOption ?? ""} {item.Link}");
+                }
+            }
+        }
+        #endregion
     }
 }

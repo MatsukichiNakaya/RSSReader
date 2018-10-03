@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace RSSReader.Model
@@ -19,5 +15,7 @@ namespace RSSReader.Model
         [XmlElement("ShowImage", DataType = "boolean", IsNullable = false)]
         public Boolean IsShowImage { get; set; }
      
+        [XmlElement("KeepPage", DataType = "boolean", IsNullable = false)]
+        public Boolean IsKeepPage { get; set; }
     }
 }

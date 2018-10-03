@@ -115,8 +115,14 @@
     </Compile>
     <Compile Include="Project\DataBase\SQLite.cs" />
     <Compile Include="Project\DataBase\SQLiteEnums.cs" />
+    <Compile Include="Project\Extention\ArrayExtention.cs" />
     <Compile Include="Project\IO\Registry.cs" />
+    <Compile Include="Project\IO\Text.cs" />
     <Compile Include="Project\Serialization\XmlSerializer.cs" />
+    <Compile Include="Project\Winows\Message.cs" />
+    <Compile Include="Project\Winows\WindowAPI.cs" />
+    <Compile Include="Project\Winows\WindowInfo.cs" />
+    <Compile Include="Project\Winows\WinMsgAPI.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

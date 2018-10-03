@@ -34,6 +34,9 @@
             <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource TextComm}" Text="Update span"/>
             <TextBox x:Name="UpdateBox" Grid.Row="1" Grid.Column="1" Height="20" Text="{Binding UpdateSpan}" Margin="10,0,10,0"/>
         </Grid>
+        <StackPanel Grid.Column="0" Grid.Row="1">
+            <Button x:Name="DeleteButton" Style="{StaticResource CommButtonKey}" Content="Delete chash" Click="DeleteButton_Click"/>
+        </StackPanel>
         <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
             <Button x:Name="AppendButton" Style="{StaticResource CommButtonKey}"
                     Margin="10" Content="Append" Click="AppendButton_Click"/>
