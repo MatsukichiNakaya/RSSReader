@@ -105,7 +105,7 @@ namespace RSSReader.Pages
 
             // Todo :
             // 更新間隔設定値を超えているか？
-            result = 5 < (DateTime.Now - last).Minutes;
+            result = 5 <= (DateTime.Now - last).Minutes;
 
             return result;
         }
@@ -188,7 +188,7 @@ namespace RSSReader.Pages
 
                 isCommit = true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 isCommit = false;
             }
@@ -264,7 +264,7 @@ namespace RSSReader.Pages
             foreach (var item in feedItems)
             {
                 db.Update($"insert into log(master_id, title, page_url, summary, is_read, reg_date, thumb_url) values(" +
-                          $"{masterID}, '{item.Title}', '{item.Link.AbsoluteUri}', '{item.Summary.Replace("'", "")}', " +
+                          $"{masterID}, '{item.Title}', '{item.Link.AbsoluteUri}', '{item.Summary?.Replace("'", "") ?? ""}', " +
                           $"{(item.IsRead ? 1 : 0)}, '{item.PublishDate}', '{item.ThumbUri}')");
             }
             return true;

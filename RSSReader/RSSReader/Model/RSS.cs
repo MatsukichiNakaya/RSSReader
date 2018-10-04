@@ -240,7 +240,7 @@ namespace RSSReader.Model
                     {
                         // 表題
                         case "title":
-                            gfitem.Title = item[k].Value;
+                            gfitem.Title = item[k].Value.Replace('\'', '’');
                             break;
                         // webページへのリンク
                         case "link":
