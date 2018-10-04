@@ -9,6 +9,7 @@ namespace RSSReader
         public const String RSS_HEADER_ATOM = "feed";
         public const String MASTER_PATH = @".\rss_log.db";
         public const String XML_PATH = @"Configure.xml";
+        public const String PAGE_DAT = @".\page.dat";
 
         public enum EditMode
         {

@@ -40,7 +40,7 @@ namespace RSSReader
 
         private void NavigationWindow_Closing(Object sender, CancelEventArgs e)
         {
-            TextFile.Write(@".\page.dat", $"{this.Page}", TextFile.OVER_WRITE);
+            TextFile.Write(Define.PAGE_DAT, $"{this.Page}", TextFile.OVER_WRITE);
         }
 
 

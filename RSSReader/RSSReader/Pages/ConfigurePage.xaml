@@ -33,6 +33,8 @@
             <TextBox x:Name="BrowsBox" Grid.Row="0" Grid.Column="1" Height="20" Text="{Binding BrowserOption}" Margin="10,0,10,0"/>
             <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource TextComm}" Text="Update span"/>
             <TextBox x:Name="UpdateBox" Grid.Row="1" Grid.Column="1" Height="20" Text="{Binding UpdateSpan}" Margin="10,0,10,0"/>
+            <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource TextComm}" Text="Keep Page"/>
+            <CheckBox x:Name="CheckKeepPage" Grid.Row="2" Grid.Column="1" IsChecked="{Binding IsKeepPage}" VerticalAlignment="Center" Margin="10,0"/>
         </Grid>
         <StackPanel Grid.Column="0" Grid.Row="1">
             <Button x:Name="DeleteButton" Style="{StaticResource CommButtonKey}" Content="Delete chash" Click="DeleteButton_Click"/>

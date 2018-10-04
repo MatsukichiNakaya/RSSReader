@@ -41,15 +41,23 @@ namespace RSSReader.Pages
 
         private void AppendButton_Click(Object sender, RoutedEventArgs e)
         {
-            if (!Int32.TryParse(this.UpdateBox.Text, out Int32 span)) { return; }
-            if (span < 5) { return; }
-
-            var conf = new RssConfigure() {
-                BrowserOption = this.BrowsBox.Text,
-                UpdateSpan = span,
-                IsShowImage = false,
-            };
-            XmlSerializer.Save(conf, Define.XML_PATH);
+            //if (!Int32.TryParse(this.UpdateBox.Text, out Int32 span)) { return; }
+            //if (span < 5) { return; }
+            //var conf = new RssConfigure() {
+            //    BrowserOption = this.BrowsBox.Text,
+            //    UpdateSpan = span,
+            //    IsShowImage = false,
+            //};
+            //XmlSerializer.Save(conf, Define.XML_PATH);
+            try
+            {
+                var conf = this.ConfGrid.DataContext as RssConfigure;
+                XmlSerializer.Save(conf, Define.XML_PATH);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("setting error!", "error", MessageBoxButton.OK);
+            }
         }
 
         /// <summary>

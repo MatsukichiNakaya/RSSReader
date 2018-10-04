@@ -59,8 +59,6 @@ namespace RSSReader.Pages
             };
             this.AutoUpdateTimer.Tick += AutoUpdateTimer_Tick;
             this.AutoUpdateTimer.Start();
-
-            this.Config = XmlSerializer.Load<RssConfigure>(Define.XML_PATH);
         }
         #endregion
 
@@ -70,9 +68,24 @@ namespace RSSReader.Pages
         /// </summary>
         private void Page_Loaded(Object sender, RoutedEventArgs e)
         {
+            this.Config = XmlSerializer.Load<RssConfigure>(Define.XML_PATH);
             // コンボボックスは最初の項目を選択する
             if (0 < this.SiteSelectBox.Items.Count)
             {
+                // 前回のページ保持オプション
+                if (this.Config.IsKeepPage)
+                {
+                    if (Int32.TryParse(TextFile.Read(Define.PAGE_DAT), out Int32 id))
+                    {
+                        Int32 page = GetIndexFromMasterID(id);
+                        if (0 <= page)
+                        {
+                            // 正常にデータが読めたら値を設定。
+                            this.SiteSelectBox.SelectedIndex = page;
+                            return;
+                        }
+                    }
+                }
                 this.SiteSelectBox.SelectedIndex = 0;
             }
         }
@@ -125,6 +138,10 @@ namespace RSSReader.Pages
         /// </summary>
         private void SettingButton_Click(Object sender, RoutedEventArgs e)
         {
+            Int32 index = (this.SiteSelectBox.SelectedItem as RssSiteInfo)?.ID ?? -1;
+            if(index < 0) { return; }
+
+            TextFile.Write(Define.PAGE_DAT, $"{index}", TextFile.OVER_WRITE);
             this.NavigationService.Navigate(new ConfigurePage(this));
         }
 
@@ -133,6 +150,11 @@ namespace RSSReader.Pages
         /// </summary>
         private void FabButton_Click(Object sender, RoutedEventArgs e)
         {
+            Int32 index = (this.SiteSelectBox.SelectedItem as RssSiteInfo)?.ID ?? -1;
+            if (index < 0)
+            { return; }
+
+            TextFile.Write(Define.PAGE_DAT, $"{index}", TextFile.OVER_WRITE);
             this.NavigationService.Navigate(new RSSEditPage(this, GetSiteInfo()));
         }
 

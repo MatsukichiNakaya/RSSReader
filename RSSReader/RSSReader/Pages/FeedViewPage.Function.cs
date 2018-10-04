@@ -45,6 +45,21 @@ namespace RSSReader.Pages
             }
             return cmbItems;
         }
+
+        private Int32 GetIndexFromMasterID(Int32 masterID)
+        {
+            for (Int32 index = 0; index < this.SiteSelectBox.Items.Count; index++)
+            {
+                if (this.SiteSelectBox.Items[index] is RssSiteInfo site)
+                {
+                    if (site.ID == masterID)
+                    {
+                        return index;
+                    }
+                }
+            }
+            return -1;
+        }
         #endregion
 
         #region ListBox
