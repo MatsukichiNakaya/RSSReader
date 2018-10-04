@@ -23,7 +23,7 @@ namespace RSSReader
         private IntPtr WndProc(IntPtr hwnd, Int32 msg,
                                 IntPtr wParam, IntPtr lParam, ref Boolean handled)
         {
-            if (msg == CHANGE_MESSAGE)
+            if (msg == this.CHANGE_MESSAGE)
             {
                 // 現在のページを保持
                 this.Page = wParam.ToInt32();   

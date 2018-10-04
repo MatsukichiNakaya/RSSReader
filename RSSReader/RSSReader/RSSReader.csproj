@@ -98,6 +98,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Model\FeedItem.cs" />
+    <Compile Include="Model\MarkupElement.cs" />
     <Compile Include="Model\RSS.cs" />
     <Compile Include="Model\RssConfigure.cs" />
     <Compile Include="Model\RssSiteInfo.cs" />

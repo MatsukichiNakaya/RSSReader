@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.ServiceModel.Syndication;
 using System.Text.RegularExpressions;
@@ -37,6 +38,8 @@ namespace RSSReader.Model
         /// <summary>サムネイルの横幅</summary>
         public Int32 ThumbWidth { get; set; }
 
+        public List<MarkupElement> ExtraItems { get; set; }
+
         /// <summary>
         /// 
         /// </summary>
@@ -53,6 +56,7 @@ namespace RSSReader.Model
             this.ThumbWidth = 0;
         }
 
+#if false
         /// <summary>
         /// RSS 2.0 (または、atom)形式で読み込んだデータをFeedItemとして読み込む
         /// </summary>
@@ -199,7 +203,7 @@ namespace RSSReader.Model
             }
             return null;
         }
-
+#endif
         /// <summary>
         /// 
         /// </summary>
