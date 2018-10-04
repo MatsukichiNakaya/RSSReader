@@ -114,67 +114,77 @@ namespace RSSReader.Model
         /// <returns></returns>
         public static List<FeedItem> ReadFeedItems(String url)
         {
+            var namespaceList = GetNamespace(url);
+
             // Xmlを解析してItemまたはentry要素を取得する。
-            GetElements(url,
-                out List<Dictionary<String, MarkupElement>> items,
-                out List<String> namespaceList);
+            GetElements(url, out List<Dictionary<String, MarkupElement>> elementItems);
 
             // now create a List of type GenericFeedItem
             var itemList = new List<FeedItem>();
 
-            ConvertResult(items, namespaceList, ref itemList);
+            ConvertResult(elementItems, namespaceList, ref itemList);
 
             SetThumbnail(itemList, namespaceList);
 
             return itemList;
         }
 
+        private static String[] GetNamespace(String url)
+        {
+            var xml = new XmlDocument();
+            xml.Load(url);
+            var elem = xml.DocumentElement;
+            var results = new List<String>();
+
+            foreach (XmlAttribute att in elem.Attributes)
+            {
+                var split = att.Name.Split(':');
+                if (1 < split.Length)
+                {
+                    results.Add(split[1]);
+                }
+            }
+            return results.ToArray();;
+        }
+
         /// <summary>
         /// xmlを解析してそれぞれの要素を取得
         /// </summary>
         /// <param name="url"></param>
-        /// <param name="items"></param>
+        /// <param name="elementItems"></param>
         /// <param name="namespaceList"></param>
         private static void GetElements(String url,
-                                        out List<Dictionary<String, MarkupElement>> items,
-                                        out List<String> namespaceList)
+                                        out List<Dictionary<String, MarkupElement>> elementItems)
         {
-            items = new List<Dictionary<String, MarkupElement>>();
+            elementItems = new List<Dictionary<String, MarkupElement>>();
             Dictionary<String, MarkupElement> currentItem = null;
             var reader = new XmlTextReader(url);
-            namespaceList = new List<String>();
 
+            String name = String.Empty;
             while (reader.Read())
             {
                 if (reader.NodeType != XmlNodeType.Element)
-                { continue; }
-                String name = reader.Name;
-
-                if (name.ToLowerInvariant() == "feed" ||
-                    name.ToLowerInvariant() == "rdf:rdf" ||
-                    name.ToLowerInvariant() == "rss")
                 {
-                    if (reader.HasAttributes)
+                    if (reader.NodeType == XmlNodeType.CDATA)
                     {
-                        while (reader.MoveToNextAttribute())
+                        if (currentItem != null && !String.IsNullOrEmpty(name))
                         {
-                            var split = reader.Name.Split(':');
-                            if (1 < split.Length)
-                            {
-                                namespaceList.Add(split[1]);
-                            }
+                            // CDATAの値を親ノードの値に設定
+                            currentItem[name].Value = reader.Value;
                         }
                     }
+                    continue;
                 }
 
+                name = reader.Name;
+
+                //   "item" RSS1.0, RSS2.0  "entry" atom
                 if (name.ToLowerInvariant() == "item" || name.ToLowerInvariant() == "entry")
                 {
-                    // Save previous item
                     if (currentItem != null)
                     {
-                        items.Add(currentItem);
+                        elementItems.Add(currentItem);
                     }
-                    // Create new item
                     currentItem = new Dictionary<String, MarkupElement>();
                 }
                 else if (currentItem != null)
@@ -189,7 +199,6 @@ namespace RSSReader.Model
                         }
                     }
                     reader.Read();
-                    // some feeds can have duplicate keys, so we don't want to blow up here:
                     if (!currentItem.Keys.Contains(name))
                     {
                         currentItem.Add(name, new MarkupElement(reader.Value, att));
@@ -205,7 +214,7 @@ namespace RSSReader.Model
         /// <param name="namespaceList">名前空間のリスト</param>
         /// <param name="resultItems">返り値　FeedItemクラス</param>
         private static void ConvertResult(List<Dictionary<String, MarkupElement>> elementItems,
-                                          List<String> namespaceList,
+                                          IEnumerable<String> namespaceList,
                                           ref List<FeedItem> resultItems)
         {
             foreach (Dictionary<String, MarkupElement> item in elementItems)
@@ -225,30 +234,32 @@ namespace RSSReader.Model
                             if (temp[0] == nm) { key = temp[1]; }
                         }
                     }
-
+                    // 個々の名称を見て各要素のプロパティに設定。
+                    // フォーマットによる名称の違いを定義する。
                     switch (key)
                     {
+                        // 表題
                         case "title":
                             gfitem.Title = item[k].Value;
                             break;
+                        // webページへのリンク
                         case "link":
                             gfitem.Link = new Uri(item[k].Attributes == null
                                                     ? item[k].Value
                                                     : item[k].Attributes["href"]);
                             break;
-                        case "published":
-                        case "pubDate":
-                        case "issued":
-                        case "date":
+                        // 更新日付要素
+                        case "published": case "pubDate": case "issued": case "date":
                             DateTime.TryParse(item[k].Value, out DateTime dt);
                             gfitem.PublishDate = (dt != DateTime.MinValue
                                                     ? dt : DateTime.Now)
                                                     .ToString(FeedItem.DATE_FORMAT);
                             break;
-                        case "content":
-                        case "description":
+                        // 小見出しなどコンテンツ要素,サマリー
+                        case "summary": case "description":
                             gfitem.Summary = item[k].Value;
                             break;
+                        // その他の要素
                         default:
                             gfitem.ExtraItems.Add(new MarkupElement() {
                                 Name = k,
@@ -266,7 +277,8 @@ namespace RSSReader.Model
         /// フィードの要素からサムネイルを取得する
         /// </summary>
         /// <param name="feedItems"></param>
-        private static void SetThumbnail(List<FeedItem> feedItems, List<String> namespaceList)
+        private static void SetThumbnail(IEnumerable<FeedItem> feedItems,
+                                         IEnumerable<String> namespaceList)
         {
             foreach (var feed in feedItems)
             {
@@ -287,13 +299,13 @@ namespace RSSReader.Model
         /// </summary>
         /// <param name="elem"></param>
         /// <returns></returns>
-        private static Uri GetYoutubeThumb(List<MarkupElement> elem)
+        private static Uri GetYoutubeThumb(IEnumerable<MarkupElement> elem)
         {
             foreach (var item in elem)
             {
                 if (item.Name == "media:thumbnail")
                 {
-                    
+
                     return new Uri(item.Attributes["url"]);
                 }
             }
@@ -306,20 +318,20 @@ namespace RSSReader.Model
         /// <param name="elem"></param>
         /// <param name="namespaceList"></param>
         /// <returns></returns>
-        private static Uri GetGenericThumb(List<MarkupElement> elem, List<String> namespaceList)
+        private static Uri GetGenericThumb(IEnumerable<MarkupElement> elem,
+                                          IEnumerable<String> namespaceList)
         {
             foreach (var item in elem)
             {
                 String[] temp = item.Name.Split(':');
                 String key = 1 < temp.Length ? temp[1] : item.Name;
 
-                if (key == "encoded")
+                if (key == "encoded" || key == "content")
                 {
                     if (String.IsNullOrWhiteSpace(item.Value))
                     {
-                        return null;
+                        continue;
                     }
-                    
                     return GetImgTagSource(item.Value);
                 }
             }
@@ -354,3 +366,4 @@ namespace RSSReader.Model
         }
     }
 }
+
