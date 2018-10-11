@@ -4,6 +4,10 @@
     <ImageBrush x:Key="SyncIcon" ImageSource="Resources/Sync.png"/>
     <ImageBrush x:Key="FabIcon" ImageSource="Resources/book-new.png"/>
     <ImageBrush x:Key="ConfigIcon" ImageSource="Resources/cog.png"/>
+    <ImageBrush x:Key="AddIcon" ImageSource="Resources/list-add.png"/>
+    <ImageBrush x:Key="DeleteIcon" ImageSource="Resources/list-delete.png"/>
+    <ImageBrush x:Key="EditIcon" ImageSource="Resources/list-edit.png"/>
+    <ImageBrush x:Key="ReturnIcon" ImageSource="Resources/return.png"/>
 
     <Style x:Key="CommButtonKey" TargetType="{x:Type Button}">
         <Setter Property="Height" Value="20"/>

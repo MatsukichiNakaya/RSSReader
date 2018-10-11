@@ -16,39 +16,36 @@ namespace RSSReader.Pages
     {
         private FeedViewPage InnerViewPage { get; set; }
 
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="inner"></param>
         public ConfigurePage(FeedViewPage inner)
         {
             InitializeComponent();
 
             var conf = XmlSerializer.Load<RssConfigure>(Define.XML_PATH);
             this.ConfGrid.DataContext = conf;
-
-
             this.InnerViewPage = inner;
         }
 
-        private void ChashDelButton_Click(Object sender, RoutedEventArgs e)
-        {
-            if (MessageBoxResult.Cancel 
-                == MessageBox.Show("Delete unnecessary files?")) { return; }
-
-        }
-
+        /// <summary>
+        /// 戻るボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ReturnButton_Click(Object sender, RoutedEventArgs e)
         {
             this.NavigationService.Navigate(this.InnerViewPage);
         }
 
+        /// <summary>
+        /// 設定の保存ボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AppendButton_Click(Object sender, RoutedEventArgs e)
         {
-            //if (!Int32.TryParse(this.UpdateBox.Text, out Int32 span)) { return; }
-            //if (span < 5) { return; }
-            //var conf = new RssConfigure() {
-            //    BrowserOption = this.BrowsBox.Text,
-            //    UpdateSpan = span,
-            //    IsShowImage = false,
-            //};
-            //XmlSerializer.Save(conf, Define.XML_PATH);
             try
             {
                 var conf = this.ConfGrid.DataContext as RssConfigure;
@@ -65,6 +62,11 @@ namespace RSSReader.Pages
         /// </summary>
         private void DeleteButton_Click(Object sender, RoutedEventArgs e)
         {
+            if (MessageBoxResult.Cancel
+                 == MessageBox.Show("Delete unnecessary files?", "message",
+                                    MessageBoxButton.OKCancel))
+            { return; }
+
             using (var db = new SQLite(Define.MASTER_PATH))
             {
                 db.Open();
@@ -82,7 +84,7 @@ namespace RSSReader.Pages
 
                     foreach (var f in files)
                     {
-                        // DBへの登録なし
+                        // DBへの登録なしのサムネを削除する
                         if (!thumbs.Contains(System.IO.Path.GetFileName(f)))
                         {
                             System.IO.File.Delete(f);

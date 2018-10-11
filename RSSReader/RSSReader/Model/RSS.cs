@@ -124,7 +124,7 @@ namespace RSSReader.Model
 
             ConvertResult(elementItems, namespaceList, ref itemList);
 
-            SetThumbnail(itemList, namespaceList);
+            SetThumbUri(itemList, namespaceList);
 
             return itemList;
         }
@@ -277,7 +277,7 @@ namespace RSSReader.Model
         /// フィードの要素からサムネイルを取得する
         /// </summary>
         /// <param name="feedItems"></param>
-        private static void SetThumbnail(IEnumerable<FeedItem> feedItems,
+        private static void SetThumbUri(IEnumerable<FeedItem> feedItems,
                                          IEnumerable<String> namespaceList)
         {
             foreach (var feed in feedItems)

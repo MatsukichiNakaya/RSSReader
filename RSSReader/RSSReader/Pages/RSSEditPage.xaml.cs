@@ -49,14 +49,14 @@ namespace RSSReader.Pages
             {
                 return;
             }
-            // 改めて要素を取得
-            var items = new List<RssSiteInfo>(GetEditItems());
-            // リストへ追加して表示する
-            items.Add(new RssSiteInfo() {
-                ID = id,
-                SiteName = title,
-                Link = url,
-            });
+            // 改めて要素を取得  リストへ追加して表示する
+            var items = new List<RssSiteInfo>(GetEditItems()) {
+                new RssSiteInfo() {
+                    ID = id,
+                    SiteName = title,
+                    Link = url,
+                }
+            };
             this.FavEditBox.ItemsSource = items;
             this.RssInputBox.Text = "";
         }
@@ -81,6 +81,10 @@ namespace RSSReader.Pages
         private void DelButton_Click(Object sender, RoutedEventArgs e)
         {
             if (!(this.FavEditBox.SelectedItem is RssSiteInfo item)) { return; }
+            if (MessageBoxResult.Cancel 
+                == MessageBox.Show($"{item.SiteName}\r\nDelete RSS feed.", "message",
+                                   MessageBoxButton.OKCancel))
+            { return; }
             
             using (var db = new SQLite(Define.MASTER_PATH))
             {
@@ -217,7 +221,8 @@ namespace RSSReader.Pages
         {
             if (mode == Define.EditMode.None)
             {
-                this.AddButton.IsEnabled = true;
+                //this.AddButton.IsEnabled = true;
+                this.AddButton.Visibility = Visibility.Visible;
                 this.EditButton.IsEnabled = true;
                 this.DelButton.IsEnabled = true;
                 this.AppendButton.Visibility = Visibility.Hidden;
@@ -225,7 +230,8 @@ namespace RSSReader.Pages
             }
             else
             {
-                this.AddButton.IsEnabled = false;
+                //this.AddButton.IsEnabled = false;
+                this.AddButton.Visibility = Visibility.Hidden;
                 this.EditButton.IsEnabled = false;
                 this.DelButton.IsEnabled = false;
                 this.AppendButton.Visibility = Visibility.Visible;

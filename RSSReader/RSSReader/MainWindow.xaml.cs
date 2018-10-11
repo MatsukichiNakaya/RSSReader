@@ -11,7 +11,6 @@ namespace RSSReader
     /// </summary>
     public partial class MainWindow : NavigationWindow
     {
-        private readonly UInt32 CHANGE_MESSAGE = 32770;
         private Int32 Page { get; set; }
 
         public MainWindow()
@@ -23,10 +22,17 @@ namespace RSSReader
         private IntPtr WndProc(IntPtr hwnd, Int32 msg,
                                 IntPtr wParam, IntPtr lParam, ref Boolean handled)
         {
-            if (msg == this.CHANGE_MESSAGE)
-            {
-                // 現在のページを保持
-                this.Page = wParam.ToInt32();   
+            switch (msg) {
+                case Define.CHANGE_MESSAGE:
+                    // 現在のページを保持
+                    this.Page = wParam.ToInt32();
+                    break;
+                case Define.Window_MIN_MESSAGE:
+                    // 最小化
+                    this.WindowState = System.Windows.WindowState.Minimized;
+                    break;
+                default:
+                    break;
             }
             return IntPtr.Zero;
         }

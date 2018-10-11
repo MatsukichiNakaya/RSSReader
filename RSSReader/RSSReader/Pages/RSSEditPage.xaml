@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:RSSReader.Pages"
+      xmlns:model="clr-namespace:RSSReader.Model"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="RSSEditPage">
@@ -11,35 +12,50 @@
         <Style x:Key="ListBoxItemStyle" TargetType="ListBoxItem">
             <EventSetter Event="MouseDoubleClick" Handler="ListBoxItem_MouseDoubleClick"/>
         </Style>
-
-
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="80"/>
+            <RowDefinition Height="0"/>
+            <RowDefinition Height="100"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Margin="0">
+        <StackPanel Grid.Row="1" Margin="0">
             <StackPanel Margin="10,10,0,0" Orientation="Horizontal">
                 <TextBlock Text="RSS feed URL"/>
                 <TextBlock x:Name="SiteName" Margin="10,0,0,0"/>
             </StackPanel>
-            <TextBox x:Name="RssInputBox" Margin="10,5,10,0"/>
+            <Grid Margin="10,5,10,0" Height="40">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="50"/>
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="RssInputBox" Grid.Column="0" Height="20"/>
+                <Button x:Name="AddButton" Grid.Column="1"
+                        Style="{StaticResource PicButtonKey}" Margin="5,4,5,4"
+                        ToolTip="Add"
+                        Background="{StaticResource AddIcon}"
+                        Click="AddButton_Click"/>
+            </Grid>
             <StackPanel Orientation="Horizontal" Margin="0,5,10,0" HorizontalAlignment="Right">
                 <Button x:Name="AppendButton" Style="{StaticResource CommButtonKey}" Content="Append" Visibility="Hidden" Click="AppendButton_Click" Margin="0,0,5,0"/>
                 <Button x:Name="CancelButton" Style="{StaticResource CommButtonKey}" Content="Cancel" Visibility="Hidden" Click="CancelButton_Click"/>
             </StackPanel>
         </StackPanel>
-        <Button x:Name="ReturnButton" Grid.Row="0" Style="{StaticResource PicButtonKey}" Margin="0,5,5,0" Content="r"
-                HorizontalAlignment="Right" VerticalAlignment="Top" Width="20" Height="20" FontFamily="Marlett"
-                Foreground="Red" Click="ReturnButton_Click"/>
-        <DockPanel Grid.Row="1">
+        <DockPanel Grid.Row="2">
             <TextBlock DockPanel.Dock="Top" Text="Registed RSS feeds" Margin="10"/>
-            <StackPanel DockPanel.Dock="Right" Margin="0,20,0,0">
-                <Button x:Name="AddButton" Style="{StaticResource CommButtonKey}" Margin="0,0,0,10" Content="Add" Click="AddButton_Click"/>
-                <Button x:Name="EditButton" Style="{StaticResource CommButtonKey}" Margin="0,0,0,10" Content="Edit" Click="EditButton_Click"/>
-                <Button x:Name="DelButton" Style="{StaticResource CommButtonKey}" Margin="0,0,0,10" Content="Delete" Click="DelButton_Click"/>
-            </StackPanel>
+            <DockPanel DockPanel.Dock="Right" Margin="5,20,10,0">
+                <Button x:Name="EditButton" Margin="0,0,0,15" DockPanel.Dock="Top"
+                        Style="{StaticResource PicButtonKey}" Background="{StaticResource EditIcon}"
+                        ToolTip="Edit" Click="EditButton_Click"/>
+                <Button x:Name="DelButton" Margin="0,0,0,10" DockPanel.Dock="Top"
+                        Style="{StaticResource PicButtonKey}" Background="{StaticResource DeleteIcon}"
+                        ToolTip="Delete" Click="DelButton_Click"/>
+                <Button x:Name="ReturnButton" Margin="0,0,0,10" DockPanel.Dock="Bottom"
+                        VerticalAlignment="Bottom"
+                        Style="{StaticResource PicButtonKey}"
+                        Background="{StaticResource ReturnIcon}"
+                        Click="ReturnButton_Click" ToolTip="Return"/>
+            </DockPanel>
             <ListBox x:Name="FavEditBox" Margin="5" ItemsSource="{Binding}"
                      ItemContainerStyle="{DynamicResource ListBoxItemStyle}">
                 <ListBox.ItemTemplate>

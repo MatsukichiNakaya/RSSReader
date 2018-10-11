@@ -28,18 +28,31 @@
                 <RowDefinition/>
                 <RowDefinition/>
                 <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource TextComm}" Text="Brower Options"/>
-            <TextBox x:Name="BrowsBox" Grid.Row="0" Grid.Column="1" Height="20" Text="{Binding BrowserOption}" Margin="10,0,10,0"/>
+            <TextBox x:Name="BrowsBox" Grid.Row="0" Grid.Column="1" Height="20" Text="{Binding BrowserOption}"
+                     Margin="10,0,10,0"/>
             <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource TextComm}" Text="Update span"/>
-            <TextBox x:Name="UpdateBox" Grid.Row="1" Grid.Column="1" Height="20" Text="{Binding UpdateSpan}" Margin="10,0,10,0"/>
-            <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource TextComm}" Text="Keep Page"/>
-            <CheckBox x:Name="CheckKeepPage" Grid.Row="2" Grid.Column="1" IsChecked="{Binding IsKeepPage}" VerticalAlignment="Center" Margin="10,0"/>
+            <TextBox x:Name="UpdateBox" Grid.Row="1" Grid.Column="1" Height="20" Text="{Binding UpdateSpan}"
+                     Margin="10,0,10,0" Width="50" HorizontalAlignment="Left"/>
+            <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource TextComm}" Text="Show Image"/>
+            <CheckBox x:Name="CheckShowImage" Grid.Row="2" Grid.Column="1" IsChecked="{Binding IsShowImage}"
+                      VerticalAlignment="Center" Margin="10,0"/>
+            <TextBlock Grid.Row="3" Grid.Column="0" Style="{StaticResource TextComm}" Text="Keep Page"/>
+            <CheckBox x:Name="CheckKeepPage" Grid.Row="3" Grid.Column="1" IsChecked="{Binding IsKeepPage}"
+                      VerticalAlignment="Center" Margin="10,0"/>
+            <TextBlock Grid.Row="4" Grid.Column="0" Style="{StaticResource TextComm}" Text="Auto Minimize"/>
+            <CheckBox x:Name="AutoMinimize" Grid.Row="4" Grid.Column="1" IsChecked="{Binding IsAutoMinimize}"
+                      VerticalAlignment="Center" Margin="10,0"/>
         </Grid>
         <StackPanel Grid.Column="0" Grid.Row="1">
-            <Button x:Name="DeleteButton" Style="{StaticResource CommButtonKey}" Content="Delete chash" Click="DeleteButton_Click"/>
+            <Button x:Name="DeleteButton" Style="{StaticResource CommButtonKey}"
+                    Content="Delete chash" Click="DeleteButton_Click" Margin="0,10,0,0"/>
         </StackPanel>
-        <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+        <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal"
+                    HorizontalAlignment="Right" VerticalAlignment="Bottom">
             <Button x:Name="AppendButton" Style="{StaticResource CommButtonKey}"
                     Margin="10" Content="Append" Click="AppendButton_Click"/>
             <Button x:Name="ReturnButton"  Style="{StaticResource CommButtonKey}"

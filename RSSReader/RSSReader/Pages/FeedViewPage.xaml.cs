@@ -118,8 +118,8 @@ namespace RSSReader.Pages
                 this.FeedList.ScrollIntoView(this.FeedList.SelectedItem);
 
                 // ソフトへ終了メッセージを送信する
-                var bgw = (IntPtr)WindowInfo.FindWindowByName(null, "RssReader");
-                WinMessage.Send(bgw, 32770, (IntPtr)item.ID, IntPtr.Zero);
+                var bgw = WindowInfo.FindWindowByName(null, Define.TITLE);
+                WinMessage.Send(bgw, Define.CHANGE_MESSAGE, (IntPtr)item.ID, IntPtr.Zero);
             }
         }
 
@@ -167,7 +167,7 @@ namespace RSSReader.Pages
             {
                 if (item.Content is FeedItem feed)
                 {
-                    Process.Start(this.ChromePath, $"{this.Config?.BrowserOption ?? ""} {feed.Link}");
+                    StartBrowser(feed);
                 }
             }
         }
@@ -181,9 +181,9 @@ namespace RSSReader.Pages
 
             if (sender is ListBox box)
             {
-                if (box.SelectedValue is FeedItem item)
+                if (box.SelectedValue is FeedItem feed)
                 {
-                    Process.Start(this.ChromePath, $"{this.Config?.BrowserOption ?? ""} {item.Link}");
+                    StartBrowser(feed);
                 }
             }
         }

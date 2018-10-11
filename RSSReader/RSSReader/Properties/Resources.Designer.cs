@@ -47,7 +47,7 @@ namespace RSSReader.Properties {
         }
         
         /// <summary>
-        ///   厳密に型指定されたこのリソース クラスを使用して、すべての検索リソースに対し、
+        ///   すべてについて、現在のスレッドの CurrentUICulture プロパティをオーバーライドします
         ///   現在のスレッドの CurrentUICulture プロパティをオーバーライドします。
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
@@ -57,6 +57,16 @@ namespace RSSReader.Properties {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap _return {
+            get {
+                object obj = ResourceManager.GetObject("_return", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -76,6 +86,36 @@ namespace RSSReader.Properties {
         internal static System.Drawing.Bitmap cog {
             get {
                 object obj = ResourceManager.GetObject("cog", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap list_add {
+            get {
+                object obj = ResourceManager.GetObject("list_add", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap list_delete {
+            get {
+                object obj = ResourceManager.GetObject("list_delete", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap list_edit {
+            get {
+                object obj = ResourceManager.GetObject("list_edit", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

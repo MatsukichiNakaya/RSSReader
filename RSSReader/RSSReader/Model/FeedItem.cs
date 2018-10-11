@@ -19,6 +19,9 @@ namespace RSSReader.Model
         /// <summary>YouTubeのホスト名</summary>
         public const String HOST_YOUTUBE = "www.youtube.com";
 
+        /// <summary>log ID</summary>
+        public String ID { get; set; }
+
         /// <summary>記事のタイトル</summary>
         public String Title { get; set; }
         /// <summary>更新日時</summary>
@@ -45,6 +48,7 @@ namespace RSSReader.Model
         /// </summary>
         public FeedItem()
         {
+            this.ID = null; 
             this.Title = null;
             this.PublishDate = null;
             this.Summary = null;
@@ -253,25 +257,22 @@ namespace RSSReader.Model
         public static BitmapImage ReadChashThumb(String path)
         {
             if (String.IsNullOrEmpty(path)) { return null; }
-
-            var imageSource = new BitmapImage();
-
+            var bmpImage = new BitmapImage();
             try
             {
-                imageSource.BeginInit();
-                imageSource.UriSource = new Uri(Path.GetFullPath(path), UriKind.RelativeOrAbsolute);
-                imageSource.EndInit();
+                bmpImage.BeginInit();
+                bmpImage.UriSource = new Uri(Path.GetFullPath(path), UriKind.RelativeOrAbsolute);
+                bmpImage.EndInit();
 
-                imageSource.DownloadCompleted += new EventHandler((Object sender, EventArgs e) => {
+                bmpImage.DownloadCompleted += new EventHandler((Object sender, EventArgs e) => {
                     // 必要あれば画像読み込み後の処理を入れる
                 });
             }
             catch (Exception)
             {
-                imageSource = null;
+                bmpImage = null;
             }
-
-            return imageSource;
+            return bmpImage;
         }
 
         /// <summary>

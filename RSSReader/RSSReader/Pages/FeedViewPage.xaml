@@ -61,7 +61,7 @@
                         <TextBlock DockPanel.Dock="Top" Text="{Binding Title}" FontSize="16" FontWeight="Bold"/>
                         <TextBlock DockPanel.Dock="Top" Text="{Binding PublishDate}" FontSize="12" Foreground="DarkGray"/>
                         <DockPanel Margin="5, 3, 5, 3">
-                            <Border DockPanel.Dock="Left" BorderThickness="0" Margin="0,0,10,0"
+                            <Border DockPanel.Dock="Left" BorderThickness="0" Margin="0,0,10,0" BorderBrush="Black"
                                     VerticalAlignment="Top" Height="90" Width="{Binding ThumbWidth}">
                                 <Image Source="{Binding Thumbnail}" Stretch="Uniform"/>
                             </Border>

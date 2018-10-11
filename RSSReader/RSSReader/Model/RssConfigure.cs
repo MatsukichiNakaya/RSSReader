@@ -17,5 +17,8 @@ namespace RSSReader.Model
      
         [XmlElement("KeepPage", DataType = "boolean", IsNullable = false)]
         public Boolean IsKeepPage { get; set; }
+
+        [XmlElement("AutoMinimize", DataType = "boolean", IsNullable = false)]
+        public Boolean IsAutoMinimize { get; set; }
     }
 }

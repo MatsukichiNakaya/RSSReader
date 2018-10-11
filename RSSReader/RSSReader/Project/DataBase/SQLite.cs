@@ -133,7 +133,6 @@ namespace Project.DataBase
         public Int32 Update(String command)
         {
             if(this.Connection.State == System.Data.ConnectionState.Closed) { return 0; }
-
             // トランザクションの開始と終了に関してのコマンド呼び出し有無で分岐
             if (this.TransactionState == SQLiteTransactionState.Stop)
             {   // トランザクション開始していない
