@@ -9,6 +9,8 @@ using Project.DataBase;
 using Project.Windows;
 using RSSReader.Model;
 
+using static RSSReader.Define;
+
 namespace RSSReader.Pages
 {
     public partial class FeedViewPage : Page
@@ -25,12 +27,12 @@ namespace RSSReader.Pages
         /// <summary>
         /// コンボボックスに設定するデータを取得する
         /// </summary>
-        /// <returns></returns>
+        /// <returns>登録サイト一覧</returns>
         private IEnumerable<RssSiteInfo> GetSiteInfo()
         {
             var cmbItems = new List<RssSiteInfo>();
-            using (var db = new SQLite(Define.MASTER_PATH))
-            {
+            using (var db = new SQLite(MASTER_PATH)) {
+
                 db.Open();
 
                 var ret = db.Select("select * from rss_master");
@@ -48,10 +50,10 @@ namespace RSSReader.Pages
         }
 
         /// <summary>
-        /// コンボボックスで選択しているアイテムのマスターIDを取得する
+        /// マスターIDからコンボボックス上でのインデックスを取得する
         /// </summary>
-        /// <param name="masterID"></param>
-        /// <returns></returns>
+        /// <param name="masterID">DB上のマスターID</param>
+        /// <returns>コンボボックス上のインデックス</returns>
         private Int32 GetIndexFromMasterID(Int32 masterID)
         {
             for (Int32 index = 0; index < this.SiteSelectBox.Items.Count; index++) {
@@ -61,7 +63,7 @@ namespace RSSReader.Pages
                     }
                 }
             }
-            return -1;
+            return ERROR_RESULT;
         }
         #endregion
 
@@ -69,19 +71,19 @@ namespace RSSReader.Pages
         /// <summary>
         /// RSS フィードリストの更新を行う
         /// </summary>
-        /// <param name="item"></param>
+        /// <param name="item">サイト情報</param>
         private void UpdateListBox(RssSiteInfo item)
         {
             String url = item?.Link;
-            if (url == null)
-            { return; }
+            if (url == null) { return; }
 
             Int32 masterID = item.ID;
             IEnumerable<FeedItem> feedItems = null;
 
-            using (var db = new SQLite(Define.MASTER_PATH))
-            {
+            using (var db = new SQLite(MASTER_PATH)) {
+
                 db.Open();
+
                 if (CanRSSRead(db, masterID)) {
                     // フィードデータダウンロード
                     feedItems = RSS.ReadFeedItems(url);
@@ -97,8 +99,9 @@ namespace RSSReader.Pages
         /// <summary>
         /// 更新間隔チェック
         /// </summary>
-        /// <param name="masterID"></param>
-        /// <returns></returns>
+        /// <param name="db">DBインスタンス</param>
+        /// <param name="masterID">DB上のマスターID</param>
+        /// <returns>取得間隔経過判定</returns>
         private Boolean CanRSSRead(SQLite db, Int32 masterID)
         {
             Boolean result = false;
@@ -107,9 +110,8 @@ namespace RSSReader.Pages
             var ret = db.Select($"select last_update from sync where master_id = {masterID}");
             var last = DateTime.Parse(ret["last_update"][0]);
 
-            // Todo :
             // 更新間隔設定値を超えているか？
-            result = 5 <= (DateTime.Now - last).Minutes;
+            result = INTERVAL_TIME <= (DateTime.Now - last).Minutes;
 
             return result;
         }
@@ -117,26 +119,28 @@ namespace RSSReader.Pages
         /// <summary>
         /// 読み込み日時更新
         /// </summary>
-        /// <param name="masterID"></param>
+        /// <param name="db">DBインスタンス</param>
+        /// <param name="masterID">DB上のマスターID</param>
         private void UpdateLastSync(SQLite db, Int32 masterID)
         {
-            // 一件だけなのでこれだけ
-            db.Update($"update sync set last_update='{DateTime.Now.ToString(FeedItem.DATE_FORMAT)}' where master_id={masterID}");
+            db.Update(
+                $"update sync set last_update='{DateTime.Now.ToString(FeedItem.DATE_FORMAT)}'" +
+                $" where master_id={masterID}");
         }
 
         /// <summary>
         /// リストボックスに割り当てる項目をDBからも取得して設定する
         /// </summary>
-        /// <param name="feedItems"></param>
-        /// <param name="masterID"></param>
+        /// <param name="db">DBインスタンス</param>
+        /// <param name="feedItems">feed項目一覧</param>
+        /// <param name="masterID">DB上のマスターID</param>
         private void SetFeedItems(SQLite db, IEnumerable<FeedItem> feedItems, Int32 masterID)
         {
-            // キャッシュ用のディレクトリ確認
             FeedItem.ExistsChashDirectory(masterID.ToString());
 
             // 更新日時の最新で並べ替える
-            var items = GetFeedItemsToDB(db, feedItems, masterID).OrderByDescending(fd => fd.PublishDate);
-
+            var items = GetFeedItemsToDB(db, feedItems, masterID)
+                            .OrderByDescending(fd => fd.PublishDate);
             if (this.Config.IsShowImage) {
                 // サムネの読み込み
                 foreach (var item in items) {
@@ -158,19 +162,20 @@ namespace RSSReader.Pages
         /// <summary>
         /// サムネ画像をダウンロード、または、キャッシュから読み込む
         /// </summary>
-        /// <param name="url"></param>
-        /// <param name="masterID"></param>
-        /// <returns></returns>
+        /// <param name="url">サムネイルのUrl</param>
+        /// <param name="masterID">DB上のマスターID</param>
+        /// <param name="host">webサイトのホスト名</param>
+        /// <returns>画像データ</returns>
         private ImageSource GetImage(Uri url, Int32 masterID, String host)
         {
             String localPath = FeedItem.GetChashPath(url?.AbsoluteUri, masterID, host);
-            
-            if (File.Exists(localPath))
-            {   // chashから読み込み
+
+            if (File.Exists(localPath)) {   
+                // chashから読み込み
                 return FeedItem.ReadChashThumb(localPath);
             }
-            else
-            {   // ダウンロード
+            else {   
+                // ダウンロード
                 return FeedItem.DownloadThumb(url?.AbsoluteUri, masterID, host);
             }
         }
@@ -178,19 +183,20 @@ namespace RSSReader.Pages
         /// <summary>
         /// webからのデータとDBのログ情報をマージして返す。
         /// </summary>
-        /// <param name="db"></param>
-        /// <param name="feedItems"></param>
-        /// <param name="masterID"></param>
-        /// <returns></returns>
-        private IEnumerable<FeedItem> GetFeedItemsToDB(SQLite db, IEnumerable<FeedItem> feedItems, Int32 masterID)
+        /// <param name="db">DBインスタンス</param>
+        /// <param name="feedItems">feed項目一覧</param>
+        /// <param name="masterID">DB上のマスターID</param>
+        /// <returns>feed項目一覧</returns>
+        private IEnumerable<FeedItem> GetFeedItemsToDB(SQLite db,
+                                                IEnumerable<FeedItem> feedItems, Int32 masterID)
         {
             // RSS記事のページURLをもとに新規項目を取得する
             var registeredItem = GetLogItems(db, masterID).ToList();
             var urlHash = new HashSet<String>(registeredItem.Select(l => l.Link.AbsoluteUri));
             var newItems = GetNewcomer(feedItems, urlHash);
+            Boolean isCommit = false;
 
             db.BeginTransaction();
-            Boolean isCommit = false;
             try {
                 // 新規項目をDBに登録
                 LogUpdate(db, newItems, masterID);
@@ -202,7 +208,6 @@ namespace RSSReader.Pages
             finally {
                 db.EndTransaction(isCommit);
             }
-
             // DBに登録したので改めて取得する。
             // ※ToArray()が無いと遅延評価の影響でサムネ読み込みに影響があるので注意
             return GetLogItems(db, masterID).ToArray();
@@ -211,11 +216,14 @@ namespace RSSReader.Pages
         /// <summary>
         /// DBからFeedItemを取得する
         /// </summary>
-        /// <returns></returns>
+        /// <param name="db">DBインスタンス</param>
+        /// <param name="masterID">DB上のマスターID</param>
+        /// <returns>feed項目一覧</returns>
         private IEnumerable<FeedItem> GetLogItems(SQLite db, Int32 masterID)
         {
             var ret = db.Select($"select * from log where master_id = {masterID}");
-            if(0 < ret.Count) {
+
+            if (0 < ret.Count) {
                 Int32 count = ret["log_id"].Count;
                 for (Int32 i = 0; i < count; i++) {
                     yield return new FeedItem() {
@@ -233,18 +241,18 @@ namespace RSSReader.Pages
         }
 
         /// <summary>
-        /// ログから取得したURLとかぶらない
+        /// ログから取得したURLとかぶらないfeed項目を選別する
         /// </summary>
-        /// <param name="feedItems"></param>
-        /// <param name="hash"></param>
-        /// <returns></returns>
-        private IEnumerable<FeedItem> GetNewcomer(IEnumerable<FeedItem> feedItems, HashSet<String> hash)
+        /// <param name="feedItems">feed項目一覧</param>
+        /// <param name="hash">DB登録済みのURLの一覧</param>
+        /// <returns>新規取得のfeed項目</returns>
+        private IEnumerable<FeedItem> GetNewcomer(IEnumerable<FeedItem> feedItems,
+                                                    HashSet<String> hash)
         {
             if (null != feedItems) {
                 foreach (var feed in feedItems) {
                     // 重複するものは除外
-                    if (hash.Contains(feed.Link.AbsoluteUri))
-                    { continue; }
+                    if (hash.Contains(feed.Link.AbsoluteUri)) { continue; }
 
                     yield return feed;
                 }
@@ -254,7 +262,10 @@ namespace RSSReader.Pages
         /// <summary>
         /// 新しい項目をDBに登録する
         /// </summary>
-        /// <returns></returns>
+        /// <param name="db">DBインスタンス</param>
+        /// <param name="feedItems">feed項目一覧</param>
+        /// <param name="masterID">DB上のマスターID</param>
+        /// <returns>DB登録成功可否</returns>
         private Boolean LogUpdate(SQLite db, IEnumerable<FeedItem> feedItems, Int32 masterID)
         {
             Int32 regCount = TableRegistRowCount(db, masterID);
@@ -263,21 +274,29 @@ namespace RSSReader.Pages
             // 上限に合わせてログを削除
             DeleteLogItems(db, masterID, delCount);
 
-            // 新規分を登録
-            foreach (var item in feedItems) {
-                db.Update($"insert into log(master_id, title, page_url, summary, is_read, reg_date, thumb_url) values(" +
-                          $"{masterID}, '{item.Title}', '{item.Link.AbsoluteUri}', '{item.Summary?.Replace("'", "") ?? ""}', " +
-                          $"{(item.IsRead ? 1 : 0)}, '{item.PublishDate}', '{item.ThumbUri}')");
+            try {
+                // 新規分を登録
+                foreach (var item in feedItems) {
+                    db.Update($"insert into log(" +
+                              $"master_id, title, page_url, summary, is_read, reg_date, thumb_url)" +
+                              $" values({masterID}, '{item.Title}', '{item.Link.AbsoluteUri}'," +
+                              $" '{item.Summary?.Replace("'", "") ?? ""}', " +
+                              $"{(item.IsRead ? 1 : 0)}, '{item.PublishDate}', '{item.ThumbUri}')");
+                }
             }
+            catch (Exception) {
+                return false;
+            }
+
             return true;
         }
 
         /// <summary>
         /// 登録してあるmaster_idの件数を取得する
         /// </summary>
-        /// <param name="db"></param>
-        /// <param name="masterID"></param>
-        /// <returns></returns>
+        /// <param name="db">DBインスタンス</param>
+        /// <param name="masterID">DB上のマスターID</param>
+        /// <returns>指定IDのDB登録件数</returns>
         private Int32 TableRegistRowCount(SQLite db, Int32 masterID)
         {
             var ret = db.Select($"select count(log_id) as cnt from log where master_id = {masterID}");
@@ -287,14 +306,15 @@ namespace RSSReader.Pages
         /// <summary>
         /// 古いログを削除する
         /// </summary>
-        /// <param name="db"></param>
-        /// <param name="masterID"></param>
-        /// <param name="delCount"></param>
+        /// <param name="db">DBインスタンス</param>
+        /// <param name="masterID">DB上のマスターID</param>
+        /// <param name="delCount">削除件数</param>
         private void DeleteLogItems(SQLite db, Int32 masterID, Int32 delCount)
         {
             if (0 < delCount) {
                 // 古い順にログIDを取得
-                var ret = db.Select($"select log_id from log where master_id = {masterID} order by reg_date asc");
+                var ret = db.Select(
+                    $"select log_id from log where master_id = {masterID} order by reg_date asc");
                 // 指定のカウント分　DBから削除する
                 for (Int32 i = 0; i < delCount; i++) {
                     db.Update($"delete from log where log_id = {ret["log_id"][i]}");
@@ -316,23 +336,24 @@ namespace RSSReader.Pages
 
             // 自動で最小化するオプション
             if (this.Config?.IsAutoMinimize ?? false) {
-                var bgw = WindowInfo.FindWindowByName(null, Define.TITLE);
-                WinMessage.Send(bgw, Define.Window_MIN_MESSAGE, IntPtr.Zero, IntPtr.Zero);
+                var bgw = WindowInfo.FindWindowByName(null, TITLE);
+                WinMessage.Send(bgw, Window_MIN_MESSAGE, IntPtr.Zero, IntPtr.Zero);
             }
         }
 
         /// <summary>
         /// 既読済みの設定を行う
         /// </summary>
-        /// <param name="item"></param>
+        /// <param name="item">feed項目</param>
         private void UpdateReadHistory(FeedItem item)
         {
-            Int32 masterID = (this.SiteSelectBox.SelectedItem as RssSiteInfo)?.ID ?? -1;
-            if(masterID < 0) { return; }
+            Int32 masterID = (this.SiteSelectBox.SelectedItem as RssSiteInfo)?.ID ?? ERROR_RESULT;
+            if (masterID < 0) { return; }
 
-            using (var db = new SQLite(Define.MASTER_PATH))
-            {
+            using (var db = new SQLite(MASTER_PATH)) {
+
                 db.Open();
+
                 var isCommit = false;
                 try {
                     db.BeginTransaction();

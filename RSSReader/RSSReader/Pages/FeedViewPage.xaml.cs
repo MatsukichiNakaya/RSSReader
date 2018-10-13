@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -8,6 +7,8 @@ using Project.IO;
 using Project.Serialization.Xml;
 using Project.Windows;
 using RSSReader.Model;
+
+using static RSSReader.Define;
 
 namespace RSSReader.Pages
 {
@@ -36,6 +37,7 @@ namespace RSSReader.Pages
         /// <summary>アイテムの項目数</summary>
         public Int32 SiteItemCount { get { return this.SiteSelectBox.Items.Count; } }
 
+        /// <summary>動作設定</summary>
         private RssConfigure Config { get; set; }
         #endregion
 
@@ -68,18 +70,15 @@ namespace RSSReader.Pages
         /// </summary>
         private void Page_Loaded(Object sender, RoutedEventArgs e)
         {
-            this.Config = XmlSerializer.Load<RssConfigure>(Define.XML_PATH);
+            this.Config = XmlSerializer.Load<RssConfigure>(XML_PATH);
+
             // コンボボックスは最初の項目を選択する
-            if (0 < this.SiteSelectBox.Items.Count)
-            {
+            if (0 < this.SiteSelectBox.Items.Count) {
                 // 前回のページ保持オプション
-                if (this.Config.IsKeepPage)
-                {
-                    if (Int32.TryParse(TextFile.Read(Define.PAGE_DAT), out Int32 id))
-                    {
+                if (this.Config.IsKeepPage) {
+                    if (Int32.TryParse(TextFile.Read(PAGE_DAT), out Int32 id)) {
                         Int32 page = GetIndexFromMasterID(id);
-                        if (0 <= page)
-                        {
+                        if (0 <= page && page < this.SiteSelectBox.Items.Count) {
                             // 正常にデータが読めたら値を設定。
                             this.SiteSelectBox.SelectedIndex = page;
                             return;
@@ -90,17 +89,12 @@ namespace RSSReader.Pages
             }
         }
 
-        private void Page_UnLoadeded(Object sender, RoutedEventArgs e)
-        {
-            
-        }
-
         /// <summary>
         /// データ自動更新タイマ
         /// </summary>
         private void AutoUpdateTimer_Tick(Object sender, EventArgs e)
         {
-            
+
         }
 
         /// <summary>
@@ -108,18 +102,16 @@ namespace RSSReader.Pages
         /// </summary>
         private void SiteSelectBox_SelectionChanged(Object sender, SelectionChangedEventArgs e)
         {
-            if (sender is ComboBox cmb)
-            {
-                if (!(cmb.SelectedItem is RssSiteInfo item))
-                { return; }
+            if (sender is ComboBox cmb) {
+                if (!(cmb.SelectedItem is RssSiteInfo item)) { return; }
                 UpdateListBox(item);
 
                 this.FeedList.SelectedIndex = 0;
                 this.FeedList.ScrollIntoView(this.FeedList.SelectedItem);
 
                 // ソフトへ終了メッセージを送信する
-                var bgw = WindowInfo.FindWindowByName(null, Define.TITLE);
-                WinMessage.Send(bgw, Define.CHANGE_MESSAGE, (IntPtr)item.ID, IntPtr.Zero);
+                var bgw = WindowInfo.FindWindowByName(null, TITLE);
+                WinMessage.Send(bgw, CHANGE_MESSAGE, (IntPtr)item.ID, IntPtr.Zero);
             }
         }
 
@@ -138,10 +130,10 @@ namespace RSSReader.Pages
         /// </summary>
         private void SettingButton_Click(Object sender, RoutedEventArgs e)
         {
-            Int32 index = (this.SiteSelectBox.SelectedItem as RssSiteInfo)?.ID ?? -1;
-            if(index < 0) { return; }
+            Int32 index = (this.SiteSelectBox.SelectedItem as RssSiteInfo)?.ID ?? ERROR_RESULT;
+            if (index < 0) { return; }
 
-            TextFile.Write(Define.PAGE_DAT, $"{index}", TextFile.OVER_WRITE);
+            TextFile.Write(PAGE_DAT, $"{index}", TextFile.OVER_WRITE);
             this.NavigationService.Navigate(new ConfigurePage(this));
         }
 
@@ -150,39 +142,34 @@ namespace RSSReader.Pages
         /// </summary>
         private void FabButton_Click(Object sender, RoutedEventArgs e)
         {
-            Int32 index = (this.SiteSelectBox.SelectedItem as RssSiteInfo)?.ID ?? -1;
-            if (index < 0)
-            { return; }
+            Int32 index = (this.SiteSelectBox.SelectedItem as RssSiteInfo)?.ID ?? ERROR_RESULT;
+            if (index < 0) { return; }
 
-            TextFile.Write(Define.PAGE_DAT, $"{index}", TextFile.OVER_WRITE);
+            TextFile.Write(PAGE_DAT, $"{index}", TextFile.OVER_WRITE);
             this.NavigationService.Navigate(new RSSEditPage(this, GetSiteInfo()));
         }
 
         /// <summary>
-        /// 記事ページ選択ブラウザ起動処理
+        /// 記事ページ ブラウザ起動処理 ダブルクリック
         /// </summary>
         private void ListBoxItem_MouseDoubleClick(Object sender, MouseButtonEventArgs e)
         {
-            if (sender is ListBoxItem item)
-            {
-                if (item.Content is FeedItem feed)
-                {
+            if (sender is ListBoxItem item) {
+                if (item.Content is FeedItem feed) {
                     StartBrowser(feed);
                 }
             }
         }
 
         /// <summary>
-        /// 選択項目をキーで起動
+        /// 記事ページ ブラウザ起動処理 エンターキー
         /// </summary>
         private void FeedList_PreviewKeyDown(Object sender, KeyEventArgs e)
         {
             if (e.Key != Key.Return) { return; }
 
-            if (sender is ListBox box)
-            {
-                if (box.SelectedValue is FeedItem feed)
-                {
+            if (sender is ListBox box) {
+                if (box.SelectedValue is FeedItem feed) {
                     StartBrowser(feed);
                 }
             }

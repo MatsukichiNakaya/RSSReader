@@ -46,13 +46,17 @@ namespace RSSReader.Pages
         /// <param name="e"></param>
         private void AppendButton_Click(Object sender, RoutedEventArgs e)
         {
-            try
-            {
+            try {
                 var conf = this.ConfGrid.DataContext as RssConfigure;
+
+                // 内部で定義している間隔以下は設定できない。
+                if (conf.UpdateSpan < Define.INTERVAL_TIME) {
+                    conf.UpdateSpan = Define.INTERVAL_TIME;
+                }
+
                 XmlSerializer.Save(conf, Define.XML_PATH);
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 MessageBox.Show("setting error!", "error", MessageBoxButton.OK);
             }
         }
@@ -64,33 +68,34 @@ namespace RSSReader.Pages
         {
             if (MessageBoxResult.Cancel
                  == MessageBox.Show("Delete unnecessary files?", "message",
-                                    MessageBoxButton.OKCancel))
-            { return; }
+                                    MessageBoxButton.OKCancel)) {
+                return;
+            }
 
-            using (var db = new SQLite(Define.MASTER_PATH))
-            {
-                db.Open();
-                var masterIDs = db.Select("select id from rss_master")["id"];
+            try {
+                using (var db = new SQLite(Define.MASTER_PATH)) {
+                    db.Open();
+                    var masterIDs = db.Select("select id from rss_master")["id"];
 
-                foreach (var id in masterIDs)
-                {
-                    // URLからファイル名だけを抜き出したリストにする
-                    var thumbs = new HashSet<String>(
-                        db.Select($"select thumb_url from log where master_id={id}")["thumb_url"]
-                        .Select(p => System.IO.Path.GetFileName(p)));
-                    // 個別のディレクトリからファイル名を取得
-                    var files = System.IO.Directory.GetFiles($@"{FeedItem.CHASH_DIR}\{id}", "*",
-                        System.IO.SearchOption.TopDirectoryOnly);
+                    foreach (var id in masterIDs) {
+                        // URLからファイル名だけを抜き出したリストにする
+                        var thumbs = new HashSet<String>(
+                            db.Select($"select thumb_url from log where master_id={id}")["thumb_url"]
+                            .Select(p => System.IO.Path.GetFileName(p)));
+                        // 個別のディレクトリからファイル名を取得
+                        var files = System.IO.Directory.GetFiles($@"{FeedItem.CHASH_DIR}\{id}", "*",
+                            System.IO.SearchOption.TopDirectoryOnly);
 
-                    foreach (var f in files)
-                    {
-                        // DBへの登録なしのサムネを削除する
-                        if (!thumbs.Contains(System.IO.Path.GetFileName(f)))
-                        {
-                            System.IO.File.Delete(f);
+                        foreach (var f in files) {
+                            // DBへの登録なしのサムネを削除する
+                            if (!thumbs.Contains(System.IO.Path.GetFileName(f))) {
+                                System.IO.File.Delete(f);
+                            }
                         }
                     }
                 }
+            }
+            catch (Exception) {
             }
         }
     }

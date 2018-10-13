@@ -38,9 +38,15 @@ namespace RSSReader.Model
         /// </summary>
         public String Summary { get; set; }
 
+        /// <summary>
+        /// プロパティ変更イベントハンドラ
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
-
-        //INotifyPropertyChangedの実装            
+          
+        /// <summary>
+        /// プロパティ変更イベント
+        /// </summary>
+        /// <param name="propertyName"></param>
         protected void OnPropertyChanged(String propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

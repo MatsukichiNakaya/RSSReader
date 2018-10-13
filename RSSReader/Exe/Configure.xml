@@ -4,5 +4,5 @@
   <UpdateSpan>5</UpdateSpan>
   <ShowImage>true</ShowImage>
   <KeepPage>true</KeepPage>
-  <IsAutoMinimize>true</IsAutoMinimize>
+  <AutoMinimize>true</AutoMinimize>
 </RssConfigure>

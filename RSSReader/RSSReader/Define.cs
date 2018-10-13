@@ -4,6 +4,9 @@ namespace RSSReader
 {
     internal class Define
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public const String TITLE = "RssReader";
 
         /// <summary>
@@ -34,6 +37,9 @@ namespace RSSReader
         /// </summary>
         public const String PAGE_DAT = @".\page.dat";
 
+        /// <summary>
+        /// エディットモード
+        /// </summary>
         public enum EditMode
         {
             None = 0,
@@ -49,5 +55,15 @@ namespace RSSReader
         /// ウインドウ最小化メッセージ
         /// </summary>
         public const Int32 Window_MIN_MESSAGE = 32771;
+
+        /// <summary>
+        /// エラー時の返り値
+        /// </summary>
+        public const Int32 ERROR_RESULT = -1;
+
+        /// <summary>
+        /// 同じ場所にアクセスする場合の時間間隔
+        /// </summary>
+        public const Int32 INTERVAL_TIME = 5;
     }
 }
