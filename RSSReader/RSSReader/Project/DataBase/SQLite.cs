@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 // Must System.Data.SQLite import.
 using System.Data.SQLite;
@@ -48,6 +49,46 @@ namespace Project.DataBase
 
         /// <summary>DB接続閉じる</summary>
         public void Close() => this.Connection.Close();
+
+        /// <summary>
+        /// DBファイルが無い場合に作成しする。
+        /// </summary>
+        /// <param name="filePath">DBを作成するファイルパス</param>
+        /// <returns>DB作成の成否</returns>
+        public static Boolean CreateDB(String filePath)
+        {
+            try {
+                if (File.Exists(filePath)) {
+                    // 作成していないが、ファイルが既に存在しているのでtrue
+                    return true;
+                }
+                SQLiteConnection.CreateFile(filePath);
+            }
+            catch (Exception) {
+                return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public Boolean CreateTable(String command)
+        {
+            if (this.Connection.State == System.Data.ConnectionState.Closed) { return false; }
+
+            try {
+                using (SQLiteCommand cmd = this.Connection.CreateCommand()) {
+                    cmd.CommandText = command;
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            catch (Exception) {
+                return false;
+            }
+            return true;
+        }
 
         /// <summary>
         /// 射影コマンド

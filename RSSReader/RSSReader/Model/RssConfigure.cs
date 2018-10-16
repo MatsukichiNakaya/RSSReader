@@ -38,5 +38,17 @@ namespace RSSReader.Model
         /// </summary>
         [XmlElement("AutoMinimize", DataType = "boolean", IsNullable = false)]
         public Boolean IsAutoMinimize { get; set; }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public RssConfigure()
+        {
+            this.BrowserOption = String.Empty;
+            this.UpdateSpan = Define.INTERVAL_TIME;
+            this.IsShowImage = true;
+            this.IsKeepPage = false;
+            this.IsAutoMinimize = false;
+        }
     }
 }

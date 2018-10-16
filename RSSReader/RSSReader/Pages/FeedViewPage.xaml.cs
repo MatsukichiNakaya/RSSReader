@@ -1,10 +1,10 @@
 ﻿using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using Project.IO;
-using Project.Serialization.Xml;
 using Project.Windows;
 using RSSReader.Model;
 
@@ -49,6 +49,11 @@ namespace RSSReader.Pages
         {
             InitializeComponent();
 
+            // DBファイルが無ければ作成する。
+            if (!File.Exists(MASTER_PATH)) {
+                CommFunc.CreateDB();
+            }
+
             // RSSフィード登録サイトの読み込み
             ReLoadSiteItems();
 
@@ -70,7 +75,7 @@ namespace RSSReader.Pages
         /// </summary>
         private void Page_Loaded(Object sender, RoutedEventArgs e)
         {
-            this.Config = XmlSerializer.Load<RssConfigure>(XML_PATH);
+            this.Config = CommFunc.ConfigLoad();
 
             // コンボボックスは最初の項目を選択する
             if (0 < this.SiteSelectBox.Items.Count) {

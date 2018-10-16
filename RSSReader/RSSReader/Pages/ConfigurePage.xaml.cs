@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -24,7 +25,7 @@ namespace RSSReader.Pages
         {
             InitializeComponent();
 
-            var conf = XmlSerializer.Load<RssConfigure>(Define.XML_PATH);
+            var conf = CommFunc.ConfigLoad();
             this.ConfGrid.DataContext = conf;
             this.InnerViewPage = inner;
         }
@@ -72,8 +73,26 @@ namespace RSSReader.Pages
                 return;
             }
 
+            if (!File.Exists(Define.MASTER_PATH)) {
+                MessageBox.Show("DB file not found", "error", MessageBoxButton.OK);
+                return;
+            }
+
+            // 画像ファイル削除
+            CashFileDelete();
+
+            // DBの最適化
+            DBMaintenance();
+        }
+
+        /// <summary>
+        /// 不要になった画像ファイルを削除する。
+        /// </summary>
+        private void CashFileDelete()
+        {
             try {
                 using (var db = new SQLite(Define.MASTER_PATH)) {
+
                     db.Open();
                     var masterIDs = db.Select("select id from rss_master")["id"];
 
@@ -93,6 +112,21 @@ namespace RSSReader.Pages
                             }
                         }
                     }
+                }
+            }
+            catch (Exception) {
+            }
+        }
+
+        /// <summary>
+        /// DBファイルのテンポラリ領域の解放
+        /// </summary>
+        private void DBMaintenance()
+        {
+            try {
+                using (var db = new SQLite(Define.MASTER_PATH)) {
+                    db.Open();
+                    db.Update("VACUUM");
                 }
             }
             catch (Exception) {
