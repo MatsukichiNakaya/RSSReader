@@ -114,7 +114,7 @@ namespace RSSReader.Pages
                 this.FeedList.SelectedIndex = 0;
                 this.FeedList.ScrollIntoView(this.FeedList.SelectedItem);
 
-                // ソフトへ終了メッセージを送信する
+                // メインウインドウにサイト変更メッセージを送信する
                 var bgw = WindowInfo.FindWindowByName(null, TITLE);
                 WinMessage.Send(bgw, CHANGE_MESSAGE, (IntPtr)item.ID, IntPtr.Zero);
             }

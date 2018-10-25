@@ -2,7 +2,8 @@
 <RssConfigure xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <BrowserOption>--profile-directory="Profile 1" --incognito</BrowserOption>
   <UpdateSpan>5</UpdateSpan>
-  <ShowImage>true</ShowImage>
+  <ShowImage>false</ShowImage>
   <KeepPage>true</KeepPage>
   <AutoMinimize>true</AutoMinimize>
+  <OffLineMode>true</OffLineMode>
 </RssConfigure>

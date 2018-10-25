@@ -84,7 +84,8 @@ namespace RSSReader.Pages
 
                 db.Open();
 
-                if (CanRSSRead(db, masterID)) {
+                // 更新間隔の確認とOffLineモードオプションを確認する
+                if (CanRSSRead(db, masterID) && !this.Config.IsOffLine) {
                     // フィードデータダウンロード
                     feedItems = RSS.ReadFeedItems(url);
                     // ダウンロード時刻アップデート

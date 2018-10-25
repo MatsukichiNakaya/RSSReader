@@ -16,8 +16,8 @@
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
         <Grid x:Name="ConfGrid" DataContext="{Binding}">
             <Grid.ColumnDefinitions>
@@ -25,6 +25,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
+                <RowDefinition/>
                 <RowDefinition/>
                 <RowDefinition/>
                 <RowDefinition/>
@@ -45,6 +46,9 @@
                       VerticalAlignment="Center" Margin="10,0"/>
             <TextBlock Grid.Row="4" Grid.Column="0" Style="{StaticResource TextComm}" Text="Auto Minimize"/>
             <CheckBox x:Name="AutoMinimize" Grid.Row="4" Grid.Column="1" IsChecked="{Binding IsAutoMinimize}"
+                      VerticalAlignment="Center" Margin="10,0"/>
+            <TextBlock Grid.Row="5" Grid.Column="0" Style="{StaticResource TextComm}" Text="OffLine Mode"/>
+            <CheckBox x:Name="OffLineMode" Grid.Row="5" Grid.Column="1" IsChecked="{Binding IsOffLine}"
                       VerticalAlignment="Center" Margin="10,0"/>
         </Grid>
         <StackPanel Grid.Column="0" Grid.Row="1">

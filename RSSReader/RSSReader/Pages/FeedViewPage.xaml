@@ -59,7 +59,18 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <DockPanel Margin="5">
-                        <TextBlock DockPanel.Dock="Top" Text="{Binding Title}" FontSize="16" FontWeight="Bold"/>
+                        <CheckBox x:Name="IsReadCheckBox" IsChecked="{Binding IsRead}" Visibility="Hidden"/>
+                        <TextBlock DockPanel.Dock="Top" Text="{Binding Title}" FontSize="16" FontWeight="Bold">
+                            <TextBlock.Style>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsChecked, ElementName=IsReadCheckBox}" Value="true">
+                                            <Setter Property="Foreground" Value="Gray"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
                         <TextBlock DockPanel.Dock="Top" Text="{Binding PublishDate}" FontSize="12" Foreground="DarkGray"/>
                         <DockPanel Margin="5, 3, 5, 3">
                             <Border DockPanel.Dock="Left" BorderThickness="0" Margin="0,0,10,0" BorderBrush="Black"

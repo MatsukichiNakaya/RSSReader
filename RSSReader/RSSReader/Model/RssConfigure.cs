@@ -40,6 +40,15 @@ namespace RSSReader.Model
         public Boolean IsAutoMinimize { get; set; }
 
         /// <summary>
+        /// オフラインモード
+        /// </summary>
+        /// <remarks>
+        /// この設定がONになっていると、新規にRSSを取得しない
+        /// </remarks>
+        [XmlElement("OffLineMode", DataType = "boolean", IsNullable = false)]
+        public Boolean IsOffLine { get; set; }
+
+        /// <summary>
         /// コンストラクタ
         /// </summary>
         public RssConfigure()
@@ -49,6 +58,7 @@ namespace RSSReader.Model
             this.IsShowImage = true;
             this.IsKeepPage = false;
             this.IsAutoMinimize = false;
+            this.IsOffLine = false;
         }
     }
 }
