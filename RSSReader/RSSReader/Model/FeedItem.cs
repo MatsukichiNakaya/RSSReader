@@ -15,6 +15,9 @@ namespace RSSReader.Model
         /// <summary>FeedItemで使用する日付のフォーマット</summary>
         public const String DATE_FORMAT = "yyyy/MM/dd HH:mm:ss";
 
+        /// <summary>Filterで使用する日付のフォーマット</summary>
+        public const String DATE_FILTER_FORMAT = "yyyy/MM/dd";
+
         /// <summary></summary>
         public const String CHASH_DIR = "chash";
 

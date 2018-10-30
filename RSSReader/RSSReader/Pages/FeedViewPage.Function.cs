@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Project.DataBase;
@@ -40,9 +41,9 @@ namespace RSSReader.Pages
                 Int32 count = ret["id"].Count;
                 for (Int32 i = 0; i < count; i++) {
                     cmbItems.Add(new RssSiteInfo() {
-                        ID = Int32.Parse(ret["id"][i]),
-                        SiteName = ret["site"][i],
-                        Link = ret["url"][i],
+                        ID          = Int32.Parse(ret["id"][i]),
+                        SiteName    = ret["site"][i],
+                        Link        = ret["url"][i],
                     });
                 }
             }
@@ -72,13 +73,19 @@ namespace RSSReader.Pages
         /// RSS フィードリストの更新を行う
         /// </summary>
         /// <param name="item">サイト情報</param>
-        private void UpdateListBox(RssSiteInfo item)
+        /// <param name="isListUpdate">ListBoxの表示を更新するか</param>
+        private void UpdateListBox(RssSiteInfo item, Boolean isListUpdate)
         {
             String url = item?.Link;
             if (url == null) { return; }
 
             Int32 masterID = item.ID;
             IEnumerable<FeedItem> feedItems = null;
+
+            if(!IsOnline()) {
+                // インターネット接続が無いため、強制的にオフラインモードに設定
+                this.Config.IsOffLine = true;
+            }
 
             using (var db = new SQLite(MASTER_PATH)) {
 
@@ -92,8 +99,8 @@ namespace RSSReader.Pages
                     UpdateLastSync(db, masterID);
                 }
 
-                // リスト更新
-                SetFeedItems(db, feedItems, masterID);
+                // リスト・DBの更新
+                SetFeedItems(db, feedItems, masterID, isListUpdate);
             }
         }
 
@@ -135,19 +142,24 @@ namespace RSSReader.Pages
         /// <param name="db">DBインスタンス</param>
         /// <param name="feedItems">feed項目一覧</param>
         /// <param name="masterID">DB上のマスターID</param>
-        private void SetFeedItems(SQLite db, IEnumerable<FeedItem> feedItems, Int32 masterID)
+        /// <param name="isListUpdate">ListBoxの表示を更新するか</param>
+        private void SetFeedItems(SQLite db, IEnumerable<FeedItem> feedItems,
+                                    Int32 masterID, Boolean isListUpdate)
         {
             FeedItem.ExistsChashDirectory(masterID.ToString());
 
             // 更新日時の最新で並べ替える
             var items = GetFeedItemsToDB(db, feedItems, masterID)
                             .OrderByDescending(fd => fd.PublishDate);
+            // リストを更新しないのでサムネイル画像は読み込まない。
+            if(!isListUpdate) { return; }
+
             if (this.Config.IsShowImage) {
                 // サムネの読み込み
                 foreach (var item in items) {
                     item.Thumbnail = GetImage(item.ThumbUri, masterID, item.Host);
                     if (item.ThumbUri != null) {
-                        item.ThumbWidth = 160;
+                        item.ThumbWidth = DEFAULT_PIC_WIDTH;
                     }
                 }
             }
@@ -228,14 +240,14 @@ namespace RSSReader.Pages
                 Int32 count = ret["log_id"].Count;
                 for (Int32 i = 0; i < count; i++) {
                     yield return new FeedItem() {
-                        ID = ret["log_id"][i],
-                        Title = ret["title"][i],
+                        ID          = ret["log_id"][i],
+                        Title       = ret["title"][i],
                         PublishDate = ret["reg_date"][i],
-                        Summary = ret["summary"][i]?.Replace("'", ""),
-                        Link = new Uri(ret["page_url"][i]),
-                        IsRead = Int32.Parse(ret["is_read"][i]) == 1,
-                        ThumbUri = String.IsNullOrEmpty(ret["thumb_url"][i])
-                                    ? null : new Uri(ret["thumb_url"][i]),
+                        Summary     = ret["summary"][i]?.Replace("'", ""),
+                        Link        = new Uri(ret["page_url"][i]),
+                        IsRead      = Int32.Parse(ret["is_read"][i]) == 1,
+                        ThumbUri    = String.IsNullOrEmpty(ret["thumb_url"][i])
+                                        ? null : new Uri(ret["thumb_url"][i]),
                     };
                 }
             }
@@ -270,7 +282,7 @@ namespace RSSReader.Pages
         private Boolean LogUpdate(SQLite db, IEnumerable<FeedItem> feedItems, Int32 masterID)
         {
             Int32 regCount = TableRegistRowCount(db, masterID);
-            Int32 delCount = (regCount + feedItems.Count()) - 100;
+            Int32 delCount = (regCount + feedItems.Count()) - LOG_SAVE_MAX_COUNT;
 
             // 上限に合わせてログを削除
             DeleteLogItems(db, masterID, delCount);
@@ -373,5 +385,70 @@ namespace RSSReader.Pages
         }
         #endregion
 
+        #region Button
+
+        private void AllDownloadData()
+        {
+
+        }
+        #endregion
+
+        #region Network
+        /// <summary>
+        /// インターネットに接続しているか
+        /// </summary>
+        /// <returns></returns>
+        private Boolean IsOnline()
+        {
+            return NetworkInterface.GetIsNetworkAvailable();
+        }
+
+        /// <summary>
+        /// オフラインモードの表示
+        /// </summary>
+        /// <param name="conf">動作設定値</param>
+        private void DispOfflineMode(RssConfigure conf)
+        {
+            if (IsOnline()) {
+                // インターネット接続があっても設定がOfflineモードであれば表示する
+                if (conf.IsOffLine) {
+                    this.IsOfflineBox.Visibility = System.Windows.Visibility.Visible;
+                }
+            }
+            else {
+                this.IsOfflineBox.Visibility = System.Windows.Visibility.Visible;
+            }
+        }
+        #endregion
+
+        #region Filter
+        /// <summary>
+        /// 条件による絞り込み処理を実行する
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="date"></param>
+        private void FilteringItems(String key, DateTime? date)
+        {
+            var source = this.FeedList.ItemsSource as IEnumerable<FeedItem>;
+            if(source == null) { return; }
+
+            try {
+                // キーワードフィルタ
+                if (!String.IsNullOrEmpty(key)) {
+                    source = source.Where(x =>
+                                    0 <= x.Title.IndexOf(key));
+                }
+                // 日付フィルタ
+                if (date != null) {
+                    source = source.Where(x =>
+                                    date?.Date == DateTime.Parse(x.PublishDate).Date);
+                }
+
+                this.FeedList.ItemsSource = source;
+            }
+            catch (Exception) {
+            }
+        }
+        #endregion
     }
 }

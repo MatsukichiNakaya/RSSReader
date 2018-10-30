@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using Project.DataBase;
 using Project.Serialization.Xml;
 using RSSReader.Model;
+using static RSSReader.Define;
 
 namespace RSSReader.Pages
 {
@@ -51,11 +52,11 @@ namespace RSSReader.Pages
                 var conf = this.ConfGrid.DataContext as RssConfigure;
 
                 // 内部で定義している間隔以下は設定できない。
-                if (conf.UpdateSpan < Define.INTERVAL_TIME) {
-                    conf.UpdateSpan = Define.INTERVAL_TIME;
+                if (conf.UpdateSpan < INTERVAL_TIME) {
+                    conf.UpdateSpan = INTERVAL_TIME;
                 }
 
-                XmlSerializer.Save(conf, Define.XML_PATH);
+                XmlSerializer.Save(conf, XML_PATH);
             }
             catch (Exception) {
                 MessageBox.Show("setting error!", "error", MessageBoxButton.OK);
@@ -73,7 +74,7 @@ namespace RSSReader.Pages
                 return;
             }
 
-            if (!File.Exists(Define.MASTER_PATH)) {
+            if (!File.Exists(MASTER_PATH)) {
                 MessageBox.Show("DB file not found", "error", MessageBoxButton.OK);
                 return;
             }
@@ -91,7 +92,7 @@ namespace RSSReader.Pages
         private void CashFileDelete()
         {
             try {
-                using (var db = new SQLite(Define.MASTER_PATH)) {
+                using (var db = new SQLite(MASTER_PATH)) {
 
                     db.Open();
                     var masterIDs = db.Select("select id from rss_master")["id"];
@@ -124,7 +125,7 @@ namespace RSSReader.Pages
         private void DBMaintenance()
         {
             try {
-                using (var db = new SQLite(Define.MASTER_PATH)) {
+                using (var db = new SQLite(MASTER_PATH)) {
                     db.Open();
                     db.Update("VACUUM");
                 }

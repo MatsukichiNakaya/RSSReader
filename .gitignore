@@ -263,3 +263,5 @@ __pycache__/
 /RSSReader/Exe/rss_log.db
 /RSSReader/Exe/sqliteboot.cmd
 /RSSReader/Exe/log_select_sql.txt
+/RSSReader/Exe/html_template.txt
+/RSSReader/Exe/page.datt

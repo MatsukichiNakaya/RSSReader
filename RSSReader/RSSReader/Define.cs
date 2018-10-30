@@ -65,5 +65,20 @@ namespace RSSReader
         /// 同じ場所にアクセスする場合の時間間隔
         /// </summary>
         public const Int32 INTERVAL_TIME = 5;
+
+        /// <summary>
+        /// RSSの履歴を保持する最大数(1サイト当たり)
+        /// </summary>
+        public const Int32 LOG_SAVE_MAX_COUNT = 100;
+
+        /// <summary>
+        /// サムネイル画像のデフォルト設定値
+        /// </summary>
+        public const Int32 DEFAULT_PIC_WIDTH = 160;
+
+        /// <summary>
+        /// RSS読み込み時にListBoxを更新するか？
+        /// </summary>
+        public const Boolean LISTBOX_UPDATE = true;
     }
 }

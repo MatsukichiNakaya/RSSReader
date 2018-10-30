@@ -92,6 +92,7 @@ namespace RSSReader.Pages
                 }
                 this.SiteSelectBox.SelectedIndex = 0;
             }
+            DispOfflineMode(this.Config);
         }
 
         /// <summary>
@@ -99,6 +100,7 @@ namespace RSSReader.Pages
         /// </summary>
         private void AutoUpdateTimer_Tick(Object sender, EventArgs e)
         {
+            // 別タスクで実行する。
 
         }
 
@@ -109,7 +111,8 @@ namespace RSSReader.Pages
         {
             if (sender is ComboBox cmb) {
                 if (!(cmb.SelectedItem is RssSiteInfo item)) { return; }
-                UpdateListBox(item);
+
+                UpdateListBox(item, LISTBOX_UPDATE);
 
                 this.FeedList.SelectedIndex = 0;
                 this.FeedList.ScrollIntoView(this.FeedList.SelectedItem);
@@ -127,7 +130,22 @@ namespace RSSReader.Pages
         {
             if (!(this.SiteSelectBox.SelectedItem is RssSiteInfo item)) { return; }
 
-            UpdateListBox(item);
+            UpdateListBox(item, LISTBOX_UPDATE);
+        }
+
+        /// <summary>
+        /// すべてのサイトデータを取得してDBを更新する
+        /// </summary>
+        private void AllDownloadButton_Click(Object sender, RoutedEventArgs e)
+        {
+            if (0 < this.SiteSelectBox.Items.Count) { return; }
+
+            for (Int32 index = 0; index < this.SiteSelectBox.Items.Count; index++) {
+                if (this.SiteSelectBox.Items[index] is RssSiteInfo site) {
+                    // サイト別に更新、リストボックスの更新は行わない
+                    UpdateListBox(site, !LISTBOX_UPDATE);
+                }
+            }
         }
 
         /// <summary>
@@ -178,6 +196,38 @@ namespace RSSReader.Pages
                     StartBrowser(feed);
                 }
             }
+        }
+
+        /// <summary>
+        /// RSS フィードへのフィルタ適用ボタン
+        /// </summary>
+        private void FilterButton_Click(Object sender, RoutedEventArgs e)
+        {
+            FilteringItems(this.KeywordBox.Text, this.DatePick.SelectedDate);
+        }
+
+        /// <summary>
+        /// 日付フィルタ解除ボタン
+        /// </summary>
+        private void DateClearButton_Click(Object sender, RoutedEventArgs e)
+        {
+            this.DatePick.SelectedDate = null;
+
+            if (!(this.SiteSelectBox.SelectedItem is RssSiteInfo item)) { return; }
+            // フィルタ関係なく最新の状態にする
+            UpdateListBox(item, LISTBOX_UPDATE);
+        }
+
+        /// <summary>
+        /// キーワードフィルタ解除ボタン
+        /// </summary>
+        private void KeywordClearButton_Click(Object sender, RoutedEventArgs e)
+        {
+            this.KeywordBox.Text = String.Empty;
+
+            if (!(this.SiteSelectBox.SelectedItem is RssSiteInfo item)) { return; }
+            // フィルタ関係なく最新の状態にする
+            UpdateListBox(item, LISTBOX_UPDATE);
         }
         #endregion
     }

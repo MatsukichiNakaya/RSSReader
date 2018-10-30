@@ -15,6 +15,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="70"/>
+            <RowDefinition Height="70"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal">
@@ -37,6 +38,14 @@
                     Style="{StaticResource FlatButtonKey}"
                     ToolTip="Update list"
                     Click="SiteReloadButton_Click"/>
+            <Button x:Name="AllDownloadButton" Margin="10,0,0,0"
+                    Width="24" Height="24" BorderThickness="0"
+                    Background="{StaticResource DownloadIcon}"
+                    Style="{StaticResource FlatButtonKey}"
+                    ToolTip="All RSS Download"
+                    Click="AllDownloadButton_Click"/>
+            <TextBlock x:Name="IsOfflineBox" Text="Offline" VerticalAlignment="Center"
+                       Margin="20,0,0,0" FontSize="20" Visibility="Hidden"/>
         </StackPanel>
         <StackPanel Grid.Row="0" HorizontalAlignment="Right" Orientation="Horizontal">
             <Button x:Name="SettingButton" Margin="0,0,10,0"
@@ -52,7 +61,39 @@
                     Style="{StaticResource PicButtonKey}"
                     Click="FabButton_Click"/>
         </StackPanel>
-        <ListBox x:Name="FeedList" Grid.Row="1" ItemsSource="{Binding}"
+        <Grid x:Name="FilterPanel" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <DockPanel Grid.ColumnSpan="2" LastChildFill="True">
+                <TextBlock DockPanel.Dock="Left" Text="Filter Option" Margin="5"/>
+                <Button x:Name="FilterButton" Style="{StaticResource CommButtonKey}"
+                        DockPanel.Dock="Right"
+                        Content="Append" Margin="5,0" Click="FilterButton_Click"/>
+                <TextBox x:Name="FilterBox" Margin="5,3,5,3" Visibility="Hidden"/>
+            </DockPanel>
+            <StackPanel Grid.Row="1" Grid.Column="0" Margin="5" Orientation="Horizontal">
+                <TextBlock Text="Date" Margin="5" VerticalAlignment="Center"/>
+                <DatePicker x:Name="DatePick" Width="150" VerticalAlignment="Center" FontSize="14"/>
+                <Button x:Name="DateClearButton" Style="{StaticResource CommButtonKey}"
+                        DockPanel.Dock="Right" Width="50"
+                        Content="Clear" Margin="5,0" Click="DateClearButton_Click"/>
+            </StackPanel>
+            <DockPanel Grid.Row="1" Grid.Column="1" LastChildFill="True">
+                <TextBlock Text="keyword" Margin="5" VerticalAlignment="Center"/>
+                <Button x:Name="KeywordClearButton" Style="{StaticResource CommButtonKey}"
+                        DockPanel.Dock="Right" Width="50"
+                        Content="Clear" Margin="5,0" Click="KeywordClearButton_Click"/>
+                <TextBox x:Name="KeywordBox" Margin="5" Height="25" VerticalContentAlignment="Center"
+                         AcceptsReturn="False"/>
+            </DockPanel>
+        </Grid>
+        <ListBox x:Name="FeedList" Grid.Row="2" ItemsSource="{Binding}"
                  ItemContainerStyle="{DynamicResource ListBoxItemStyle}"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  PreviewKeyDown="FeedList_PreviewKeyDown">
