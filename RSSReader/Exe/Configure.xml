@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RssConfigure xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <BrowserOption>--profile-directory="Profile 1" --incognito</BrowserOption>
+  <BrowserOption />
   <UpdateSpan>5</UpdateSpan>
-  <ShowImage>false</ShowImage>
+  <ShowImage>true</ShowImage>
   <KeepPage>true</KeepPage>
-  <AutoMinimize>true</AutoMinimize>
-  <OffLineMode>true</OffLineMode>
+  <AutoMinimize>false</AutoMinimize>
+  <OffLineMode>false</OffLineMode>
 </RssConfigure>
