@@ -73,25 +73,32 @@
             <DockPanel Grid.ColumnSpan="2" LastChildFill="True">
                 <TextBlock DockPanel.Dock="Left" Text="Filter Option" Margin="5"/>
                 <Button x:Name="FilterButton" Style="{StaticResource CommButtonKey}"
-                        DockPanel.Dock="Right"
+                        DockPanel.Dock="Right" Visibility="Hidden"
                         Content="Append" Margin="5,0" Click="FilterButton_Click"/>
                 <TextBox x:Name="FilterBox" Margin="5,3,5,3" Visibility="Hidden"/>
             </DockPanel>
             <StackPanel Grid.Row="1" Grid.Column="0" Margin="5" Orientation="Horizontal">
                 <TextBlock Text="Date" Margin="5" VerticalAlignment="Center"/>
-                <DatePicker x:Name="DatePick" Width="150" VerticalAlignment="Center" FontSize="14"/>
+                <DatePicker x:Name="DatePick" Width="150" VerticalAlignment="Center" FontSize="14"
+                            CalendarClosed="DatePick_CalendarClosed"/>
                 <Button x:Name="DateClearButton" Style="{StaticResource CommButtonKey}"
                         DockPanel.Dock="Right" Width="50"
                         Content="Clear" Margin="5,0" Click="DateClearButton_Click"/>
             </StackPanel>
-            <DockPanel Grid.Row="1" Grid.Column="1" LastChildFill="True">
+            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
                 <TextBlock Text="keyword" Margin="5" VerticalAlignment="Center"/>
-                <Button x:Name="KeywordClearButton" Style="{StaticResource CommButtonKey}"
-                        DockPanel.Dock="Right" Width="50"
-                        Content="Clear" Margin="5,0" Click="KeywordClearButton_Click"/>
-                <TextBox x:Name="KeywordBox" Margin="5" Height="25" VerticalContentAlignment="Center"
-                         AcceptsReturn="False"/>
-            </DockPanel>
+                <Border BorderBrush="Black" BorderThickness="1,1,0,1" Padding="0" Height="25">
+                    <TextBox x:Name="KeywordBox" Margin="0,0,0,0"
+                             Height="25" Width="200" VerticalContentAlignment="Center"
+                             AcceptsReturn="False" BorderThickness="0"
+                             PreviewKeyDown="KeywordBox_PreviewKeyDown"/>
+                </Border>
+                <Border BorderBrush="Black" BorderThickness="0,1,1,1" Padding="0" Height="25">
+                    <Button x:Name="KeywordClearButton" Style="{StaticResource FlatButtonKey}"
+                            Width="20" Content="r" Click="KeywordClearButton_Click"
+                            FontFamily="Marlett" Background="White" Height="25"/>
+                </Border>
+            </StackPanel>
         </Grid>
         <ListBox x:Name="FeedList" Grid.Row="2" ItemsSource="{Binding}"
                  ItemContainerStyle="{DynamicResource ListBoxItemStyle}"

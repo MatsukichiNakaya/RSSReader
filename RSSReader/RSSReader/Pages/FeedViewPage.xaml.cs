@@ -203,7 +203,9 @@ namespace RSSReader.Pages
         /// </summary>
         private void FilterButton_Click(Object sender, RoutedEventArgs e)
         {
-            FilteringItems(this.KeywordBox.Text, this.DatePick.SelectedDate);
+            if (!(this.SiteSelectBox.SelectedItem is RssSiteInfo item)) { return; }
+
+            FilteringItems(item, this.KeywordBox.Text, this.DatePick.SelectedDate);
         }
 
         /// <summary>
@@ -228,6 +230,27 @@ namespace RSSReader.Pages
             if (!(this.SiteSelectBox.SelectedItem is RssSiteInfo item)) { return; }
             // フィルタ関係なく最新の状態にする
             UpdateListBox(item, LISTBOX_UPDATE);
+        }
+
+        /// <summary>
+        /// カレンダーを閉じたときにフィルタをかける
+        /// </summary>
+        private void DatePick_CalendarClosed(Object sender, RoutedEventArgs e)
+        {
+            if (!(this.SiteSelectBox.SelectedItem is RssSiteInfo item)) { return; }
+
+            FilteringItems(item, this.KeywordBox.Text, this.DatePick.SelectedDate);
+        }
+
+        /// <summary>
+        /// エンターキーを押したときにフィルタをかける
+        /// </summary>
+        private void KeywordBox_PreviewKeyDown(Object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Return) { return; }
+            if (!(this.SiteSelectBox.SelectedItem is RssSiteInfo item)) { return; }
+
+            FilteringItems(item, this.KeywordBox.Text, this.DatePick.SelectedDate);
         }
         #endregion
     }

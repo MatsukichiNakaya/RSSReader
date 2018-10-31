@@ -100,7 +100,10 @@ namespace RSSReader.Pages
                 }
 
                 // リスト・DBの更新
-                SetFeedItems(db, feedItems, masterID, isListUpdate);
+                var items = GetFeedItems(db, feedItems, masterID, isListUpdate);
+                if (isListUpdate) {
+                    this.FeedList.ItemsSource = items;
+                }
             }
         }
 
@@ -143,7 +146,7 @@ namespace RSSReader.Pages
         /// <param name="feedItems">feed項目一覧</param>
         /// <param name="masterID">DB上のマスターID</param>
         /// <param name="isListUpdate">ListBoxの表示を更新するか</param>
-        private void SetFeedItems(SQLite db, IEnumerable<FeedItem> feedItems,
+        private IEnumerable<FeedItem> GetFeedItems(SQLite db, IEnumerable<FeedItem> feedItems,
                                     Int32 masterID, Boolean isListUpdate)
         {
             FeedItem.ExistsChashDirectory(masterID.ToString());
@@ -152,7 +155,7 @@ namespace RSSReader.Pages
             var items = GetFeedItemsToDB(db, feedItems, masterID)
                             .OrderByDescending(fd => fd.PublishDate);
             // リストを更新しないのでサムネイル画像は読み込まない。
-            if(!isListUpdate) { return; }
+            if(!isListUpdate) { return items; }
 
             if (this.Config.IsShowImage) {
                 // サムネの読み込み
@@ -169,7 +172,8 @@ namespace RSSReader.Pages
                     item.ThumbWidth = 0;
                 }
             }
-            this.FeedList.ItemsSource = items;
+            //this.FeedList.ItemsSource = items;
+            return items;
         }
 
         /// <summary>
@@ -425,12 +429,14 @@ namespace RSSReader.Pages
         /// <summary>
         /// 条件による絞り込み処理を実行する
         /// </summary>
+        /// <param name="item"></param>
         /// <param name="key"></param>
         /// <param name="date"></param>
-        private void FilteringItems(String key, DateTime? date)
+        private void FilteringItems(RssSiteInfo item, String key, DateTime? date)
         {
-            var source = this.FeedList.ItemsSource as IEnumerable<FeedItem>;
-            if(source == null) { return; }
+            var source = GetMasterData(item);
+
+            if (source == null) { return; }
 
             try {
                 // キーワードフィルタ
@@ -448,6 +454,29 @@ namespace RSSReader.Pages
             }
             catch (Exception) {
             }
+        }
+
+        /// <summary>
+        /// フィルタ用にDBからベースとなるデータを取得する。
+        /// </summary>
+        /// <param name="item"></param>
+        /// <remarks>
+        /// DBから毎回読み込むのがいいか
+        /// Feedの読み込み枚にベースとなるデータをローカルに保持していた方がいいのか
+        /// </remarks>
+        private IEnumerable<FeedItem> GetMasterData(RssSiteInfo item)
+        {
+            Int32 masterID = item.ID;
+            IEnumerable<FeedItem> feedItems = null;
+
+            using (var db = new SQLite(MASTER_PATH)) {
+
+                db.Open();
+
+                // リスト・DBの更新
+                feedItems = GetFeedItems(db, feedItems, masterID, LISTBOX_UPDATE);
+            }
+            return feedItems;
         }
         #endregion
     }
