@@ -37,7 +37,10 @@ namespace RSSReader.Pages
                 db.Open();
 
                 var ret = db.Select("select * from rss_master");
-
+				if (ret.Count == 0)
+				{
+					return cmbItems;
+				}
                 Int32 count = ret["id"].Count;
                 for (Int32 i = 0; i < count; i++) {
                     cmbItems.Add(new RssSiteInfo() {

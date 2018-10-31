@@ -153,10 +153,12 @@ namespace RSSReader.Pages
         /// </summary>
         private void SettingButton_Click(Object sender, RoutedEventArgs e)
         {
-            Int32 index = (this.SiteSelectBox.SelectedItem as RssSiteInfo)?.ID ?? ERROR_RESULT;
-            if (index < 0) { return; }
+			if (this.SiteSelectBox.Items.Count != 0) {
+				Int32 index = (this.SiteSelectBox.SelectedItem as RssSiteInfo)?.ID ?? ERROR_RESULT;
+				if (index < 0) { return; }
+				TextFile.Write(PAGE_DAT, $"{index}", TextFile.OVER_WRITE);
+			}
 
-            TextFile.Write(PAGE_DAT, $"{index}", TextFile.OVER_WRITE);
             this.NavigationService.Navigate(new ConfigurePage(this));
         }
 
@@ -165,10 +167,12 @@ namespace RSSReader.Pages
         /// </summary>
         private void FabButton_Click(Object sender, RoutedEventArgs e)
         {
-            Int32 index = (this.SiteSelectBox.SelectedItem as RssSiteInfo)?.ID ?? ERROR_RESULT;
-            if (index < 0) { return; }
+			if (this.SiteSelectBox.Items.Count != 0) {
+				Int32 index = (this.SiteSelectBox.SelectedItem as RssSiteInfo)?.ID ?? ERROR_RESULT;
+				if (index < 0) { return; }
 
-            TextFile.Write(PAGE_DAT, $"{index}", TextFile.OVER_WRITE);
+				TextFile.Write(PAGE_DAT, $"{index}", TextFile.OVER_WRITE);
+			}
             this.NavigationService.Navigate(new RSSEditPage(this, GetSiteInfo()));
         }
 
