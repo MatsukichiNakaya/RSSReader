@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Web;
 using System.Windows.Media;
@@ -10,8 +11,10 @@ namespace RSSReader.Model
     /// <summary>
     /// RSS feed のデータクラス
     /// </summary>
-    public class FeedItem
+    public class FeedItem : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
         /// <summary>FeedItemで使用する日付のフォーマット</summary>
         public const String DATE_FORMAT = "yyyy/MM/dd HH:mm:ss";
 
@@ -35,8 +38,17 @@ namespace RSSReader.Model
         public String Summary { get; set; }
         /// <summary>記事へのリンク</summary>
         public Uri Link { get; set; }
+
+        // IsReadプロパティの中身
+        private Boolean _isRead;
         /// <summary>既読有無</summary>
-        public Boolean IsRead { get; set; }
+        public Boolean IsRead {
+            get { return this._isRead; }
+            set {
+                this._isRead = value;
+                OnPropertyChanged(nameof(this.IsRead));
+            }
+        }
         /// <summary>記事元のホスト名</summary>
         public String Host { get { return this.Link.Host; } }
         /// <summary>サムネイルのUrl</summary>
@@ -64,6 +76,15 @@ namespace RSSReader.Model
             this.ThumbUri = null;
             this.Thumbnail = null;
             this.ThumbWidth = 0;
+        }
+
+        /// <summary>
+        /// プロパティ変更通知イベント
+        /// </summary>
+        /// <param name="propertyName"></param>
+        private void OnPropertyChanged(String propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         /// <summary>

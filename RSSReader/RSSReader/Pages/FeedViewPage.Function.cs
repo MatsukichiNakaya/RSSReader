@@ -348,6 +348,8 @@ namespace RSSReader.Pages
         /// <param name="item"></param>
         private void StartBrowser(FeedItem item)
         {
+            item.IsRead = true;
+
             // 既読履歴を更新
             UpdateReadHistory(item);
 
