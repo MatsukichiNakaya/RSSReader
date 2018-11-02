@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using Project.DataBase;
 using Project.Serialization.Xml;
 using RSSReader.Model;
@@ -25,8 +26,35 @@ namespace RSSReader.Pages
         public ConfigurePage(FeedViewPage inner)
         {
             InitializeComponent();
-            this.ConfGrid.DataContext = inner.Config;
+
+            // インデックスにバインドするため先に項目を設定する
+            this.HAnchorBox.ItemsSource = Enum.GetNames(typeof(HorizontalAlignment));
+            this.VAnchorBox.ItemsSource = Enum.GetNames(typeof(VerticalAlignment));
+            this.StretchBox.ItemsSource = Enum.GetNames(typeof(Stretch));
+
+            try {
+                this.ConfGrid.DataContext = inner.Config;
+            }
+            catch (Exception) {
+            }
+
             this.InnerViewPage = inner;
+        }
+
+        /// <summary>
+        /// 位置設定の情報に適切な値が設定されているか
+        /// </summary>
+        /// <returns>true:適切, false:不適切</returns>
+        public Boolean IsPositionProper()
+        {
+            foreach (var elem in this.PosGrid.Children) {
+                if (elem is ComboBox cmb) {
+                    if(cmb.SelectedIndex < 0) {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
 
         /// <summary>
@@ -53,9 +81,14 @@ namespace RSSReader.Pages
                 if (conf.UpdateSpan < INTERVAL_TIME) {
                     conf.UpdateSpan = INTERVAL_TIME;
                 }
+                // 設定が適切でないと保存しない
+                if(!IsPositionProper()) {
+                    MessageBox.Show("Position setting is not proper.",
+                        "Error", MessageBoxButton.OK);
+                    return;
+                }
 
                 XmlSerializer.Save(conf, XML_PATH);
-
                 this.InnerViewPage.Config = conf;
             }
             catch (Exception) {

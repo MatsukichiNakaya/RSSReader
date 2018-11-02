@@ -27,29 +27,45 @@
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition/>
+                <RowDefinition Height="90"/>
                 <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
+                <RowDefinition Height="150"/>
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource TextComm}" Text="Brower Options"/>
-            <TextBox x:Name="BrowsBox" Grid.Row="0" Grid.Column="1" Height="20" Text="{Binding BrowserOption}"
+            <TextBox x:Name="BrowsBox" Grid.Row="0" Grid.Column="1"
+                     Height="20" Text="{Binding BrowserOption}"
                      Margin="10,0,10,0"/>
             <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource TextComm}" Text="Update span"/>
-            <TextBox x:Name="UpdateBox" Grid.Row="1" Grid.Column="1" Height="20" Text="{Binding UpdateSpan}"
-                     Margin="10,0,10,0" Width="50" HorizontalAlignment="Left"/>
-            <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource TextComm}" Text="Show Image"/>
-            <CheckBox x:Name="CheckShowImage" Grid.Row="2" Grid.Column="1" IsChecked="{Binding IsShowImage}"
-                      VerticalAlignment="Center" Margin="10,0"/>
-            <TextBlock Grid.Row="3" Grid.Column="0" Style="{StaticResource TextComm}" Text="Keep Page"/>
-            <CheckBox x:Name="CheckKeepPage" Grid.Row="3" Grid.Column="1" IsChecked="{Binding IsKeepPage}"
-                      VerticalAlignment="Center" Margin="10,0"/>
-            <TextBlock Grid.Row="4" Grid.Column="0" Style="{StaticResource TextComm}" Text="Auto Minimize"/>
-            <CheckBox x:Name="AutoMinimize" Grid.Row="4" Grid.Column="1" IsChecked="{Binding IsAutoMinimize}"
-                      VerticalAlignment="Center" Margin="10,0"/>
-            <TextBlock Grid.Row="5" Grid.Column="0" Style="{StaticResource TextComm}" Text="OffLine Mode"/>
-            <CheckBox x:Name="OffLineMode" Grid.Row="5" Grid.Column="1" IsChecked="{Binding IsOffLine}"
-                      VerticalAlignment="Center" Margin="10,0"/>
+            <TextBox x:Name="UpdateBox" Grid.Row="1" Grid.Column="1"
+                     Height="20" Width="50" Margin="10,0,10,0" HorizontalAlignment="Left"
+                     Text="{Binding UpdateSpan}"/>
+            <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource TextComm}" Text="Switch Options"/>
+            <StackPanel Grid.Row="2" Grid.Column="1">
+                <CheckBox x:Name="CheckShowImage" IsChecked="{Binding IsShowImage}"
+                      VerticalAlignment="Center" Margin="10,3" Content="Show Image"/>
+                <CheckBox x:Name="CheckKeepPage" IsChecked="{Binding IsKeepPage}"
+                      VerticalAlignment="Center" Margin="10,3" Content="Keep Page"/>
+                <CheckBox x:Name="AutoMinimize" IsChecked="{Binding IsAutoMinimize}"
+                      VerticalAlignment="Center" Margin="10,3" Content="Auto Minimize"/>
+                <CheckBox x:Name="OffLineMode" IsChecked="{Binding IsOffLine}"
+                      VerticalAlignment="Center" Margin="10,3" Content="OffLine Mode"/>
+            </StackPanel>
+            <TextBlock Grid.Row="3" Grid.Column="0" Style="{StaticResource TextComm}" Text="BackgroundImage"/>
+            <TextBox x:Name="BackgroundBox" Grid.Row="3" Grid.Column="1"
+                     Height="20" Margin="10,0,10,0"
+                     Text="{Binding BackgroundImagePath}"/>
+            <TextBlock Grid.Row="4" Grid.Column="0" Style="{StaticResource TextComm}" Text="Image Position"/>
+            <StackPanel x:Name="PosGrid" Grid.Row="4" Grid.Column="1" Orientation="Vertical">
+                <TextBlock Text="HorizontalAlignment" Margin="3,3,0,0"/>
+                <ComboBox x:Name="HAnchorBox" Style="{StaticResource ComboBoxFlatStyle}" Width="100"
+                          HorizontalAlignment="Left" Margin="3,0,0,10" SelectedIndex="{Binding ImagePosition.XAnchor, Mode=TwoWay}"/>
+                <TextBlock Text="VerticalAlignment" Margin="3,3,0,0"/>
+                <ComboBox x:Name="VAnchorBox" Style="{StaticResource ComboBoxFlatStyle}" Width="100"
+                          HorizontalAlignment="Left" Margin="3,0,0,10" SelectedIndex="{Binding ImagePosition.YAnchor, Mode=TwoWay}"/>
+                <TextBlock Text="Stretch" Margin="3,3,0,0"/>
+                <ComboBox x:Name="StretchBox" Style="{StaticResource ComboBoxFlatStyle}" Width="100"
+                          HorizontalAlignment="Left" Margin="3,0,0,10" SelectedIndex="{Binding ImagePosition.Stretch, Mode=TwoWay}"/>
+            </StackPanel>
         </Grid>
         <StackPanel Grid.Column="0" Grid.Row="1">
             <Button x:Name="DeleteButton" Style="{StaticResource CommButtonKey}"

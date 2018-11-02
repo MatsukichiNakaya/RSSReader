@@ -5,11 +5,11 @@
   <ShowImage>false</ShowImage>
   <KeepPage>true</KeepPage>
   <AutoMinimize>true</AutoMinimize>
-  <OffLineMode>true</OffLineMode>
+  <OffLineMode>false</OffLineMode>
   <BackgroundPath />
   <ImagePosition>
     <XAnchor>0</XAnchor>
     <YAnchor>0</YAnchor>
-    <Stretch>1</Stretch>
+    <Stretch>0</Stretch>
   </ImagePosition>
 </RssConfigure>

@@ -510,8 +510,8 @@ namespace RSSReader.Pages
         /// <summary>
         /// 背景画像の設定がある場合にその画像を読み込んで設定する
         /// </summary>
-        /// <param name="path"></param>
-        /// <param name="pos"></param>
+        /// <param name="path">画像ファイルのパス</param>
+        /// <param name="pos">画像ファイルを設定する位置設定</param>
         private void ReadBackground(String path, ImagePositionSetting pos)
         {
             if (String.IsNullOrWhiteSpace(path)) { return; }
@@ -519,9 +519,17 @@ namespace RSSReader.Pages
 
             this.BackgroundImage.Source = CommFunc.ReadImage(path);
 
-            this.BackgroundImage.Stretch = (Stretch)pos.Stretch;
-            this.BackgroundImage.HorizontalAlignment = (HorizontalAlignment)pos.XAnchor;
-            this.BackgroundImage.VerticalAlignment = (VerticalAlignment)pos.YAnchor;
+            try {
+                this.BackgroundImage.Stretch = (Stretch)pos.Stretch;
+                this.BackgroundImage.HorizontalAlignment = (HorizontalAlignment)pos.XAnchor;
+                this.BackgroundImage.VerticalAlignment = (VerticalAlignment)pos.YAnchor;
+            }
+            catch (Exception) {
+                // 強制的に位置を設定する
+                this.BackgroundImage.Stretch = Stretch.None;
+                this.BackgroundImage.HorizontalAlignment = HorizontalAlignment.Left;
+                this.BackgroundImage.VerticalAlignment = VerticalAlignment.Top;
+            }
         }
         #endregion
     }
