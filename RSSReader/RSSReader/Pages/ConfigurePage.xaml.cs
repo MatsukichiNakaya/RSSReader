@@ -25,9 +25,7 @@ namespace RSSReader.Pages
         public ConfigurePage(FeedViewPage inner)
         {
             InitializeComponent();
-
-            var conf = CommFunc.ConfigLoad();
-            this.ConfGrid.DataContext = conf;
+            this.ConfGrid.DataContext = inner.Config;
             this.InnerViewPage = inner;
         }
 
@@ -57,6 +55,8 @@ namespace RSSReader.Pages
                 }
 
                 XmlSerializer.Save(conf, XML_PATH);
+
+                this.InnerViewPage.Config = conf;
             }
             catch (Exception) {
                 MessageBox.Show("setting error!", "error", MessageBoxButton.OK);

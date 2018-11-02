@@ -8,8 +8,6 @@
                   Title="RssReader" Height="450" Width="800" Icon="Resources/social_rss.ico"
                   Source="Pages/FeedViewPage.xaml" 
                   Loaded="NavigationWindow_Loaded"
-                  Closing="NavigationWindow_Closing">
-    <!--<NavigationWindow.Background>
-        <ImageBrush/>
-    </NavigationWindow.Background>-->
+                  Closing="NavigationWindow_Closing"
+                  Background="White">
 </NavigationWindow>

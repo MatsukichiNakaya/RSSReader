@@ -1,8 +1,12 @@
 ﻿
+using System;
 using System.IO;
-using Project.Serialization.Xml;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Project.DataBase;
+using Project.Serialization.Xml;
 using RSSReader.Model;
+
 using static RSSReader.Define;
 
 namespace RSSReader
@@ -26,6 +30,29 @@ namespace RSSReader
             XmlSerializer.Save(result, XML_PATH);
             
             return result;
+        }
+
+        /// <summary>
+        /// 画像の読み込み
+        /// </summary>
+        /// <param name="path">ファイルパス</param>
+        /// <returns>イメージソース</returns>
+        public static ImageSource ReadImage(String path)
+        {
+            if ( ! File.Exists(path)) {
+                return null;
+            }
+            var bmpImage = new BitmapImage();
+            try {
+                bmpImage.BeginInit();
+                bmpImage.UriSource = new Uri(Path.GetFullPath(path),
+                                             UriKind.RelativeOrAbsolute);
+                bmpImage.EndInit();
+            }
+            catch (Exception) {
+                bmpImage = null;
+            }
+            return bmpImage;
         }
 
         /// <summary>

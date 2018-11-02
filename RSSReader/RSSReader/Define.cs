@@ -25,17 +25,17 @@ namespace RSSReader
         /// <summary>
         /// RSSフィードの履歴保存DB
         /// </summary>
-        public const String MASTER_PATH = @".\rss_log.db";
+        public const String MASTER_PATH = @".\Dat\rss_log.db";
 
         /// <summary>
         /// ソフト設定値ファイル
         /// </summary>
-        public const String XML_PATH = @"Configure.xml";
+        public const String XML_PATH = @".\Dat\Configure.xml";
 
         /// <summary>
         /// 表示状態保持用ファイル
         /// </summary>
-        public const String PAGE_DAT = @".\page.dat";
+        public const String PAGE_DAT = @".\Dat\page.dat";
 
         /// <summary>
         /// エディットモード
@@ -65,6 +65,11 @@ namespace RSSReader
         /// ウインドウ最小化メッセージ
         /// </summary>
         public const Int32 Window_MIN_MESSAGE = 32771;
+
+        /// <summary>
+        /// 背景画像読み込みメッセージ
+        /// </summary>
+        public const Int32 BACKGROUND_READ_MESSAGE = 32772;
 
         /// <summary>
         /// エラー時の返り値

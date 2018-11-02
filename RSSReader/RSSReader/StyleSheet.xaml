@@ -9,6 +9,7 @@
     <ImageBrush x:Key="DeleteIcon" ImageSource="Resources/list-delete.png"/>
     <ImageBrush x:Key="EditIcon" ImageSource="Resources/list-edit.png"/>
     <ImageBrush x:Key="ReturnIcon" ImageSource="Resources/return.png"/>
+    <ImageBrush x:Key="BackgroundImage" ImageSource="Resources/BG.png" Stretch="Fill"/>
 
     <Style x:Key="CommButtonKey" TargetType="{x:Type Button}">
         <Setter Property="Height" Value="20"/>

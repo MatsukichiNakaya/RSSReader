@@ -18,6 +18,9 @@
             <RowDefinition Height="70"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
+        <Image x:Name="BackgroundImage"
+               Grid.RowSpan="3"
+               Source="{Binding Background}"/>
         <StackPanel Grid.Row="0" Orientation="Horizontal">
             <ComboBox x:Name="SiteSelectBox" Height="40" Width="500" Margin="10"
                       Style="{StaticResource ComboBoxFlatStyle}"
@@ -110,6 +113,7 @@
         <ListBox x:Name="FeedList" Grid.Row="2" ItemsSource="{Binding}"
                  ItemContainerStyle="{DynamicResource ListBoxItemStyle}"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 Background="Transparent"
                  PreviewKeyDown="FeedList_PreviewKeyDown">
             <ListBox.ItemTemplate>
                 <DataTemplate>

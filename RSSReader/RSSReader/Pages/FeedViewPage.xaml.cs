@@ -38,7 +38,10 @@ namespace RSSReader.Pages
         public Int32 SiteItemCount { get { return this.SiteSelectBox.Items.Count; } }
 
         /// <summary>動作設定</summary>
-        private RssConfigure Config { get; set; }
+        public RssConfigure Config { get; set; }
+
+        /// <summary>フィルタ適用状態</summary>
+        //private EditMode FilterState { get; set; }
         #endregion
 
         #region コンストラクタ
@@ -70,6 +73,10 @@ namespace RSSReader.Pages
             // フィルタ用選択項目
             this.IsReadComboBox.ItemsSource = Enum.GetNames(typeof(ReadState));
             this.IsReadComboBox.SelectedIndex = 0;
+
+            // 設定値の読み込み
+            this.Config = CommFunc.ConfigLoad();
+            ReadBackground(this.Config.BackgroundImagePath, this.Config.ImagePosition);
         }
         #endregion
 
@@ -79,8 +86,6 @@ namespace RSSReader.Pages
         /// </summary>
         private void Page_Loaded(Object sender, RoutedEventArgs e)
         {
-            this.Config = CommFunc.ConfigLoad();
-
             // コンボボックスは最初の項目を選択する
             if (0 < this.SiteSelectBox.Items.Count) {
                 // 前回のページ保持オプション

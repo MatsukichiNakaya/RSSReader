@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Project.DataBase;
@@ -423,8 +424,13 @@ namespace RSSReader.Pages
         #endregion
 
         #region Filter
+        /// <summary>
+        /// フィルタの解除
+        /// </summary>
         private void FilterClear()
         {
+            //this.FilterState = EditMode.None;
+
             this.DatePick.SelectedDate = null;
             this.KeywordBox.Text = String.Empty;
             this.IsReadComboBox.SelectedIndex = 0;
@@ -433,10 +439,10 @@ namespace RSSReader.Pages
         /// <summary>
         /// 条件による絞り込み処理を実行する
         /// </summary>
-        /// <param name="item"></param>
-        /// <param name="key"></param>
-        /// <param name="date"></param>
-        /// <param name="isRead"></param>
+        /// <param name="item">サイト情報</param>
+        /// <param name="key">フィルタリングするワード</param>
+        /// <param name="date">フィルタリングする日付</param>
+        /// <param name="isRead">フィルタリングする既読・未読状態</param>
         private void FilteringItems(RssSiteInfo item, 
                                     String key, DateTime? date, String isRead)
         {
@@ -479,7 +485,7 @@ namespace RSSReader.Pages
         /// <summary>
         /// フィルタ用にDBからベースとなるデータを取得する。
         /// </summary>
-        /// <param name="item"></param>
+        /// <param name="item">サイト情報</param>
         /// <remarks>
         /// DBから毎回読み込むのがいいか
         /// Feedの読み込み枚にベースとなるデータをローカルに保持していた方がいいのか
@@ -497,6 +503,25 @@ namespace RSSReader.Pages
                 feedItems = GetFeedItems(db, feedItems, masterID, LISTBOX_UPDATE);
             }
             return feedItems;
+        }
+        #endregion
+
+        #region Ather
+        /// <summary>
+        /// 背景画像の設定がある場合にその画像を読み込んで設定する
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="pos"></param>
+        private void ReadBackground(String path, ImagePositionSetting pos)
+        {
+            if (String.IsNullOrWhiteSpace(path)) { return; }
+            if (!File.Exists(path)) { return; }
+
+            this.BackgroundImage.Source = CommFunc.ReadImage(path);
+
+            this.BackgroundImage.Stretch = (Stretch)pos.Stretch;
+            this.BackgroundImage.HorizontalAlignment = (HorizontalAlignment)pos.XAnchor;
+            this.BackgroundImage.VerticalAlignment = (VerticalAlignment)pos.YAnchor;
         }
         #endregion
     }

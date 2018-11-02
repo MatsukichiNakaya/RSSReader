@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using System.Xml.Serialization;
 
 namespace RSSReader.Model
@@ -49,6 +50,15 @@ namespace RSSReader.Model
         public Boolean IsOffLine { get; set; }
 
         /// <summary>
+        /// 背景画像のパス
+        /// </summary>
+        [XmlElement("BackgroundPath", DataType = "string", IsNullable = true)]
+        public String BackgroundImagePath { get; set; }
+
+
+        public ImagePositionSetting ImagePosition { get; set; }
+
+        /// <summary>
         /// コンストラクタ
         /// </summary>
         public RssConfigure()
@@ -59,6 +69,38 @@ namespace RSSReader.Model
             this.IsKeepPage = false;
             this.IsAutoMinimize = false;
             this.IsOffLine = false;
+            this.BackgroundImagePath = String.Empty;
+            this.ImagePosition = new ImagePositionSetting();
+        }
+    }
+
+    /// <summary>
+    /// 画像読み込み設定
+    /// </summary>
+    [Serializable]
+    [StructLayout(LayoutKind.Sequential, Pack = 4, Size = 4)]
+    public class ImagePositionSetting
+    {
+        /// <summary>横軸のどちらに紐づけるか</summary>
+        [XmlElement("XAnchor", DataType = "int", IsNullable = false)]
+        public Int32 XAnchor { get; set; }
+
+        /// <summary>縦軸のどちらに紐づけるか</summary>
+        [XmlElement("YAnchor", DataType = "int", IsNullable = false)]
+        public Int32 YAnchor { get; set; }
+
+        /// <summary>配置の縮尺設定</summary>
+        [XmlElement("Stretch", DataType = "int", IsNullable = false)]
+        public Int32 Stretch { get; set; }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public ImagePositionSetting()
+        {
+            this.XAnchor = (Int32)System.Windows.HorizontalAlignment.Left;
+            this.YAnchor = (Int32)System.Windows.VerticalAlignment.Top;
+            this.Stretch = (Int32)System.Windows.Media.Stretch.None;
         }
     }
 }
