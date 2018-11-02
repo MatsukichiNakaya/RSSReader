@@ -47,6 +47,16 @@ namespace RSSReader
         }
 
         /// <summary>
+        /// 既読・未読ステータス
+        /// </summary>
+        public enum ReadState
+        {
+            None = 0,
+            Read = 1,
+            Unread = 2
+        }
+
+        /// <summary>
         /// ページ保持用のメッセージ
         /// </summary>
         public const Int32 CHANGE_MESSAGE = 32770;

@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:RSSReader.Pages"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="550" d:DesignWidth="800"
       Title="FeedViewPage" Loaded="Page_Loaded">
     <Page.Resources>
         <Style x:Key="ListBoxItemStyle" TargetType="{x:Type ListBoxItem}">
@@ -67,7 +67,8 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="260"/>
+                <ColumnDefinition Width="300"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <DockPanel Grid.ColumnSpan="2" LastChildFill="True">
@@ -80,13 +81,13 @@
             <StackPanel Grid.Row="1" Grid.Column="0" Margin="5" Orientation="Horizontal">
                 <TextBlock Text="Date" Margin="5" VerticalAlignment="Center"/>
                 <DatePicker x:Name="DatePick" Width="150" VerticalAlignment="Center" FontSize="14"
-                            CalendarClosed="DatePick_CalendarClosed"/>
+                            CalendarClosed="DatePick_CalendarClosed" PreviewKeyDown="DatePick_PreviewKeyDown"/>
                 <Button x:Name="DateClearButton" Style="{StaticResource CommButtonKey}"
                         DockPanel.Dock="Right" Width="50"
-                        Content="Clear" Margin="5,0" Click="DateClearButton_Click"/>
+                        Content="Clear" Margin="5,3" Click="DateClearButton_Click"/>
             </StackPanel>
             <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
-                <TextBlock Text="keyword" Margin="5" VerticalAlignment="Center"/>
+                <TextBlock Text="keyword" Margin="10,5,5,5" VerticalAlignment="Center"/>
                 <Border BorderBrush="Black" BorderThickness="1,1,0,1" Padding="0" Height="25">
                     <TextBox x:Name="KeywordBox" Margin="0,0,0,0"
                              Height="25" Width="200" VerticalContentAlignment="Center"
@@ -98,6 +99,12 @@
                             Width="20" Content="r" Click="KeywordClearButton_Click"
                             FontFamily="Marlett" Background="White" Height="25"/>
                 </Border>
+            </StackPanel>
+            <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal">
+                <TextBlock Text="Read State" Margin="10,5,5,5" VerticalAlignment="Center"/>
+                <ComboBox x:Name="IsReadComboBox"  Width="100" Height="25" 
+                          Style="{StaticResource ComboBoxFlatStyle}"
+                          Margin="5" SelectionChanged="IsReadComboBox_SelectionChanged"/>
             </StackPanel>
         </Grid>
         <ListBox x:Name="FeedList" Grid.Row="2" ItemsSource="{Binding}"

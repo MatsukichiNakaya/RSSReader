@@ -394,14 +394,6 @@ namespace RSSReader.Pages
         }
         #endregion
 
-        #region Button
-
-        private void AllDownloadData()
-        {
-
-        }
-        #endregion
-
         #region Network
         /// <summary>
         /// インターネットに接続しているか
@@ -431,15 +423,25 @@ namespace RSSReader.Pages
         #endregion
 
         #region Filter
+        private void FilterClear()
+        {
+            this.DatePick.SelectedDate = null;
+            this.KeywordBox.Text = String.Empty;
+            this.IsReadComboBox.SelectedIndex = 0;
+        }
+
         /// <summary>
         /// 条件による絞り込み処理を実行する
         /// </summary>
         /// <param name="item"></param>
         /// <param name="key"></param>
         /// <param name="date"></param>
-        private void FilteringItems(RssSiteInfo item, String key, DateTime? date)
+        /// <param name="isRead"></param>
+        private void FilteringItems(RssSiteInfo item, 
+                                    String key, DateTime? date, String isRead)
         {
             var source = GetMasterData(item);
+            Int32 srcCount = source.Count();
 
             if (source == null) { return; }
 
@@ -454,8 +456,21 @@ namespace RSSReader.Pages
                     source = source.Where(x =>
                                     date?.Date == DateTime.Parse(x.PublishDate).Date);
                 }
-
-                this.FeedList.ItemsSource = source;
+                // 既読・未読フィルタ
+                if (Enum.TryParse(isRead, out ReadState state)) {
+                    switch (state) {
+                        case ReadState.Read:
+                            source = source.Where(x => x.IsRead);
+                            break;
+                        case ReadState.Unread:
+                            source = source.Where(x => !x.IsRead);
+                            break;
+                    }
+                }
+                // 無駄に更新しないように
+                if (srcCount != source.Count()) {
+                    this.FeedList.ItemsSource = source;
+                }
             }
             catch (Exception) {
             }

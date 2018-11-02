@@ -66,6 +66,10 @@ namespace RSSReader.Pages
             };
             this.AutoUpdateTimer.Tick += AutoUpdateTimer_Tick;
             this.AutoUpdateTimer.Start();
+
+            // フィルタ用選択項目
+            this.IsReadComboBox.ItemsSource = Enum.GetNames(typeof(ReadState));
+            this.IsReadComboBox.SelectedIndex = 0;
         }
         #endregion
 
@@ -116,6 +120,8 @@ namespace RSSReader.Pages
 
                 this.FeedList.SelectedIndex = 0;
                 this.FeedList.ScrollIntoView(this.FeedList.SelectedItem);
+
+                FilterClear();
 
                 // メインウインドウにサイト変更メッセージを送信する
                 var bgw = WindowInfo.FindWindowByName(null, TITLE);
@@ -209,7 +215,7 @@ namespace RSSReader.Pages
         {
             if (!(this.SiteSelectBox.SelectedItem is RssSiteInfo item)) { return; }
 
-            FilteringItems(item, this.KeywordBox.Text, this.DatePick.SelectedDate);
+            //FilteringItems(item, this.KeywordBox.Text, this.DatePick.SelectedDate);
         }
 
         /// <summary>
@@ -243,7 +249,22 @@ namespace RSSReader.Pages
         {
             if (!(this.SiteSelectBox.SelectedItem is RssSiteInfo item)) { return; }
 
-            FilteringItems(item, this.KeywordBox.Text, this.DatePick.SelectedDate);
+            FilteringItems(item, this.KeywordBox.Text,
+                this.DatePick.SelectedDate, this.IsReadComboBox.SelectedItem as String);
+        }
+
+        /// <summary>
+        /// カレンダーでエンターキーを押したときにフィルタをかける
+        /// </summary>
+        private void DatePick_PreviewKeyDown(Object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Return) { return; }
+            if (!(this.SiteSelectBox.SelectedItem is RssSiteInfo item)) { return; }
+
+            if (DateTime.TryParse(this.DatePick.Text, out DateTime editDate)) {
+                FilteringItems(item, this.KeywordBox.Text,
+                            editDate, this.IsReadComboBox.SelectedItem as String);
+            }
         }
 
         /// <summary>
@@ -254,8 +275,22 @@ namespace RSSReader.Pages
             if (e.Key != Key.Return) { return; }
             if (!(this.SiteSelectBox.SelectedItem is RssSiteInfo item)) { return; }
 
-            FilteringItems(item, this.KeywordBox.Text, this.DatePick.SelectedDate);
+            FilteringItems(item, this.KeywordBox.Text,
+                this.DatePick.SelectedDate, this.IsReadComboBox.SelectedItem as String);
+        }
+
+        /// <summary>
+        /// 選択肢を変更したときにフィルタをかける
+        /// </summary>
+        private void IsReadComboBox_SelectionChanged(Object sender, SelectionChangedEventArgs e)
+        {
+            if (!(this.SiteSelectBox.SelectedItem is RssSiteInfo item)) { return; }
+
+            FilteringItems(item, this.KeywordBox.Text,
+                this.DatePick.SelectedDate, this.IsReadComboBox.SelectedItem as String);
         }
         #endregion
+
+
     }
 }
