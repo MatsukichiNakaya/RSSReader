@@ -52,6 +52,10 @@ namespace RSSReader.Pages
         {
             InitializeComponent();
 
+            if (!Directory.Exists(DAT_DIR)) {
+                Directory.CreateDirectory(DAT_DIR);
+            }
+
             // DBファイルが無ければ作成する。
             if (!File.Exists(MASTER_PATH)) {
                 CommFunc.CreateDB();

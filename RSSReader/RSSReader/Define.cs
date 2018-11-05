@@ -2,10 +2,13 @@
 
 namespace RSSReader
 {
+    /// <summary>
+    /// 共通定義
+    /// </summary>
     internal class Define
     {
         /// <summary>
-        /// 
+        /// アプリケーションタイトル
         /// </summary>
         public const String TITLE = "RssReader";
 
@@ -21,6 +24,11 @@ namespace RSSReader
         /// atom
         /// </summary>
         public const String RSS_HEADER_ATOM = "feed";
+
+        /// <summary>
+        /// 設定ファイルなどのディレクトリ
+        /// </summary>
+        public const String DAT_DIR = @".\Dat";
 
         /// <summary>
         /// RSSフィードの履歴保存DB
