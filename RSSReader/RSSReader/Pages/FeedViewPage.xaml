@@ -15,8 +15,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="70"/>
-            <RowDefinition Height="70"/>
-            <RowDefinition/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Image x:Name="BackgroundImage"
                Grid.RowSpan="3"
@@ -64,83 +63,76 @@
                     Style="{StaticResource PicButtonKey}"
                     Click="FabButton_Click"/>
         </StackPanel>
-        <Grid x:Name="FilterPanel" Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="25"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="260"/>
-                <ColumnDefinition Width="300"/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <DockPanel Grid.ColumnSpan="2" LastChildFill="True">
-                <TextBlock DockPanel.Dock="Left" Text="Filter Option" Margin="5"/>
-                <Button x:Name="FilterButton" Style="{StaticResource CommButtonKey}"
-                        DockPanel.Dock="Right" Visibility="Hidden"
-                        Content="Append" Margin="5,0" Click="FilterButton_Click"/>
-                <TextBox x:Name="FilterBox" Margin="5,3,5,3" Visibility="Hidden"/>
-            </DockPanel>
-            <StackPanel Grid.Row="1" Grid.Column="0" Margin="5" Orientation="Horizontal">
-                <TextBlock Text="Date" Margin="5" VerticalAlignment="Center"/>
-                <DatePicker x:Name="DatePick" Width="150" VerticalAlignment="Center" FontSize="14"
+        <StackPanel Grid.Row="1" >
+            <Expander Header="Filter Option" Margin="0" VerticalAlignment="Top">
+                <Grid x:Name="FilterPanel" Height="37">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="260"/>
+                        <ColumnDefinition Width="300"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Row="0" Grid.Column="0" Margin="5" Orientation="Horizontal">
+                        <TextBlock Text="Date" Margin="5" VerticalAlignment="Center"/>
+                        <DatePicker x:Name="DatePick" Width="150" VerticalAlignment="Center" FontSize="14"
                             CalendarClosed="DatePick_CalendarClosed" PreviewKeyDown="DatePick_PreviewKeyDown"/>
-                <Button x:Name="DateClearButton" Style="{StaticResource CommButtonKey}"
-                        DockPanel.Dock="Right" Width="50"
-                        Content="Clear" Margin="5,3" Click="DateClearButton_Click"/>
-            </StackPanel>
-            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
-                <TextBlock Text="keyword" Margin="10,5,5,5" VerticalAlignment="Center"/>
-                <Border BorderBrush="Black" BorderThickness="1,1,0,1" Padding="0" Height="25">
-                    <TextBox x:Name="KeywordBox" Margin="0,0,0,0"
-                             Height="25" Width="200" VerticalContentAlignment="Center"
-                             AcceptsReturn="False" BorderThickness="0"
-                             PreviewKeyDown="KeywordBox_PreviewKeyDown"/>
-                </Border>
-                <Border BorderBrush="Black" BorderThickness="0,1,1,1" Padding="0" Height="25">
-                    <Button x:Name="KeywordClearButton" Style="{StaticResource FlatButtonKey}"
-                            Width="20" Content="r" Click="KeywordClearButton_Click"
-                            FontFamily="Marlett" Background="White" Height="25"/>
-                </Border>
-            </StackPanel>
-            <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal">
-                <TextBlock Text="Read State" Margin="10,5,5,5" VerticalAlignment="Center"/>
-                <ComboBox x:Name="IsReadComboBox"  Width="100" Height="25" 
-                          Style="{StaticResource ComboBoxFlatStyle}"
-                          Margin="5" SelectionChanged="IsReadComboBox_SelectionChanged"/>
-            </StackPanel>
-        </Grid>
-        <ListBox x:Name="FeedList" Grid.Row="2" ItemsSource="{Binding}"
-                 ItemContainerStyle="{DynamicResource ListBoxItemStyle}"
-                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                 Background="Transparent"
-                 PreviewKeyDown="FeedList_PreviewKeyDown">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <DockPanel Margin="5">
-                        <CheckBox x:Name="IsReadCheckBox" IsChecked="{Binding IsRead}" Visibility="Hidden"/>
-                        <TextBlock DockPanel.Dock="Top" Text="{Binding Title}" FontSize="16" FontWeight="Bold">
-                            <TextBlock.Style>
-                                <Style TargetType="{x:Type TextBlock}">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsChecked, ElementName=IsReadCheckBox}" Value="true">
-                                            <Setter Property="Foreground" Value="Gray"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-                        <TextBlock DockPanel.Dock="Top" Text="{Binding PublishDate}" FontSize="12" Foreground="DarkGray"/>
-                        <DockPanel Margin="5, 3, 5, 3">
-                            <Border DockPanel.Dock="Left" BorderThickness="0" Margin="0,0,10,0" BorderBrush="Black"
-                                    VerticalAlignment="Top" Height="90" Width="{Binding ThumbWidth}">
-                                <Image Source="{Binding Thumbnail}" Stretch="Uniform"/>
-                            </Border>
-                            <TextBlock DockPanel.Dock="Right" Text="{Binding Summary}" FontSize="10" Foreground="Gray"/>
+                        <Button x:Name="DateClearButton" Style="{StaticResource CommButtonKey}"
+                                DockPanel.Dock="Right" Width="50"
+                                Content="Clear" Margin="5,3" Click="DateClearButton_Click"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+                        <TextBlock Text="keyword" Margin="10,5,5,5" VerticalAlignment="Center"/>
+                        <Border BorderBrush="Black" BorderThickness="1,1,0,1" Padding="0" Height="25">
+                            <TextBox x:Name="KeywordBox" Margin="0,0,0,0"
+                                     Height="25" Width="200" VerticalContentAlignment="Center"
+                                     AcceptsReturn="False" BorderThickness="0"
+                                     PreviewKeyDown="KeywordBox_PreviewKeyDown"/>
+                        </Border>
+                        <Border BorderBrush="Black" BorderThickness="0,1,1,1" Padding="0" Height="25">
+                            <Button x:Name="KeywordClearButton" Style="{StaticResource FlatButtonKey}"
+                                    Width="20" Content="r" Click="KeywordClearButton_Click"
+                                    FontFamily="Marlett" Background="White" Height="25"/>
+                        </Border>
+                    </StackPanel>
+                    <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
+                        <TextBlock Text="Read State" Margin="10,5,5,5" VerticalAlignment="Center"/>
+                        <ComboBox x:Name="IsReadComboBox"  Width="100" Height="25"
+                                  Style="{StaticResource ComboBoxFlatStyle}"
+                                  Margin="5" SelectionChanged="IsReadComboBox_SelectionChanged"/>
+                    </StackPanel>
+                </Grid>
+            </Expander>
+            <ListBox x:Name="FeedList" ItemsSource="{Binding}"
+                     ItemContainerStyle="{DynamicResource ListBoxItemStyle}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     Background="Transparent"
+                     PreviewKeyDown="FeedList_PreviewKeyDown">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <DockPanel Margin="5">
+                            <CheckBox x:Name="IsReadCheckBox" IsChecked="{Binding IsRead}" Visibility="Hidden"/>
+                            <TextBlock DockPanel.Dock="Top" Text="{Binding Title}" FontSize="16" FontWeight="Bold">
+                                <TextBlock.Style>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsChecked, ElementName=IsReadCheckBox}" Value="true">
+                                                <Setter Property="Foreground" Value="Gray"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <TextBlock DockPanel.Dock="Top" Text="{Binding PublishDate}" FontSize="12" Foreground="DarkGray"/>
+                            <DockPanel Margin="5, 3, 5, 3">
+                                <Border DockPanel.Dock="Left" BorderThickness="0" Margin="0,0,10,0" BorderBrush="Black"
+                                        VerticalAlignment="Top" Height="90" Width="{Binding ThumbWidth}">
+                                    <Image Source="{Binding Thumbnail}" Stretch="Uniform"/>
+                                </Border>
+                                <TextBlock DockPanel.Dock="Right" Text="{Binding Summary}" FontSize="10" Foreground="Gray"/>
+                            </DockPanel>
                         </DockPanel>
-                    </DockPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel>
     </Grid>
 </Page>

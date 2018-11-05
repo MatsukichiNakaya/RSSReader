@@ -214,16 +214,6 @@ namespace RSSReader.Pages
         }
 
         /// <summary>
-        /// RSS フィードへのフィルタ適用ボタン
-        /// </summary>
-        private void FilterButton_Click(Object sender, RoutedEventArgs e)
-        {
-            if (!(this.SiteSelectBox.SelectedItem is RssSiteInfo item)) { return; }
-
-            //FilteringItems(item, this.KeywordBox.Text, this.DatePick.SelectedDate);
-        }
-
-        /// <summary>
         /// 日付フィルタ解除ボタン
         /// </summary>
         private void DateClearButton_Click(Object sender, RoutedEventArgs e)
