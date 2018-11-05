@@ -63,8 +63,9 @@
                     Style="{StaticResource PicButtonKey}"
                     Click="FabButton_Click"/>
         </StackPanel>
-        <StackPanel Grid.Row="1" >
-            <Expander Header="Filter Option" Margin="0" VerticalAlignment="Top">
+        <DockPanel Grid.Row="1" LastChildFill="True">
+            <Expander Header="Filter Option" DockPanel.Dock="Top"
+                      Margin="0,3" VerticalAlignment="Top">
                 <Grid x:Name="FilterPanel" Height="37">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="260"/>
@@ -133,6 +134,6 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-        </StackPanel>
+        </DockPanel>
     </Grid>
 </Page>
