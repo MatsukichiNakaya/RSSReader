@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 
@@ -20,8 +22,7 @@ namespace RSSReader.Model
         public static String ReadFeedTitle(String url)
         {
             try {
-                var xml = new XmlDocument();
-                xml.Load(url);
+                var xml = XmlDocumentLoad(url);
                 var elem = xml.DocumentElement;
 
                 // atom 形式
@@ -61,14 +62,69 @@ namespace RSSReader.Model
         }
 
         /// <summary>
+        /// Xmlの内容を読み込む
+        /// </summary>
+        /// <param name="url">XmlのURL</param>
+        /// <returns>XmlDocumentのデータ</returns>
+        private static XmlDocument XmlDocumentLoad(String url)
+        {
+            var client = new WebClient() { Encoding = Encoding.UTF8 };
+            var xmlString = client.DownloadString(url);
+            var xml = new XmlDocument();
+
+            // 無効な文字列を削除してデータを読み込む
+            xml.LoadXml(Sanitize(xmlString));
+            return xml;
+        }
+
+        /// <summary>
+        /// XmlTextReaderとしてxmlの内容を読み込む
+        /// </summary>
+        /// <param name="url">XmlのURL</param>
+        /// <returns>XmlTextReaderのデータ</returns>
+        private static XmlTextReader XmlTextReaderLoad(String url)
+        {
+            var xml = XmlDocumentLoad(url);
+            TextWriter tw = new StringWriter();
+            XmlWriter xw = new XmlTextWriter(tw);
+            xml.WriteTo(xw);
+            // 無効な文字列を削除してデータを読み込む
+            return new XmlTextReader(new StringReader(Sanitize(tw.ToString())));
+        }
+
+        /// <summary>
+        /// Xml無効な文字を削除
+        /// </summary>
+        /// <param name="xml">xmlの内容</param>
+        /// <returns>無効文字を削除した内容</returns>
+        private static String Sanitize(String xml)
+        {
+            var sb = new StringBuilder();
+
+            foreach (var c in xml) {
+                var code = (Int32)c;
+
+                if (code == 0x9 ||
+                    code == 0xa ||
+                    code == 0xd ||
+                    (0x20 <= code && code <= 0xd7ff) ||
+                    (0xe000 <= code && code <= 0xfffd) ||
+                    (0x10000 <= code && code <= 0x10ffff)) {
+                    sb.Append(c);
+                }
+            }
+            return sb.ToString();
+        }
+
+        /// <summary>
         /// Xmlから名前空間の取得
         /// </summary>
         /// <param name="url">RSS feed の URL</param>
         /// <returns>名前空間一覧</returns>
         private static String[] GetNamespace(String url)
         {
-            var xml = new XmlDocument();
-            xml.Load(url);
+            var xml = XmlDocumentLoad(url);
+
             var elem = xml.DocumentElement;
             var results = new List<String>();
 
@@ -92,9 +148,9 @@ namespace RSSReader.Model
         {
             elementItems = new List<Dictionary<String, MarkupElement>>();
             Dictionary<String, MarkupElement> currentItem = null;
-            var reader = new XmlTextReader(url);
-
+            var reader = XmlTextReaderLoad(url);
             String name = String.Empty;
+
             while (reader.Read()) {
                 // CDATAのデータは前に読み込んだタグを親として設定する
                 if (reader.NodeType != XmlNodeType.Element) {
@@ -106,7 +162,6 @@ namespace RSSReader.Model
                     }
                     continue;
                 }
-
                 name = reader.Name;
 
                 //   "item" RSS1.0, RSS2.0  "entry" atom
