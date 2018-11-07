@@ -40,27 +40,34 @@ namespace RSSReader.Pages
         /// <summary>動作設定</summary>
         public RssConfigure Config { get; set; }
 
-        /// <summary>フィルタ適用状態</summary>
-        //private EditMode FilterState { get; set; }
+        /// <summary>ページ指定</summary>
+        private Int32 PageID { get;  set; }
         #endregion
 
         #region コンストラクタ
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
         public FeedViewPage()
         {
             InitializeComponent();
 
-            if (!Directory.Exists(DAT_DIR)) {
-                Directory.CreateDirectory(DAT_DIR);
-            }
+            InitializeControls(-1);
+        }
 
-            // DBファイルが無ければ作成する。
-            if (!File.Exists(MASTER_PATH)) {
-                CommFunc.CreateDB();
-            }
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public FeedViewPage(Int32 pageID)
+        {
+            InitializeComponent();
 
+            InitializeControls(pageID);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="page"></param>
+        private void InitializeControls(Int32 pageID)
+        {
             // RSSフィード登録サイトの読み込み
             ReLoadSiteItems();
 
@@ -79,8 +86,10 @@ namespace RSSReader.Pages
             this.IsReadComboBox.SelectedIndex = 0;
 
             // 設定値の読み込み
-            this.Config = CommFunc.ConfigLoad();
-            ReadBackground(this.Config.BackgroundImagePath, this.Config.ImagePosition);
+            this.Config = App.Configure;
+            ReadBackground(this.Config?.BackgroundImagePath, this.Config?.ImagePosition);
+
+            this.PageID = pageID;
         }
         #endregion
 
@@ -94,13 +103,21 @@ namespace RSSReader.Pages
             if (0 < this.SiteSelectBox.Items.Count) {
                 // 前回のページ保持オプション
                 if (this.Config.IsKeepPage) {
-                    if (Int32.TryParse(TextFile.Read(PAGE_DAT), out Int32 id)) {
-                        Int32 page = GetIndexFromMasterID(id);
-                        if (0 <= page && page < this.SiteSelectBox.Items.Count) {
-                            // 正常にデータが読めたら値を設定。
-                            this.SiteSelectBox.SelectedIndex = page;
-                            return;
+                    Int32 id = 0;
+                    // メインウインドウからの指定があれば優先する
+                    if (this.PageID < 0) {
+                        if ( ! Int32.TryParse(TextFile.Read(PAGE_DAT), out id)) {
+                            id = 0;
                         }
+                    }
+                    else {
+                        id = this.PageID;
+                    }
+                    Int32 page = GetIndexFromMasterID(id);
+                    if (0 <= page && page < this.SiteSelectBox.Items.Count) {
+                        // 正常にデータが読めたら値を設定。
+                        this.SiteSelectBox.SelectedIndex = page;
+                        return;
                     }
                 }
                 this.SiteSelectBox.SelectedIndex = 0;
@@ -148,6 +165,8 @@ namespace RSSReader.Pages
             UpdateListBox(item, LISTBOX_UPDATE);
         }
 
+#if false
+        // Todo : RSSエディット画面へ引っ越しする。
         /// <summary>
         /// すべてのサイトデータを取得してDBを更新する
         /// </summary>
@@ -190,7 +209,7 @@ namespace RSSReader.Pages
 			}
             this.NavigationService.Navigate(new RSSEditPage(this, GetSiteInfo()));
         }
-
+#endif
         /// <summary>
         /// 記事ページ ブラウザ起動処理 ダブルクリック
         /// </summary>
@@ -288,7 +307,7 @@ namespace RSSReader.Pages
             FilteringItems(item, this.KeywordBox.Text,
                 this.DatePick.SelectedDate, this.IsReadComboBox.SelectedItem as String);
         }
-        #endregion
+#endregion
 
 
     }

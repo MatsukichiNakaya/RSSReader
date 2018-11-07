@@ -1,13 +1,65 @@
-﻿<NavigationWindow x:Class="RSSReader.MainWindow"
-                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                  xmlns:local="clr-namespace:RSSReader"
-                  mc:Ignorable="d" ShowsNavigationUI="False"
-                  Title="RssReader" Height="450" Width="800" Icon="Resources/social_rss.ico"
-                  Source="Pages/FeedViewPage.xaml" 
-                  Loaded="NavigationWindow_Loaded"
-                  Closing="NavigationWindow_Closing"
-                  Background="White">
-</NavigationWindow>
+﻿<Window x:Class="RSSReader.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RSSReader"
+        mc:Ignorable="d" 
+        x:Name="BaseWindow"
+        Title="RssReader" Height="450" Width="800" Icon="Resources/social_rss.ico"
+        Loaded="NavigationWindow_Loaded"
+        Closing="NavigationWindow_Closing"
+        Background="White" MouseLeftButtonDown="Window_MouseLeftButtonDown">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="0" UseAeroCaptionButtons="False"
+                      ResizeBorderThickness="{x:Static SystemParameters.WindowResizeBorderThickness}"/>
+    </WindowChrome.WindowChrome>
+    <Grid>
+        <!-- Head -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center" Orientation="Horizontal" Margin="5,0,0,0" Height="25">
+            <Rectangle x:Name="IconBox" Height="24" Width="24" VerticalAlignment="Center" Margin="0,0,5,0">
+                <Rectangle.Fill>
+                    <ImageBrush ImageSource="Resources/social_rss.ico"/>
+                </Rectangle.Fill>
+            </Rectangle>
+            <TextBlock Text="{Binding Title, ElementName=BaseWindow}" VerticalAlignment="Center"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,10,0">
+                <Button x:Name="ListButton" Margin="0,0,10,0"
+                        HorizontalAlignment="Right"
+                        Background="{StaticResource ListViewIcon}"
+                        ToolTip="RSS feed View"
+                        Style="{StaticResource PicMinButtonKey}"
+                        Click="ListButton_Click"/>
+                <Button x:Name="SettingButton" Margin="0,0,10,0"
+                        Background="{StaticResource ConfigIcon}"
+                        HorizontalAlignment="Right"
+                        Style="{StaticResource PicMinButtonKey}"
+                        ToolTip="Configurations"
+                        Click="SettingButton_Click"/>
+                <Button x:Name="FabButton" Margin="0,0,10,0"
+                        HorizontalAlignment="Right"
+                        Background="{StaticResource FabIcon}"
+                        ToolTip="RSS feed Edit"
+                        Style="{StaticResource PicMinButtonKey}"
+                        Click="FabButton_Click"/>
+            </StackPanel>
+            <StackPanel Grid.Row="0" VerticalAlignment="Top" HorizontalAlignment="Right" Orientation="Horizontal">
+                <Button x:Name="MinimumButton" Style="{StaticResource captionButtonStyleKey}" Content="0" Click="MinimumButton_Click"/>
+                <Button x:Name="MaximumButton" Style="{StaticResource captionButtonStyleKey}" Content="1" Click="MaximumButton_Click"/>
+                <Button x:Name="CloseButton" Style="{StaticResource closeButtonStyle}" Content="r" Click="CloseButton_Click"/>
+            </StackPanel>           
+        </StackPanel>
+
+        <!-- /Head -->
+        <Frame x:Name="MainFrame" Source="Pages/FeedViewPage.xaml"
+               Grid.Row="1" NavigationUIVisibility="Hidden">
+            
+        </Frame>
+    </Grid>
+</Window>

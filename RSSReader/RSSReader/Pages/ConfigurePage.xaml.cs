@@ -17,13 +17,11 @@ namespace RSSReader.Pages
     /// </summary>
     public partial class ConfigurePage : Page
     {
-        private FeedViewPage InnerViewPage { get; set; }
-
         /// <summary>
         /// コンストラクタ
         /// </summary>
         /// <param name="inner"></param>
-        public ConfigurePage(FeedViewPage inner)
+        public ConfigurePage()
         {
             InitializeComponent();
 
@@ -33,12 +31,10 @@ namespace RSSReader.Pages
             this.StretchBox.ItemsSource = Enum.GetNames(typeof(Stretch));
 
             try {
-                this.ConfGrid.DataContext = inner.Config;
+                this.ConfGrid.DataContext = App.Configure;
             }
             catch (Exception) {
             }
-
-            this.InnerViewPage = inner;
         }
 
         /// <summary>
@@ -55,16 +51,6 @@ namespace RSSReader.Pages
                 }
             }
             return true;
-        }
-
-        /// <summary>
-        /// 戻るボタン
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ReturnButton_Click(Object sender, RoutedEventArgs e)
-        {
-            this.NavigationService.Navigate(this.InnerViewPage);
         }
 
         /// <summary>
@@ -87,9 +73,9 @@ namespace RSSReader.Pages
                         "Error", MessageBoxButton.OK);
                     return;
                 }
-
+                
                 XmlSerializer.Save(conf, XML_PATH);
-                this.InnerViewPage.Config = conf;
+                App.Configure = conf;
             }
             catch (Exception) {
                 MessageBox.Show("setting error!", "error", MessageBoxButton.OK);

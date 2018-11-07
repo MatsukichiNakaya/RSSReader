@@ -10,77 +10,108 @@
     <ImageBrush x:Key="EditIcon" ImageSource="Resources/list-edit.png"/>
     <ImageBrush x:Key="ReturnIcon" ImageSource="Resources/return.png"/>
     <ImageBrush x:Key="BackgroundImage" ImageSource="Resources/BG.png" Stretch="Fill"/>
-
+    <ImageBrush x:Key="ListViewIcon" ImageSource="Resources/list.png"/>
+    <!-- fore color -->
+    <SolidColorBrush x:Key="CommForeColor" Color="#FF000000"/>
+    
     <Style x:Key="CommButtonKey" TargetType="{x:Type Button}">
         <Setter Property="Height" Value="20"/>
         <Setter Property="Width" Value="100"/>
     </Style>
     
     <!-- Button Style -->
-    <Style x:Key="FlatButtonKey" TargetType="{x:Type Button}">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Button}">
-                    <Border x:Name="border" BorderThickness="0" Background="{TemplateBinding Background}">
-                        <Border.Effect>
-                            <DropShadowEffect Opacity="0"/>
-                        </Border.Effect>
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal">
-                                    <Storyboard>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)"
+    <ControlTemplate  x:Key="CommButtonControlTemplate" TargetType="{x:Type Button}">
+        <Border x:Name="border" BorderThickness="0" Background="{TemplateBinding Background}">
+            <Border.Effect>
+                <DropShadowEffect Opacity="0"/>
+            </Border.Effect>
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal">
+                        <Storyboard>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)"
                                                                        Storyboard.TargetName="border">
-                                            <EasingDoubleKeyFrame KeyTime="0" Value="0.6"/>
-                                        </DoubleAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="MouseOver">
-                                    <Storyboard>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)"
+                                <EasingDoubleKeyFrame KeyTime="0" Value="0.6"/>
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </VisualState>
+                    <VisualState x:Name="MouseOver">
+                        <Storyboard>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)"
                                                                        Storyboard.TargetName="border">
-                                            <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
-                                        </DoubleAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Pressed">
-                                    <Storyboard>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)"
+                                <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </VisualState>
+                    <VisualState x:Name="Pressed">
+                        <Storyboard>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)"
                                                                        Storyboard.TargetName="border">
-                                            <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
-                                        </DoubleAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.ShadowDepth)"
+                                <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+                            </DoubleAnimationUsingKeyFrames>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.ShadowDepth)"
                                                                        Storyboard.TargetName="border">
-                                            <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
-                                        </DoubleAnimationUsingKeyFrames>
-                                        <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Color)"
+                                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                            </DoubleAnimationUsingKeyFrames>
+                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Color)"
                                                                       Storyboard.TargetName="border">
-                                            <EasingColorKeyFrame KeyTime="0" Value="White"/>
-                                        </ColorAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)"
+                                <EasingColorKeyFrame KeyTime="0" Value="White"/>
+                            </ColorAnimationUsingKeyFrames>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)"
                                                                        Storyboard.TargetName="border">
-                                            <EasingDoubleKeyFrame KeyTime="0" Value="0.6"/>
-                                        </DoubleAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Disabled"/>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-                        <ContentPresenter x:Name="contentPresenter"
+                                <EasingDoubleKeyFrame KeyTime="0" Value="0.6"/>
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </VisualState>
+                    <VisualState x:Name="Disabled"/>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+            <ContentPresenter x:Name="contentPresenter"
                                           Focusable="False"
                                           Margin="{TemplateBinding Padding}"
                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
+        </Border>
+    </ControlTemplate>
+    
+    <Style x:Key="FlatButtonKey" TargetType="{x:Type Button}">
+        <Setter Property="Template" Value="{StaticResource CommButtonControlTemplate}"/>
     </Style>
     <!-- End of Button Style -->
 
+    <!-- Window Title Bar Buttons Style -->
+    <Style x:Key="captionButtonStyleKey" TargetType="{x:Type Button}">
+        <Setter Property="FontFamily" Value="Marlett"/>
+        <Setter Property="Foreground" Value="{StaticResource CommForeColor}"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Height" Value="25"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="IsTabStop" Value="False"/>
+        <Setter Property="Margin" Value="2, 0, 2, 0"/>
+        <Setter Property="OverridesDefaultStyle" Value="True"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Template" Value="{StaticResource CommButtonControlTemplate}"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Width" Value="20"/>
+        <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
+    </Style>
+
+    <!--Close Button-->
+    <SolidColorBrush x:Key="closeButtonColor" Color="#FFFF0000"/>
+    <Style BasedOn="{StaticResource captionButtonStyleKey}"
+           x:Key="closeButtonStyle" TargetType="{x:Type Button}">
+        <Setter Property="Foreground" Value="{StaticResource closeButtonColor}"/>
+    </Style>
+    
     <Style x:Key="PicButtonKey" TargetType="{x:Type Button}" BasedOn="{StaticResource FlatButtonKey}">
         <Setter Property="Height" Value="32"/>
         <Setter Property="Width" Value="32"/>
+        <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+
+    <Style x:Key="PicMinButtonKey" TargetType="{x:Type Button}" BasedOn="{StaticResource FlatButtonKey}">
+        <Setter Property="Height" Value="24"/>
+        <Setter Property="Width" Value="24"/>
         <Setter Property="BorderThickness" Value="0"/>
     </Style>
 
@@ -198,7 +229,5 @@
         </Setter>
     </Style>
     <!-- End of Flat ComboBox Style -->
-    
-    
-    
+
 </ResourceDictionary>

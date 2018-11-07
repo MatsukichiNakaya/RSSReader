@@ -1,18 +1,28 @@
-﻿using System.Windows.Navigation;
+﻿using System;
 using System.ComponentModel;
-using System;
+using System.IO;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Navigation;
 using Project.IO;
+using RSSReader.Model;
+using RSSReader.Pages;
+
+using static RSSReader.Define;
 
 namespace RSSReader
 {
     /// <summary>
     /// MainWindow.xaml の相互作用ロジック
     /// </summary>
-    public partial class MainWindow : NavigationWindow
+    public partial class MainWindow : Window
     {
         // 現在表示しているRSSのページ番号
         private Int32 Page { get; set; }
+
+        private const Double PROP_OPACITY = 0.2;
 
         /// <summary>
         /// コンストラクタ
@@ -20,6 +30,20 @@ namespace RSSReader
         public MainWindow()
         {
             InitializeComponent();
+
+            if (!Directory.Exists(DAT_DIR)) {
+                Directory.CreateDirectory(DAT_DIR);
+            }
+
+            // DBファイルが無ければ作成する。
+            if (!File.Exists(MASTER_PATH)) {
+                CommFunc.CreateDB();
+            }
+
+            // 初期設定
+            this.Page = -1;
+            App.Configure = CommFunc.ConfigLoad();
+            ButtonDeactivate(this.ListButton);
         }
 
         /// <summary>
@@ -64,10 +88,97 @@ namespace RSSReader
         /// </summary>
         private void NavigationWindow_Closing(Object sender, CancelEventArgs e)
         {
+            if(this.Page < 0) { return; }
             // 表示するページを保持するために終了前に状態を保存する
             TextFile.Write(Define.PAGE_DAT, $"{this.Page}", TextFile.OVER_WRITE);
         }
 
+        /// <summary>
+        /// ドラッグ＆ドロップによるウインドウの移動
+        /// </summary>
+        private void Window_MouseLeftButtonDown(Object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (e.ButtonState != MouseButtonState.Pressed) { return; }
+            this.DragMove();
+        }
 
+        /// <summary>
+        /// ウインドウ最小化
+        /// </summary>
+        private void MinimumButton_Click(Object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        }
+
+        /// <summary>
+        /// ウインドウ最大化
+        /// </summary>
+        private void MaximumButton_Click(Object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Maximized;
+        }
+
+        /// <summary>
+        /// ウインドウを閉じる
+        /// </summary>
+        private void CloseButton_Click(Object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        /// <summary>
+        /// 設定画面へ
+        /// </summary>
+        private void SettingButton_Click(Object sender, RoutedEventArgs e)
+        {
+            this.MainFrame.Navigate(new ConfigurePage());
+            ButtonStateClear();
+            ButtonDeactivate(this.SettingButton);
+        }
+
+        /// <summary>
+        /// RSSフィード編集画面へ
+        /// </summary>
+        private void FabButton_Click(Object sender, RoutedEventArgs e)
+        {
+            this.MainFrame.Navigate(new RSSEditPage(CommFunc.GetSiteInfo()));
+            ButtonStateClear();
+            ButtonDeactivate(this.FabButton);
+        }
+
+        /// <summary>
+        /// リスト画面へ
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ListButton_Click(Object sender, RoutedEventArgs e)
+        {
+            this.MainFrame.Navigate(new FeedViewPage(this.Page));
+            ButtonStateClear();
+            ButtonDeactivate(this.ListButton);
+        }
+
+        /// <summary>
+        /// ボタンの非活性化
+        /// </summary>
+        /// <param name="btn">対象のボタン</param>
+        private void ButtonDeactivate(Button btn)
+        {
+            btn.IsEnabled = false;
+            btn.Opacity = PROP_OPACITY;
+        }
+
+        /// <summary>
+        /// 無効化解除
+        /// </summary>
+        private void ButtonStateClear()
+        {
+            this.ListButton.IsEnabled = true;
+            this.ListButton.Opacity = 1;
+            this.FabButton.IsEnabled = true;
+            this.FabButton.Opacity = 1;
+            this.SettingButton.IsEnabled = true;
+            this.SettingButton.Opacity = 1;
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using RSSReader.Model;
 
 namespace RSSReader
 {
@@ -7,5 +8,9 @@ namespace RSSReader
     /// </summary>
     public partial class App : Application
     {
+        /// <summary>
+        /// アプリケーション動作設定
+        /// </summary>
+        public static RssConfigure Configure;
     }
 }

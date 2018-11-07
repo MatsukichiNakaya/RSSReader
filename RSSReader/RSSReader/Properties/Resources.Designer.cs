@@ -113,6 +113,16 @@ namespace RSSReader.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap list {
+            get {
+                object obj = ResourceManager.GetObject("list", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap list_add {
             get {
                 object obj = ResourceManager.GetObject("list_add", resourceCulture);
@@ -147,6 +157,16 @@ namespace RSSReader.Properties {
             get {
                 object obj = ResourceManager.GetObject("social_rss", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static System.Drawing.Bitmap social_rss1 {
+            get {
+                object obj = ResourceManager.GetObject("social_rss1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         

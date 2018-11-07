@@ -75,8 +75,6 @@
                     HorizontalAlignment="Right" VerticalAlignment="Bottom">
             <Button x:Name="AppendButton" Style="{StaticResource CommButtonKey}"
                     Margin="10" Content="Append" Click="AppendButton_Click"/>
-            <Button x:Name="ReturnButton"  Style="{StaticResource CommButtonKey}"
-                    Margin="10" Content="Return" Click="ReturnButton_Click"/>
         </StackPanel>
     </Grid>
 </Page>

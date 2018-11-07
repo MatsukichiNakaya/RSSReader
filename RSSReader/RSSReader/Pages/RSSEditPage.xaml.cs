@@ -15,9 +15,6 @@ namespace RSSReader.Pages
     /// </summary>
     public partial class RSSEditPage : Page
     {
-        /// <summary>RSS表示ページを保持する</summary>
-        private FeedViewPage InnerViewPage { get; set; }
-
         /// <summary>RSS feedの編集状態</summary>
         private EditMode EditMode { get; set; }
 
@@ -36,10 +33,10 @@ namespace RSSReader.Pages
         /// </summary>
         /// <param name="page">RSS表示ページ</param>
         /// <param name="sites">サイト一覧</param>
-        public RSSEditPage(FeedViewPage page, IEnumerable<RssSiteInfo> sites)
+        public RSSEditPage(IEnumerable<RssSiteInfo> sites)
         {
             InitializeComponent();
-            this.InnerViewPage = page;
+
             this.FavEditBox.ItemsSource = sites;
             ChangeEditMode(EditMode.None);
         }
@@ -133,8 +130,6 @@ namespace RSSReader.Pages
                     return;
                 }
             }
-            this.InnerViewPage.ReLoadSiteItems();
-            this.NavigationService.Navigate(this.InnerViewPage);
         }
 
         /// <summary>

@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -85,6 +86,33 @@ namespace RSSReader
                     " master_id integer not null," +
                     " last_update text not null);");
             }
+        }
+
+        /// <summary>
+        /// コンボボックスに設定するデータを取得する
+        /// </summary>
+        /// <returns>登録サイト一覧</returns>
+        public static IEnumerable<RssSiteInfo> GetSiteInfo()
+        {
+            var cmbItems = new List<RssSiteInfo>();
+            using (var db = new SQLite(MASTER_PATH)) {
+
+                db.Open();
+
+                var ret = db.Select("select * from rss_master");
+                if (ret.Count == 0) {
+                    return cmbItems;
+                }
+                Int32 count = ret["id"].Count;
+                for (Int32 i = 0; i < count; i++) {
+                    cmbItems.Add(new RssSiteInfo() {
+                        ID = Int32.Parse(ret["id"][i]),
+                        SiteName = ret["site"][i],
+                        Link = ret["url"][i],
+                    });
+                }
+            }
+            return cmbItems;
         }
     }
 }

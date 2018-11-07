@@ -40,28 +40,14 @@
                     Style="{StaticResource FlatButtonKey}"
                     ToolTip="Update list"
                     Click="SiteReloadButton_Click"/>
-            <Button x:Name="AllDownloadButton" Margin="10,0,0,0"
+            <!--<Button x:Name="AllDownloadButton" Margin="10,0,0,0"
                     Width="24" Height="24" BorderThickness="0"
                     Background="{StaticResource DownloadIcon}"
                     Style="{StaticResource FlatButtonKey}"
                     ToolTip="All RSS Download"
-                    Click="AllDownloadButton_Click"/>
+                    Click="AllDownloadButton_Click"/>-->
             <TextBlock x:Name="IsOfflineBox" Text="Offline" VerticalAlignment="Center"
                        Margin="20,0,0,0" FontSize="20" Visibility="Hidden"/>
-        </StackPanel>
-        <StackPanel Grid.Row="0" HorizontalAlignment="Right" Orientation="Horizontal">
-            <Button x:Name="SettingButton" Margin="0,0,10,0"
-                    Background="{StaticResource ConfigIcon}"
-                    HorizontalAlignment="Right"
-                    Style="{StaticResource PicButtonKey}"
-                    ToolTip="Configurations"
-                    Click="SettingButton_Click"/>
-            <Button x:Name="FabButton" Margin="0,0,10,0"
-                    HorizontalAlignment="Right"
-                    Background="{StaticResource FabIcon}"
-                    ToolTip="RSS feed"
-                    Style="{StaticResource PicButtonKey}"
-                    Click="FabButton_Click"/>
         </StackPanel>
         <DockPanel Grid.Row="1" LastChildFill="True">
             <Expander Header="Filter Option" DockPanel.Dock="Top"

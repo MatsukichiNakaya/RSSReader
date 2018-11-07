@@ -21,37 +21,9 @@ namespace RSSReader.Pages
         /// <summary>
         /// コンボボックスの中身を設定する
         /// </summary>
-        public void ReLoadSiteItems()
+        private void ReLoadSiteItems()
         {
-            this.SiteSelectBox.ItemsSource = GetSiteInfo();
-        }
-
-        /// <summary>
-        /// コンボボックスに設定するデータを取得する
-        /// </summary>
-        /// <returns>登録サイト一覧</returns>
-        private IEnumerable<RssSiteInfo> GetSiteInfo()
-        {
-            var cmbItems = new List<RssSiteInfo>();
-            using (var db = new SQLite(MASTER_PATH)) {
-
-                db.Open();
-
-                var ret = db.Select("select * from rss_master");
-				if (ret.Count == 0)
-				{
-					return cmbItems;
-				}
-                Int32 count = ret["id"].Count;
-                for (Int32 i = 0; i < count; i++) {
-                    cmbItems.Add(new RssSiteInfo() {
-                        ID          = Int32.Parse(ret["id"][i]),
-                        SiteName    = ret["site"][i],
-                        Link        = ret["url"][i],
-                    });
-                }
-            }
-            return cmbItems;
+            this.SiteSelectBox.ItemsSource = CommFunc.GetSiteInfo();
         }
 
         /// <summary>

@@ -43,19 +43,14 @@
         </StackPanel>
         <DockPanel Grid.Row="2">
             <TextBlock DockPanel.Dock="Top" Text="Registed RSS feeds" Margin="10"/>
-            <DockPanel DockPanel.Dock="Right" Margin="5,20,10,0">
-                <Button x:Name="EditButton" Margin="0,0,0,15" DockPanel.Dock="Top"
+            <StackPanel DockPanel.Dock="Right" Margin="5,20,10,0">
+                <Button x:Name="EditButton" Margin="0,0,0,15"
                         Style="{StaticResource PicButtonKey}" Background="{StaticResource EditIcon}"
                         ToolTip="Edit" Click="EditButton_Click"/>
-                <Button x:Name="DelButton" Margin="0,0,0,10" DockPanel.Dock="Top"
+                <Button x:Name="DelButton" Margin="0,0,0,10"
                         Style="{StaticResource PicButtonKey}" Background="{StaticResource DeleteIcon}"
                         ToolTip="Delete" Click="DelButton_Click"/>
-                <Button x:Name="ReturnButton" Margin="0,0,0,10" DockPanel.Dock="Bottom"
-                        VerticalAlignment="Bottom"
-                        Style="{StaticResource PicButtonKey}"
-                        Background="{StaticResource ReturnIcon}"
-                        Click="ReturnButton_Click" ToolTip="Return"/>
-            </DockPanel>
+            </StackPanel>
             <ListBox x:Name="FavEditBox" Margin="5" ItemsSource="{Binding}"
                      ItemContainerStyle="{DynamicResource ListBoxItemStyle}">
                 <ListBox.ItemTemplate>
