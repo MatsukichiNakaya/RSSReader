@@ -80,29 +80,55 @@
     <!-- End of Button Style -->
 
     <!-- Window Title Bar Buttons Style -->
-    <Style x:Key="captionButtonStyleKey" TargetType="{x:Type Button}">
+    <Style x:Key="flatButtonStyle" TargetType="Button"
+           BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+        <!-- デフォルトのテーマを無効化 -->
+        <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="FontFamily" Value="Marlett"/>
-        <Setter Property="Foreground" Value="{StaticResource CommForeColor}"/>
-        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-        <Setter Property="Height" Value="25"/>
-        <Setter Property="HorizontalContentAlignment" Value="Center"/>
-        <Setter Property="IsTabStop" Value="False"/>
         <Setter Property="Margin" Value="2, 0, 2, 0"/>
-        <Setter Property="OverridesDefaultStyle" Value="True"/>
-        <Setter Property="Padding" Value="0"/>
-        <Setter Property="Template" Value="{StaticResource CommButtonControlTemplate}"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
-        <Setter Property="Width" Value="20"/>
+        <Setter Property="Height" Value="25"/>
+        <Setter Property="Width" Value="25"/>
         <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}">
+                        <ContentPresenter x:Name="contentPresenter"
+                                          Focusable="False"
+                                          Margin="{TemplateBinding Padding}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--Min Max Button-->
+    <Style x:Key="flatButtonCaptionStyle" TargetType="{x:Type Button}"
+           BasedOn="{StaticResource flatButtonStyle}">
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="true">
+                <Setter Property="Background" Value="LightGray"/>
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <!--Close Button-->
     <SolidColorBrush x:Key="closeButtonColor" Color="#FFFF0000"/>
-    <Style BasedOn="{StaticResource captionButtonStyleKey}"
-           x:Key="closeButtonStyle" TargetType="{x:Type Button}">
+    <Style x:Key="flatButtonCaptionCloseStyle" TargetType="{x:Type Button}"
+           BasedOn="{StaticResource flatButtonStyle}">
         <Setter Property="Foreground" Value="{StaticResource closeButtonColor}"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="true">
+                <Setter Property="Background" Value="LightPink"/>
+            </Trigger>
+        </Style.Triggers>
     </Style>
-    
+
+    <!--Ico Button-->
     <Style x:Key="PicButtonKey" TargetType="{x:Type Button}" BasedOn="{StaticResource FlatButtonKey}">
         <Setter Property="Height" Value="32"/>
         <Setter Property="Width" Value="32"/>

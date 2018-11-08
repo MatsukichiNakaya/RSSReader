@@ -4,12 +4,18 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RSSReader"
-        mc:Ignorable="d" 
-        x:Name="BaseWindow"
-        Title="RssReader" Height="450" Width="800" Icon="Resources/social_rss.ico"
+        mc:Ignorable="d"
+        x:Name="BaseWindow" Title="RssReader" Height="450" Width="800"
+        Icon="Resources/social_rss.ico"
         Loaded="NavigationWindow_Loaded"
         Closing="NavigationWindow_Closing"
-        Background="White" MouseLeftButtonDown="Window_MouseLeftButtonDown">
+        MouseLeftButtonDown="Window_MouseLeftButtonDown" Foreground="Black">
+    <!--<Window.Background>
+        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="#FFB5FFF8" Offset="0"/>
+            <GradientStop Color="White" Offset="0.458"/>
+        </LinearGradientBrush>
+    </Window.Background>-->
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0" UseAeroCaptionButtons="False"
                       ResizeBorderThickness="{x:Static SystemParameters.WindowResizeBorderThickness}"/>
@@ -50,16 +56,16 @@
                         Click="FabButton_Click"/>
             </StackPanel>
             <StackPanel Grid.Row="0" VerticalAlignment="Top" HorizontalAlignment="Right" Orientation="Horizontal">
-                <Button x:Name="MinimumButton" Style="{StaticResource captionButtonStyleKey}" Content="0" Click="MinimumButton_Click"/>
-                <Button x:Name="MaximumButton" Style="{StaticResource captionButtonStyleKey}" Content="1" Click="MaximumButton_Click"/>
-                <Button x:Name="CloseButton" Style="{StaticResource closeButtonStyle}" Content="r" Click="CloseButton_Click"/>
-            </StackPanel>           
+                <Button x:Name="MinimumButton" Style="{StaticResource flatButtonCaptionStyle}" Content="0" Click="MinimumButton_Click" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <Button x:Name="MaximumButton" Style="{StaticResource flatButtonCaptionStyle}" Content="1" Click="MaximumButton_Click"/>
+                <Button x:Name="CloseButton" Style="{StaticResource flatButtonCaptionCloseStyle}" Content="r" Click="CloseButton_Click"/>
+            </StackPanel>
         </StackPanel>
 
         <!-- /Head -->
         <Frame x:Name="MainFrame" Source="Pages/FeedViewPage.xaml"
                Grid.Row="1" NavigationUIVisibility="Hidden">
-            
+
         </Frame>
     </Grid>
 </Window>
