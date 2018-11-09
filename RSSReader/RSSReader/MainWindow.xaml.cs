@@ -149,13 +149,21 @@ namespace RSSReader
         /// <summary>
         /// リスト画面へ
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void ListButton_Click(Object sender, RoutedEventArgs e)
         {
             this.MainFrame.Navigate(new FeedViewPage(this.Page));
             ButtonStateClear();
             ButtonDeactivate(this.ListButton);
+        }
+
+        /// <summary>
+        /// ピックアップ画面へ
+        /// </summary>
+        private void PickupButton_Click(Object sender, RoutedEventArgs e)
+        {
+            this.MainFrame.Navigate(new PickupPage());
+            ButtonStateClear();
+            ButtonDeactivate(this.PickupButton);
         }
 
         /// <summary>
@@ -179,6 +187,10 @@ namespace RSSReader
             this.FabButton.Opacity = 1;
             this.SettingButton.IsEnabled = true;
             this.SettingButton.Opacity = 1;
+            this.PickupButton.IsEnabled = true;
+            this.PickupButton.Opacity = 1;
         }
+
+
     }
 }

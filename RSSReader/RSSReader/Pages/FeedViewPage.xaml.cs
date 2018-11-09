@@ -25,11 +25,6 @@ namespace RSSReader.Pages
         /// Todo : デフォルトブラウザとの切替
         /// </remarks>
         private String ChromePath { get; set; }
-        /// <summary>
-        /// Chromeのインストール先のパスが格納されているレジストリパス
-        /// </summary>
-        private const String ChromeRegKey =
-            @"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe";
 
         /// <summary>データ自動更新用のタイマ</summary>
         private DispatcherTimer AutoUpdateTimer;
@@ -37,8 +32,8 @@ namespace RSSReader.Pages
         /// <summary>アイテムの項目数</summary>
         public Int32 SiteItemCount { get { return this.SiteSelectBox.Items.Count; } }
 
-        /// <summary>動作設定</summary>
-        public RssConfigure Config { get; set; }
+        ///// <summary>動作設定</summary>
+        //public RssConfigure Config { get; set; }
 
         /// <summary>ページ指定</summary>
         private Int32 PageID { get;  set; }
@@ -86,8 +81,7 @@ namespace RSSReader.Pages
             this.IsReadComboBox.SelectedIndex = 0;
 
             // 設定値の読み込み
-            this.Config = App.Configure;
-            ReadBackground(this.Config?.BackgroundImagePath, this.Config?.ImagePosition);
+            ReadBackground(App.Configure?.BackgroundImagePath, App.Configure?.ImagePosition);
 
             this.PageID = pageID;
         }
@@ -102,7 +96,7 @@ namespace RSSReader.Pages
             // コンボボックスは最初の項目を選択する
             if (0 < this.SiteSelectBox.Items.Count) {
                 // 前回のページ保持オプション
-                if (this.Config.IsKeepPage) {
+                if (App.Configure?.IsKeepPage ?? false) {
                     Int32 id = 0;
                     // メインウインドウからの指定があれば優先する
                     if (this.PageID < 0) {
@@ -122,7 +116,7 @@ namespace RSSReader.Pages
                 }
                 this.SiteSelectBox.SelectedIndex = 0;
             }
-            DispOfflineMode(this.Config);
+            DispOfflineMode(App.Configure);
         }
 
         /// <summary>
@@ -217,7 +211,7 @@ namespace RSSReader.Pages
         {
             if (sender is ListBoxItem item) {
                 if (item.Content is FeedItem feed) {
-                    StartBrowser(feed);
+                    CommFunc.StartBrowser(this.ChromePath, feed);
                 }
             }
         }
@@ -231,7 +225,7 @@ namespace RSSReader.Pages
 
             if (sender is ListBox box) {
                 if (box.SelectedValue is FeedItem feed) {
-                    StartBrowser(feed);
+                    CommFunc.StartBrowser(this.ChromePath, feed);
                 }
             }
         }
@@ -307,7 +301,17 @@ namespace RSSReader.Pages
             FilteringItems(item, this.KeywordBox.Text,
                 this.DatePick.SelectedDate, this.IsReadComboBox.SelectedItem as String);
         }
-#endregion
+
+        /// <summary>
+        /// ピックアップアイテムメニューの選択
+        /// </summary>
+        private void MenuItemPickup_Click(Object sender, RoutedEventArgs e)
+        {
+            if( this.FeedList.SelectedItem is FeedItem feedItem) {
+                RegistPickup(feedItem.ID);
+            }
+        }
+        #endregion
 
 
     }

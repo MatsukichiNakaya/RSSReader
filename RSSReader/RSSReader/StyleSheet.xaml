@@ -11,6 +11,8 @@
     <ImageBrush x:Key="ReturnIcon" ImageSource="Resources/return.png"/>
     <ImageBrush x:Key="BackgroundImage" ImageSource="Resources/BG.png" Stretch="Fill"/>
     <ImageBrush x:Key="ListViewIcon" ImageSource="Resources/list.png"/>
+    <ImageBrush x:Key="PickupIcon" ImageSource="Resources/Fav.png"/>
+    
     <!-- fore color -->
     <SolidColorBrush x:Key="CommForeColor" Color="#FF000000"/>
     
@@ -85,7 +87,7 @@
         <!-- デフォルトのテーマを無効化 -->
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="FontFamily" Value="Marlett"/>
-        <Setter Property="Margin" Value="2, 0, 2, 0"/>
+        <Setter Property="Margin" Value="0, 0, 0, 0"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="Height" Value="25"/>
@@ -123,7 +125,8 @@
         <Setter Property="Foreground" Value="{StaticResource closeButtonColor}"/>
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="true">
-                <Setter Property="Background" Value="LightPink"/>
+                <Setter Property="Background" Value="Red"/>
+                <Setter Property="Foreground" Value="White"/>
             </Trigger>
         </Style.Triggers>
     </Style>

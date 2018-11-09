@@ -11,6 +11,9 @@
         <Style x:Key="ListBoxItemStyle" TargetType="{x:Type ListBoxItem}">
             <EventSetter Event="MouseDoubleClick" Handler="ListBoxItem_MouseDoubleClick"/>
         </Style>
+        <ContextMenu x:Key="ItemMenu">
+            <MenuItem Header="Pickup" Click="MenuItemPickup_Click"/>
+        </ContextMenu>
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -90,6 +93,7 @@
             </Expander>
             <ListBox x:Name="FeedList" ItemsSource="{Binding}"
                      ItemContainerStyle="{DynamicResource ListBoxItemStyle}"
+                     ContextMenu="{StaticResource ItemMenu}"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                      Background="Transparent"
                      PreviewKeyDown="FeedList_PreviewKeyDown">

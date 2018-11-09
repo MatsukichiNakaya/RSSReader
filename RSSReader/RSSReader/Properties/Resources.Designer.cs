@@ -103,6 +103,16 @@ namespace RSSReader.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        internal static System.Drawing.Bitmap Fav {
+            get {
+                object obj = ResourceManager.GetObject("Fav", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         internal static System.Drawing.Bitmap folder_apollon {
             get {
                 object obj = ResourceManager.GetObject("folder_apollon", resourceCulture);

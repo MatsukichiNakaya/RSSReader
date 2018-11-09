@@ -60,7 +60,7 @@ namespace RSSReader.Pages
 
             if(!IsOnline()) {
                 // インターネット接続が無いため、強制的にオフラインモードに設定
-                this.Config.IsOffLine = true;
+                App.Configure.IsOffLine = true;
             }
 
             using (var db = new SQLite(MASTER_PATH)) {
@@ -68,7 +68,7 @@ namespace RSSReader.Pages
                 db.Open();
 
                 // 更新間隔の確認とOffLineモードオプションを確認する
-                if (CanRSSRead(db, masterID) && !this.Config.IsOffLine) {
+                if (CanRSSRead(db, masterID) && !(App.Configure?.IsOffLine ?? false)) {
                     // フィードデータダウンロード
                     feedItems = RSS.ReadFeedItems(url);
                     // ダウンロード時刻アップデート
@@ -133,10 +133,10 @@ namespace RSSReader.Pages
             // リストを更新しないのでサムネイル画像は読み込まない。
             if(!isListUpdate) { return items; }
 
-            if (this.Config.IsShowImage) {
+            if (App.Configure?.IsShowImage ?? false) {
                 // サムネの読み込み
                 foreach (var item in items) {
-                    item.Thumbnail = GetImage(item.ThumbUri, masterID, item.Host);
+                    item.Thumbnail = CommFunc.GetImage(item.ThumbUri, masterID, item.Host);
                     if (item.ThumbUri != null) {
                         item.ThumbWidth = DEFAULT_PIC_WIDTH;
                     }
@@ -152,6 +152,7 @@ namespace RSSReader.Pages
             return items;
         }
 
+#if false
         /// <summary>
         /// サムネ画像をダウンロード、または、キャッシュから読み込む
         /// </summary>
@@ -172,6 +173,7 @@ namespace RSSReader.Pages
                 return FeedItem.DownloadThumb(url?.AbsoluteUri, masterID, host);
             }
         }
+#endif
 
         /// <summary>
         /// webからのデータとDBのログ情報をマージして返す。
@@ -183,8 +185,10 @@ namespace RSSReader.Pages
         private IEnumerable<FeedItem> GetFeedItemsToDB(SQLite db,
                                                 IEnumerable<FeedItem> feedItems, Int32 masterID)
         {
+            String sql = $"select * from log where master_id = {masterID}";
+
             // RSS記事のページURLをもとに新規項目を取得する
-            var registeredItem = GetLogItems(db, masterID).ToList();
+            var registeredItem = CommFunc.GetLogItems(db, sql).ToList();
             var urlHash = new HashSet<String>(registeredItem.Select(l => l.Link.AbsoluteUri));
             var newItems = GetNewcomer(feedItems, urlHash);
             Boolean isCommit = false;
@@ -203,9 +207,11 @@ namespace RSSReader.Pages
             }
             // DBに登録したので改めて取得する。
             // ※ToArray()が無いと遅延評価の影響でサムネ読み込みに影響があるので注意
-            return GetLogItems(db, masterID).ToArray();
+            //return GetLogItems(db, masterID).ToArray();
+            return CommFunc.GetLogItems(db, sql).ToArray();
         }
 
+#if false
         /// <summary>
         /// DBからFeedItemを取得する
         /// </summary>
@@ -232,6 +238,7 @@ namespace RSSReader.Pages
                 }
             }
         }
+#endif
 
         /// <summary>
         /// ログから取得したURLとかぶらないfeed項目を選別する
@@ -314,7 +321,7 @@ namespace RSSReader.Pages
                 }
             }
         }
-
+#if false
         /// <summary>
         /// Uriをもとにブラウザを起動する。
         /// </summary>
@@ -327,10 +334,10 @@ namespace RSSReader.Pages
             UpdateReadHistory(item);
 
             // ブラウザを起動
-            Process.Start(this.ChromePath, $"{this.Config?.BrowserOption ?? ""} {item.Link}");
+            Process.Start(this.ChromePath, $"{App.Configure?.BrowserOption ?? ""} {item.Link}");
 
             // 自動で最小化するオプション
-            if (this.Config?.IsAutoMinimize ?? false) {
+            if (App.Configure?.IsAutoMinimize ?? false) {
                 var bgw = WindowInfo.FindWindowByName(null, TITLE);
                 WinMessage.Send(bgw, Window_MIN_MESSAGE, IntPtr.Zero, IntPtr.Zero);
             }
@@ -365,9 +372,10 @@ namespace RSSReader.Pages
                 db.Close();
             }
         }
-        #endregion
+#endif
+#endregion
 
-        #region Network
+#region Network
         /// <summary>
         /// インターネットに接続しているか
         /// </summary>
@@ -385,17 +393,17 @@ namespace RSSReader.Pages
         {
             if (IsOnline()) {
                 // インターネット接続があっても設定がOfflineモードであれば表示する
-                if (conf.IsOffLine) {
-                    this.IsOfflineBox.Visibility = System.Windows.Visibility.Visible;
+                if (conf?.IsOffLine ?? false) {
+                    this.IsOfflineBox.Visibility = Visibility.Visible;
                 }
             }
             else {
-                this.IsOfflineBox.Visibility = System.Windows.Visibility.Visible;
+                this.IsOfflineBox.Visibility = Visibility.Visible;
             }
         }
-        #endregion
+#endregion
 
-        #region Filter
+#region Filter
         /// <summary>
         /// フィルタの解除
         /// </summary>
@@ -476,9 +484,9 @@ namespace RSSReader.Pages
             }
             return feedItems;
         }
-        #endregion
+#endregion
 
-        #region Ather
+#region Ather
         /// <summary>
         /// 背景画像の設定がある場合にその画像を読み込んで設定する
         /// </summary>
@@ -503,6 +511,39 @@ namespace RSSReader.Pages
                 this.BackgroundImage.VerticalAlignment = VerticalAlignment.Top;
             }
         }
-        #endregion
+
+        /// <summary>
+        /// ピックアップにデータ登録を行う
+        /// </summary>
+        /// <param name="logID">対象のログID</param>
+        private void RegistPickup(String logID)
+        {
+            if (String.IsNullOrWhiteSpace(logID)) { return; }
+
+            using (var db = new SQLite(MASTER_PATH)) {
+
+                db.Open();
+
+                var isCommit = false;
+                try {
+                    db.BeginTransaction();
+
+                    var ret = db.Select($"select * from pickup where log_id = {logID}");
+
+                    if (ret.Count == 0) {
+                        db.Update($"insert into pickup(log_id) values({logID})");
+                    }
+                    isCommit = true;
+                }
+                catch (Exception) {
+                    isCommit = false;
+                }
+                finally {
+                    db.EndTransaction(isCommit);
+                }
+                db.Close();
+            }
+        }
+#endregion
     }
 }

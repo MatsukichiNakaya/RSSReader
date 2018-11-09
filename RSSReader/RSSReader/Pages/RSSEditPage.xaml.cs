@@ -99,6 +99,8 @@ namespace RSSReader.Pages
                 db.Open();
                 db.BeginTransaction();
                 try {
+                    // pickupはほかのテーブルに依存するため先に削除処理を行う
+                    DeletePickupItem(db, item.ID);
                     // rss_masterからの削除
                     db.Update($"delete from rss_master where id={item.ID}");
                     // logからの削除
@@ -115,6 +117,22 @@ namespace RSSReader.Pages
             }
             // 表示から削除
             this.FavEditBox.ItemsSource = GetEditItems(item.ID);
+        }
+
+        /// <summary>
+        /// ピックアップリストに登録されたデータも削除する
+        /// </summary>
+        /// <param name="masterID"></param>
+        private void DeletePickupItem(SQLite db, Int32 masterID)
+        {
+            // 関連するpickupデータを抽出
+            var ret = db.Select($"select p.pick_id from pickup as p" +
+                                $" inner join log as l where l.master_id = {masterID}" +
+                                $" and p.log_id=l.log_id")["pick_id"];
+            // すべて削除
+            foreach (var id in ret) {
+                db.Update($"delete from pickup where pick_id={id}");
+            }
         }
 
         /// <summary>

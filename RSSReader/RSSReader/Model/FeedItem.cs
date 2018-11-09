@@ -30,6 +30,9 @@ namespace RSSReader.Model
         /// <summary>log ID</summary>
         public String ID { get; set; }
 
+        /// <summary>Master ID</summary>
+        public String MasterID { get; set; }
+
         /// <summary>記事のタイトル</summary>
         public String Title { get; set; }
         /// <summary>更新日時</summary>
@@ -66,7 +69,8 @@ namespace RSSReader.Model
         /// </summary>
         public FeedItem()
         {
-            this.ID = null; 
+            this.ID = null;
+            this.MasterID = null;
             this.Title = null;
             this.PublishDate = null;
             this.Summary = null;

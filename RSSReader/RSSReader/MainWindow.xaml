@@ -42,6 +42,12 @@
                         ToolTip="RSS feed View"
                         Style="{StaticResource PicMinButtonKey}"
                         Click="ListButton_Click"/>
+                <Button x:Name="PickupButton" Margin="0,0,10,0"
+                        HorizontalAlignment="Right"
+                        Background="{StaticResource PickupIcon}"
+                        ToolTip="RSS feed Pickup View"
+                        Style="{StaticResource PicMinButtonKey}"
+                        Click="PickupButton_Click"/>
                 <Button x:Name="SettingButton" Margin="0,0,10,0"
                         Background="{StaticResource ConfigIcon}"
                         HorizontalAlignment="Right"

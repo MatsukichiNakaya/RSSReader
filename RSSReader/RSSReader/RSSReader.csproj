@@ -89,6 +89,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Pages\PickupPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\RSSEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -112,6 +116,9 @@
     </Compile>
     <Compile Include="Pages\FeedViewPage.xaml.cs">
       <DependentUpon>FeedViewPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\PickupPage.xaml.cs">
+      <DependentUpon>PickupPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\RSSEditPage.xaml.cs">
       <DependentUpon>RSSEditPage.xaml</DependentUpon>
@@ -189,6 +196,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\social_rss.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Fav.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.109.2\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.109.2\build\net46\System.Data.SQLite.Core.targets')" />

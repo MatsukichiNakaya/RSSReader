@@ -46,6 +46,12 @@ namespace RSSReader
         public const String PAGE_DAT = @".\Dat\page.dat";
 
         /// <summary>
+        /// Chromeのインストール先のパスが格納されているレジストリパス
+        /// </summary>
+        public const String ChromeRegKey =
+            @"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe";
+
+        /// <summary>
         /// エディットモード
         /// </summary>
         public enum EditMode

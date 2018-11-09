@@ -1,11 +1,13 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Project.DataBase;
 using Project.Serialization.Xml;
+using Project.Windows;
 using RSSReader.Model;
 
 using static RSSReader.Define;
@@ -85,6 +87,10 @@ namespace RSSReader
                     "sync_id integer primary key," +
                     " master_id integer not null," +
                     " last_update text not null);");
+                // 後で見るためのアイテムを登録するテーブル
+                db.CreateTable("CREATE TABLE pickup(" +
+                    "pick_id integer primary key," +
+                    " log_id integer not null);");
             }
         }
 
@@ -113,6 +119,106 @@ namespace RSSReader
                 }
             }
             return cmbItems;
+        }
+
+        /// <summary>
+        /// DBからFeedItemを取得する
+        /// </summary>
+        /// <param name="db">DBインスタンス</param>
+        /// <param name="sql">実行するSQL</param>
+        /// <returns>feed項目一覧</returns>
+        public static IEnumerable<FeedItem> GetLogItems(SQLite db, String sql)
+        {
+            var ret = db.Select(sql);
+
+            if (0 < ret.Count) {
+                Int32 count = ret["log_id"].Count;
+                for (Int32 i = 0; i < count; i++) {
+                    yield return new FeedItem() {
+                        ID = ret["log_id"][i],
+                        MasterID = ret["master_id"][i],
+                        Title = ret["title"][i],
+                        PublishDate = ret["reg_date"][i],
+                        Summary = ret["summary"][i]?.Replace("'", ""),
+                        Link = new Uri(ret["page_url"][i]),
+                        IsRead = Int32.Parse(ret["is_read"][i]) == 1,
+                        ThumbUri = String.IsNullOrEmpty(ret["thumb_url"][i])
+                                        ? null : new Uri(ret["thumb_url"][i]),
+                    };
+                }
+            }
+        }
+
+        /// <summary>
+        /// サムネ画像をダウンロード、または、キャッシュから読み込む
+        /// </summary>
+        /// <param name="url">サムネイルのUrl</param>
+        /// <param name="masterID">DB上のマスターID</param>
+        /// <param name="host">webサイトのホスト名</param>
+        /// <returns>画像データ</returns>
+        public static ImageSource GetImage(Uri url, Int32 masterID, String host)
+        {
+            String localPath = FeedItem.GetChashPath(url?.AbsoluteUri, masterID, host);
+
+            if (File.Exists(localPath)) {
+                // chashから読み込み
+                return FeedItem.ReadChashThumb(localPath);
+            }
+            else {
+                // ダウンロード
+                return FeedItem.DownloadThumb(url?.AbsoluteUri, masterID, host);
+            }
+        }
+
+        /// <summary>
+        /// Uriをもとにブラウザを起動する。
+        /// </summary>
+        /// <param name="item"></param>
+        public static void StartBrowser(String browserPath, FeedItem item)
+        {
+            item.IsRead = true;
+
+            // 既読履歴を更新
+            UpdateReadHistory(item);
+
+            // ブラウザを起動
+            Process.Start(browserPath, $"{App.Configure?.BrowserOption ?? ""} {item.Link}");
+
+            // 自動で最小化するオプション
+            if (App.Configure?.IsAutoMinimize ?? false) {
+                var bgw = WindowInfo.FindWindowByName(null, TITLE);
+                WinMessage.Send(bgw, Window_MIN_MESSAGE, IntPtr.Zero, IntPtr.Zero);
+            }
+        }
+
+        /// <summary>
+        /// 既読済みの設定を行う
+        /// </summary>
+        /// <param name="item">feed項目</param>
+        private static void UpdateReadHistory(FeedItem item)
+        {
+            var masterID = Int32.Parse(item.MasterID);
+            if (masterID < 0) { return; }
+
+            using (var db = new SQLite(MASTER_PATH)) {
+
+                db.Open();
+
+                var isCommit = false;
+                try {
+                    db.BeginTransaction();
+                    // 既読は [ 1 ] を設定する。
+                    db.Update($"update log set is_read = 1 where log_id = {item.ID}");
+                    isCommit = true;
+                }
+                catch (Exception) {
+                    isCommit = false;
+                }
+                finally {
+                    db.EndTransaction(isCommit);
+                }
+                db.Close();
+            }
         }
     }
 }
