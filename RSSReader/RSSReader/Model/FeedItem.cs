@@ -8,12 +8,14 @@ using System.Windows.Media.Imaging;
 
 namespace RSSReader.Model
 {
-    /// <summary>
-    /// RSS feed のデータクラス
-    /// </summary>
-    public class FeedItem : INotifyPropertyChanged
+	/// <summary>
+	/// RSS feed のデータクラス
+	/// </summary>
+	public class FeedItem : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+		#region Property/Constructor
+		/// <summary>プロパティ通知イベント</summary>
+		public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>FeedItemで使用する日付のフォーマット</summary>
         public const String DATE_FORMAT = "yyyy/MM/dd HH:mm:ss";
@@ -81,22 +83,26 @@ namespace RSSReader.Model
             this.Thumbnail = null;
             this.ThumbWidth = 0;
         }
+		#endregion
 
-        /// <summary>
-        /// プロパティ変更通知イベント
-        /// </summary>
-        /// <param name="propertyName"></param>
-        private void OnPropertyChanged(String propertyName)
+		#region Event
+		/// <summary>
+		/// プロパティ変更通知イベント
+		/// </summary>
+		/// <param name="propertyName"></param>
+		private void OnPropertyChanged(String propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+		#endregion
 
-        /// <summary>
-        /// キャッシュ用のディレクトリ有無確認
-        /// </summary>
-        /// <param name="dir">ディレクトリパス</param>
-        /// <returns>ディレクトリ有無</returns>
-        public static Boolean ExistsChashDirectory(String dir)
+		#region Thumbnail
+		/// <summary>
+		/// キャッシュ用のディレクトリ有無確認
+		/// </summary>
+		/// <param name="dir">ディレクトリパス</param>
+		/// <returns>ディレクトリ有無</returns>
+		public static Boolean ExistsChashDirectory(String dir)
         {
             String chashDir = $@"{CHASH_DIR}\{dir}";
             if (!Directory.Exists(chashDir))
@@ -200,5 +206,6 @@ namespace RSSReader.Model
             }
             return imageSource;
         }
-    }
+		#endregion
+	}
 }

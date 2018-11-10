@@ -45,11 +45,13 @@ namespace RSSReader.Model
         /// <returns>記事項目一覧</returns>
         public static List<FeedItem> ReadFeedItems(String url)
         {
-            // xml に使用されている名前空間の取得
-            var namespaceList = GetNamespace(url);
+			var xml = XmlDocumentLoad(url);
+
+			// xml に使用されている名前空間の取得
+			var namespaceList = GetNamespace(xml);
 
             // Xmlを解析してItemまたはentry要素を取得する。
-            GetElements(url, out List<Dictionary<String, MarkupElement>> elementItems);
+            GetElements(xml, out List<Dictionary<String, MarkupElement>> elementItems);
 
             // 返り値とするアイテムの配列
             var itemList = new List<FeedItem>();
@@ -82,14 +84,13 @@ namespace RSSReader.Model
         /// </summary>
         /// <param name="url">XmlのURL</param>
         /// <returns>XmlTextReaderのデータ</returns>
-        private static XmlTextReader XmlTextReaderLoad(String url)
+        private static XmlTextReader XmlTextReaderLoad(XmlDocument xml)
         {
-            var xml = XmlDocumentLoad(url);
             TextWriter tw = new StringWriter();
             XmlWriter xw = new XmlTextWriter(tw);
             xml.WriteTo(xw);
             // 無効な文字列を削除してデータを読み込む
-            return new XmlTextReader(new StringReader(Sanitize(tw.ToString())));
+            return new XmlTextReader(new StringReader(tw.ToString()));
         }
 
         /// <summary>
@@ -121,9 +122,9 @@ namespace RSSReader.Model
         /// </summary>
         /// <param name="url">RSS feed の URL</param>
         /// <returns>名前空間一覧</returns>
-        private static String[] GetNamespace(String url)
+        private static String[] GetNamespace(XmlDocument xml)
         {
-            var xml = XmlDocumentLoad(url);
+            //var xml = XmlDocumentLoad(url);
 
             var elem = xml.DocumentElement;
             var results = new List<String>();
@@ -143,12 +144,12 @@ namespace RSSReader.Model
         /// </summary>
         /// <param name="url">RSS feed の URL</param>
         /// <param name="elementItems">記事項目一覧(整形無し)</param>
-        private static void GetElements(String url,
+        private static void GetElements(XmlDocument xml,
                                         out List<Dictionary<String, MarkupElement>> elementItems)
         {
             elementItems = new List<Dictionary<String, MarkupElement>>();
             Dictionary<String, MarkupElement> currentItem = null;
-            var reader = XmlTextReaderLoad(url);
+            var reader = XmlTextReaderLoad(xml);
             String name = String.Empty;
 
             while (reader.Read()) {

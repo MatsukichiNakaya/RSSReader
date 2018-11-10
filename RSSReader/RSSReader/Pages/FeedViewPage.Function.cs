@@ -1,21 +1,19 @@
-﻿using System;
+﻿using Project.DataBase;
+using RSSReader.Model;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using Project.DataBase;
-using Project.Windows;
-using RSSReader.Model;
 
 using static RSSReader.Define;
 
 namespace RSSReader.Pages
 {
-    public partial class FeedViewPage : Page
+	public partial class FeedViewPage : Page
     {
         #region ComboBox
         /// <summary>
@@ -375,7 +373,7 @@ namespace RSSReader.Pages
 #endif
 #endregion
 
-#region Network
+		#region Network
         /// <summary>
         /// インターネットに接続しているか
         /// </summary>
@@ -401,9 +399,9 @@ namespace RSSReader.Pages
                 this.IsOfflineBox.Visibility = Visibility.Visible;
             }
         }
-#endregion
+		#endregion
 
-#region Filter
+		#region Filter
         /// <summary>
         /// フィルタの解除
         /// </summary>
@@ -484,9 +482,9 @@ namespace RSSReader.Pages
             }
             return feedItems;
         }
-#endregion
+		#endregion
 
-#region Ather
+		#region Ather
         /// <summary>
         /// 背景画像の設定がある場合にその画像を読み込んで設定する
         /// </summary>
@@ -544,6 +542,6 @@ namespace RSSReader.Pages
                 db.Close();
             }
         }
-#endregion
+		#endregion
     }
 }

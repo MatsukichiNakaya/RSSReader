@@ -23,11 +23,11 @@ namespace RSSReader.Model
         /// </summary>
         private String _link;
         public String Link {
-            get { return _link; }
+            get { return this._link; }
             set {
-                if (value != _link)
+                if (value != this._link)
                 {
-                    _link = value;
+					this._link = value;
                     OnPropertyChanged(nameof(this.Link));
                 }
             }

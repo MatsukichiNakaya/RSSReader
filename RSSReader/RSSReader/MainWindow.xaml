@@ -20,58 +20,62 @@
         <WindowChrome CaptionHeight="0" UseAeroCaptionButtons="False"
                       ResizeBorderThickness="{x:Static SystemParameters.WindowResizeBorderThickness}"/>
     </WindowChrome.WindowChrome>
-    <Grid>
-        <!-- Head -->
-        <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center" Orientation="Horizontal" Margin="5,0,0,0" Height="25">
-            <Rectangle x:Name="IconBox" Height="24" Width="24" VerticalAlignment="Center" Margin="0,0,5,0">
-                <Rectangle.Fill>
-                    <ImageBrush ImageSource="Resources/social_rss.ico"/>
-                </Rectangle.Fill>
-            </Rectangle>
-            <TextBlock Text="{Binding Title, ElementName=BaseWindow}" VerticalAlignment="Center"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,10,0">
-                <Button x:Name="ListButton" Margin="0,0,10,0"
-                        HorizontalAlignment="Right"
-                        Background="{StaticResource ListViewIcon}"
-                        ToolTip="RSS feed View"
-                        Style="{StaticResource PicMinButtonKey}"
-                        Click="ListButton_Click"/>
-                <Button x:Name="PickupButton" Margin="0,0,10,0"
-                        HorizontalAlignment="Right"
-                        Background="{StaticResource PickupIcon}"
-                        ToolTip="RSS feed Pickup View"
-                        Style="{StaticResource PicMinButtonKey}"
-                        Click="PickupButton_Click"/>
-                <Button x:Name="SettingButton" Margin="0,0,10,0"
-                        Background="{StaticResource ConfigIcon}"
-                        HorizontalAlignment="Right"
-                        Style="{StaticResource PicMinButtonKey}"
-                        ToolTip="Configurations"
-                        Click="SettingButton_Click"/>
-                <Button x:Name="FabButton" Margin="0,0,10,0"
-                        HorizontalAlignment="Right"
-                        Background="{StaticResource FabIcon}"
-                        ToolTip="RSS feed Edit"
-                        Style="{StaticResource PicMinButtonKey}"
-                        Click="FabButton_Click"/>
+    <Border BorderBrush="Black" BorderThickness="1">
+        <Grid>
+            <!-- Head -->
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <!--<StackPanel Background="LightGray"></StackPanel>-->
+            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center"
+                        Orientation="Horizontal" Margin="5,0,0,0" Height="25">
+                <Rectangle x:Name="IconBox" Height="24" Width="24" VerticalAlignment="Center" Margin="0,0,5,0">
+                    <Rectangle.Fill>
+                        <ImageBrush ImageSource="Resources/social_rss.ico"/>
+                    </Rectangle.Fill>
+                </Rectangle>
+                <TextBlock Text="{Binding Title, ElementName=BaseWindow}" VerticalAlignment="Center"/>
             </StackPanel>
-            <StackPanel Grid.Row="0" VerticalAlignment="Top" HorizontalAlignment="Right" Orientation="Horizontal">
-                <Button x:Name="MinimumButton" Style="{StaticResource flatButtonCaptionStyle}" Content="0" Click="MinimumButton_Click" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                <Button x:Name="MaximumButton" Style="{StaticResource flatButtonCaptionStyle}" Content="1" Click="MaximumButton_Click"/>
-                <Button x:Name="CloseButton" Style="{StaticResource flatButtonCaptionCloseStyle}" Content="r" Click="CloseButton_Click"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,10,0">
+                    <Button x:Name="ListButton" Margin="0,0,10,0"
+                            HorizontalAlignment="Right"
+                            Background="{StaticResource ListViewIcon}"
+                            ToolTip="RSS feed View"
+                            Style="{StaticResource PicMinButtonKey}"
+                            Click="ListButton_Click"/>
+                    <Button x:Name="PickupButton" Margin="0,0,10,0"
+                            HorizontalAlignment="Right"
+                            Background="{StaticResource PickupIcon}"
+                            ToolTip="RSS feed Pickup View"
+                            Style="{StaticResource PicMinButtonKey}"
+                            Click="PickupButton_Click"/>
+                    <Button x:Name="SettingButton" Margin="0,0,10,0"
+                            Background="{StaticResource ConfigIcon}"
+                            HorizontalAlignment="Right"
+                            Style="{StaticResource PicMinButtonKey}"
+                            ToolTip="Configurations"
+                            Click="SettingButton_Click"/>
+                    <Button x:Name="FabButton" Margin="0,0,10,0"
+                            HorizontalAlignment="Right"
+                            Background="{StaticResource FabIcon}"
+                            ToolTip="RSS feed Edit"
+                            Style="{StaticResource PicMinButtonKey}"
+                            Click="FabButton_Click"/>
+                </StackPanel>
+                <StackPanel Grid.Row="0" VerticalAlignment="Top" HorizontalAlignment="Right" Orientation="Horizontal">
+                    <Button x:Name="MinimumButton" Style="{StaticResource flatButtonCaptionStyle}" Content="0" Click="MinimumButton_Click" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Button x:Name="MaximumButton" Style="{StaticResource flatButtonCaptionStyle}" Content="1" Click="MaximumButton_Click"/>
+                    <Button x:Name="CloseButton" Style="{StaticResource flatButtonCaptionCloseStyle}" Content="r" Click="CloseButton_Click"/>
+                </StackPanel>
             </StackPanel>
-        </StackPanel>
 
-        <!-- /Head -->
-        <Frame x:Name="MainFrame" Source="Pages/FeedViewPage.xaml"
+            <!-- /Head -->
+            <Frame x:Name="MainFrame" Source="Pages/FeedViewPage.xaml"
                Grid.Row="1" NavigationUIVisibility="Hidden">
 
-        </Frame>
-    </Grid>
+            </Frame>
+        </Grid>
+    </Border>
 </Window>
