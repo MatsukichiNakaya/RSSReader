@@ -21,13 +21,6 @@ namespace RSSReader.Pages
         /// <summary>RSS feedの編集しているアイテムの番号</summary>
         private Int32 EditingNo { get; set; }
 
-        /// <summary>DBのInsert, Updateの種別</summary>
-        private enum DBCommandType
-        {
-            Insert = 0,
-            Update,
-        }
-
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -53,7 +46,7 @@ namespace RSSReader.Pages
                 return;
             }
 
-            if (!UpdateRSS(DBCommandType.Insert, url, out Int32 id, out String title)) {
+            if (!InsertRSS(url, out Int32 id, out String title)) {
                 return;
             }
             // 改めて要素を取得  リストへ追加して表示する
@@ -266,7 +259,8 @@ namespace RSSReader.Pages
             foreach (var item in items) {
                 if (item.ID == id) {
                     // DB更新
-                    if (UpdateRSS(DBCommandType.Update, this.RssInputBox.Text, out id, out _)) {
+                    if (CommFunc.DBCommit($"update rss_master set" +
+                        $" url='{this.RssInputBox.Text}' where id={item.ID}")) {
                         // アイテム欄更新
                         item.Link = this.RssInputBox.Text;
                     }
@@ -279,47 +273,44 @@ namespace RSSReader.Pages
         }
 
         /// <summary>
-        /// RSSのサイト登録テーブルを更新する
+        /// サイト登録処理
         /// </summary>
-        /// <param name="type">DB更新種別</param>
         /// <param name="url">webサイトURL</param>
         /// <param name="masterID">DB上のマスターID</param>
-        /// <param name="title">webサイト名</param>
+        /// <param name="title">サイト名</param>
         /// <returns>更新成功有無</returns>
-        private Boolean UpdateRSS(DBCommandType type, String url,
-                                    out Int32 masterID, out String title)
+        private Boolean InsertRSS(String url, out Int32 masterID, out String title)
         {
             masterID = ERROR_RESULT;
-            title = null;
-            try {
-                using (var db = new SQLite(MASTER_PATH)) {
+            // RSSを一度取得して有効か確かめる。
+            title = RSS.ReadFeedTitle(url);
 
-                    db.Open();
-
-                    // DB登録有無確認 
-                    if (SiteExists(db, url)) {
-                        MessageBox.Show("It is already registered.");
-                        return false;
-                    }
-                    // RSSを一度取得する
-                    title = RSS.ReadFeedTitle(url);
-                    if (title == null) {
-                        MessageBox.Show("Failed to get information.");
-                        return false;
-                    }
-
-                    if (type == DBCommandType.Insert) {
+            if (title == null) {
+                MessageBox.Show("Failed to get information.");
+                return false;
+            }
+            var isCommit = false;
+            using (var db = new SQLite(MASTER_PATH)) {
+                db.Open();
+                // DB登録有無確認 
+                if (SiteExists(db, url)) {
+                    MessageBox.Show("It is already registered.");
+                }
+                else {
+                    try {
+                        db.BeginTransaction();
                         masterID = SiteRegist(db, title, url);
+                        isCommit = true;
                     }
-                    else {
-                        db.Update($"update rss_master set url='{url}' where id={masterID}");
+                    catch (Exception) {
+                        isCommit = false;
+                    }
+                    finally {
+                        db.EndTransaction(isCommit);
                     }
                 }
             }
-            catch (Exception) {
-                return false;
-            }
-            return true;
+            return isCommit;
         }
 
         /// <summary>

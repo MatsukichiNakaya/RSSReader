@@ -1,17 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Project.DataBase;
 using Project.IO;
 using RSSReader.Model;
@@ -91,7 +83,6 @@ namespace RSSReader.Pages
                 }
                 catch (Exception) {
                 }
-                db.Close();
             }
             // サムネイル読み込み
             if (items != null) {
@@ -112,6 +103,52 @@ namespace RSSReader.Pages
                 }
             }
             return items;
+        }
+
+        /// <summary>
+        /// 既読の項目を削除するボタン
+        /// </summary>
+        private void ReadReleaseButton_Click(Object sender, RoutedEventArgs e)
+        {
+            if (!(this.FeedList.ItemsSource is IEnumerable<FeedItem> items)) { return; }
+
+            // 既読のログIDを取得する。
+            var logIDs = items.Where(x => x.IsRead).Select(x => x.ID);
+
+            // 削除候補のIDをまとめて削除する
+            CommFunc.DBCommit(
+                $"delete from pickup where (log_id) in ({String.Join(",", logIDs)})");
+
+            // ピックアップアイテムの取得
+            this.FeedList.ItemsSource = GetFeedPickItems();
+        }
+
+        /// <summary>
+        /// 一つの項目を削除
+        /// </summary>
+        private void MenuItemRelease_Click(Object sender, RoutedEventArgs e)
+        {
+            if (!(this.FeedList.ItemsSource is IEnumerable<FeedItem> items)) { return; }
+            if (!(this.FeedList.SelectedItem is FeedItem target)){ return; }
+
+            // DBから登録削除
+            CommFunc.DBCommit($"delete from pickup where log_id = {target.ID}");
+
+            this.FeedList.ItemsSource = ExceptID(items, target.ID);
+        }
+
+        /// <summary>
+        /// 指定のIDを除いたリストを返す
+        /// </summary>
+        /// <param name="itemList">FeedItemのリスト</param>
+        /// <param name="id">除外対象のID</param>
+        /// <returns>指定のIDを除いたリスト</returns>
+        private IEnumerable<FeedItem> ExceptID(IEnumerable<FeedItem> itemList, String id)
+        {
+            foreach (var item in itemList) {
+                if(id == item.ID) { continue; }
+                yield return item;
+            }
         }
     }
 }

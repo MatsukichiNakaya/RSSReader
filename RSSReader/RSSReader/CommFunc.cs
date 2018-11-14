@@ -199,16 +199,23 @@ namespace RSSReader
         {
             var masterID = Int32.Parse(item.MasterID);
             if (masterID < 0) { return; }
+            // 既読は [ 1 ] を設定する。
+            DBCommit($"update log set is_read = 1 where log_id = {item.ID}");
+        }
 
+        /// <summary>
+        /// DBへの書き込み処理
+        /// </summary>
+        /// <param name="sql">SQL文</param>
+        /// <returns>書き込み成否</returns>
+        public static Boolean DBCommit(String sql)
+        {
+            var isCommit = false;
             using (var db = new SQLite(MASTER_PATH)) {
-
                 db.Open();
-
-                var isCommit = false;
                 try {
                     db.BeginTransaction();
-                    // 既読は [ 1 ] を設定する。
-                    db.Update($"update log set is_read = 1 where log_id = {item.ID}");
+                    db.Update(sql);
                     isCommit = true;
                 }
                 catch (Exception) {
@@ -217,8 +224,8 @@ namespace RSSReader
                 finally {
                     db.EndTransaction(isCommit);
                 }
-                db.Close();
             }
+            return isCommit;
         }
     }
 }

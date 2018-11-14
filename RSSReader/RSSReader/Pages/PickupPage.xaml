@@ -11,6 +11,9 @@
         <Style x:Key="ListBoxItemStyle" TargetType="{x:Type ListBoxItem}">
             <EventSetter Event="MouseDoubleClick" Handler="ListBoxItem_MouseDoubleClick"/>
         </Style>
+        <ContextMenu x:Key="ItemMenu">
+            <MenuItem Header="Release" Click="MenuItemRelease_Click"/>
+        </ContextMenu>
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -18,10 +21,13 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Text="Pickup Item List"/>
+        <Button x:Name="ReadReleaseButton" Grid.Row="0" Style="{StaticResource CommButtonKey}"
+                Width="150" Content="Read Release" Click="ReadReleaseButton_Click"/>
         <ListBox x:Name="FeedList" Grid.Row="1"
                  ItemsSource="{Binding}" Background="Transparent"
                  ItemContainerStyle="{DynamicResource ListBoxItemStyle}"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 ContextMenu="{StaticResource ItemMenu}"
                  PreviewKeyDown="FeedList_PreviewKeyDown">
             <ListBox.ItemTemplate>
                 <DataTemplate>

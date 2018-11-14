@@ -96,7 +96,7 @@ namespace RSSReader.Pages
             var last = DateTime.Parse(ret["last_update"][0]);
 
             // 更新間隔設定値を超えているか？
-            result = INTERVAL_TIME <= (DateTime.Now - last).Minutes;
+            result = INTERVAL_TIME <= (DateTime.Now - last).TotalMinutes;
 
             return result;
         }
@@ -319,58 +319,6 @@ namespace RSSReader.Pages
                 }
             }
         }
-#if false
-        /// <summary>
-        /// Uriをもとにブラウザを起動する。
-        /// </summary>
-        /// <param name="item"></param>
-        private void StartBrowser(FeedItem item)
-        {
-            item.IsRead = true;
-
-            // 既読履歴を更新
-            UpdateReadHistory(item);
-
-            // ブラウザを起動
-            Process.Start(this.ChromePath, $"{App.Configure?.BrowserOption ?? ""} {item.Link}");
-
-            // 自動で最小化するオプション
-            if (App.Configure?.IsAutoMinimize ?? false) {
-                var bgw = WindowInfo.FindWindowByName(null, TITLE);
-                WinMessage.Send(bgw, Window_MIN_MESSAGE, IntPtr.Zero, IntPtr.Zero);
-            }
-        }
-
-        /// <summary>
-        /// 既読済みの設定を行う
-        /// </summary>
-        /// <param name="item">feed項目</param>
-        private void UpdateReadHistory(FeedItem item)
-        {
-            Int32 masterID = (this.SiteSelectBox.SelectedItem as RssSiteInfo)?.ID ?? ERROR_RESULT;
-            if (masterID < 0) { return; }
-
-            using (var db = new SQLite(MASTER_PATH)) {
-
-                db.Open();
-
-                var isCommit = false;
-                try {
-                    db.BeginTransaction();
-                    // 既読は [ 1 ] を設定する。
-                    db.Update($"update log set is_read = 1 where log_id = {item.ID}");
-                    isCommit = true;
-                }
-                catch (Exception) {
-                    isCommit = false;
-                }
-                finally {
-                    db.EndTransaction(isCommit);
-                }
-                db.Close();
-            }
-        }
-#endif
 #endregion
 
 		#region Network
@@ -407,8 +355,6 @@ namespace RSSReader.Pages
         /// </summary>
         private void FilterClear()
         {
-            //this.FilterState = EditMode.None;
-
             this.DatePick.SelectedDate = null;
             this.KeywordBox.Text = String.Empty;
             this.IsReadComboBox.SelectedIndex = 0;
@@ -539,7 +485,6 @@ namespace RSSReader.Pages
                 finally {
                     db.EndTransaction(isCommit);
                 }
-                db.Close();
             }
         }
 		#endregion
