@@ -49,6 +49,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -108,6 +109,12 @@
     <Compile Include="Model\RSS.cs" />
     <Compile Include="Model\RssConfigure.cs" />
     <Compile Include="Model\RssSiteInfo.cs" />
+    <Compile Include="NotifyIconWrapper.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="NotifyIconWrapper.Designer.cs">
+      <DependentUpon>NotifyIconWrapper.cs</DependentUpon>
+    </Compile>
     <Compile Include="Pages\ConfigurePage.xaml.cs">
       <DependentUpon>ConfigurePage.xaml</DependentUpon>
     </Compile>
@@ -126,6 +133,7 @@
     <Compile Include="Project\DataBase\SQLite.cs" />
     <Compile Include="Project\DataBase\SQLiteEnums.cs" />
     <Compile Include="Project\Extention\ArrayExtention.cs" />
+    <Compile Include="Project\Extention\MathExtention.cs" />
     <Compile Include="Project\IO\Registry.cs" />
     <Compile Include="Project\IO\Text.cs" />
     <Compile Include="Project\Serialization\XmlSerializer.cs" />
@@ -146,6 +154,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <EmbeddedResource Include="NotifyIconWrapper.resx">
+      <DependentUpon>NotifyIconWrapper.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -200,6 +211,7 @@
   <ItemGroup>
     <Resource Include="Resources\Fav.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.109.2\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.109.2\build\net46\System.Data.SQLite.Core.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

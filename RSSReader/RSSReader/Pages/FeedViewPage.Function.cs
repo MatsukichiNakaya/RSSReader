@@ -209,35 +209,6 @@ namespace RSSReader.Pages
             return CommFunc.GetLogItems(db, sql).ToArray();
         }
 
-#if false
-        /// <summary>
-        /// DBからFeedItemを取得する
-        /// </summary>
-        /// <param name="db">DBインスタンス</param>
-        /// <param name="masterID">DB上のマスターID</param>
-        /// <returns>feed項目一覧</returns>
-        private IEnumerable<FeedItem> GetLogItems(SQLite db, Int32 masterID)
-        {
-            var ret = db.Select($"select * from log where master_id = {masterID}");
-
-            if (0 < ret.Count) {
-                Int32 count = ret["log_id"].Count;
-                for (Int32 i = 0; i < count; i++) {
-                    yield return new FeedItem() {
-                        ID          = ret["log_id"][i],
-                        Title       = ret["title"][i],
-                        PublishDate = ret["reg_date"][i],
-                        Summary     = ret["summary"][i]?.Replace("'", ""),
-                        Link        = new Uri(ret["page_url"][i]),
-                        IsRead      = Int32.Parse(ret["is_read"][i]) == 1,
-                        ThumbUri    = String.IsNullOrEmpty(ret["thumb_url"][i])
-                                        ? null : new Uri(ret["thumb_url"][i]),
-                    };
-                }
-            }
-        }
-#endif
-
         /// <summary>
         /// ログから取得したURLとかぶらないfeed項目を選別する
         /// </summary>

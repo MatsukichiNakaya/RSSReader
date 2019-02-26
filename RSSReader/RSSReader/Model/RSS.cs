@@ -181,7 +181,9 @@ namespace RSSReader.Model
                             att.Add(reader.Name, reader.Value);
                         }
                     }
-                    reader.Read();
+                    else {
+                        reader.Read();
+                    }
                     if (!currentItem.Keys.Contains(name)) {
                         currentItem.Add(name, new MarkupElement(name, reader.Value, att));
                     }
@@ -251,6 +253,7 @@ namespace RSSReader.Model
                             break;
                     }
                 }
+                gfitem.ElapsedTime = CommFunc.GetElapsedTime(gfitem.PublishDate);
                 resultItems.Add(gfitem);
             }
         }

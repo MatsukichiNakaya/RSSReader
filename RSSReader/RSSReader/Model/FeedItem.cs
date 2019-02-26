@@ -39,6 +39,8 @@ namespace RSSReader.Model
         public String Title { get; set; }
         /// <summary>更新日時</summary>
         public String PublishDate { get; set; }
+        /// <summary>経過時間</summary>
+        public String ElapsedTime { get; set; }
         /// <summary>サマリー</summary>
         public String Summary { get; set; }
         /// <summary>記事へのリンク</summary>
@@ -75,6 +77,7 @@ namespace RSSReader.Model
             this.MasterID = null;
             this.Title = null;
             this.PublishDate = null;
+            this.ElapsedTime = null;
             this.Summary = null;
             this.Link = null;
             this.IsRead = false;

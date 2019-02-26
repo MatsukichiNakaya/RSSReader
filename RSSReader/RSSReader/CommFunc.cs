@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Project.Extention;
 using Project.DataBase;
 using Project.Serialization.Xml;
 using Project.Windows;
@@ -139,6 +140,7 @@ namespace RSSReader
                         MasterID = ret["master_id"][i],
                         Title = ret["title"][i],
                         PublishDate = ret["reg_date"][i],
+                        ElapsedTime = GetElapsedTime(ret["reg_date"][i]),
                         Summary = ret["summary"][i]?.Replace("'", ""),
                         Link = new Uri(ret["page_url"][i]),
                         IsRead = Int32.Parse(ret["is_read"][i]) == 1,
@@ -146,6 +148,30 @@ namespace RSSReader
                                         ? null : new Uri(ret["thumb_url"][i]),
                     };
                 }
+            }
+        }
+
+        /// <summary>
+        /// 更新時刻から現時刻までの経過時間を表示
+        /// </summary>
+        /// <param name="publishDate">更新時刻</param>
+        /// <returns>更新からｎ経過時間</returns>
+        public static String GetElapsedTime(String publishDate)
+        {
+            var update = DateTime.Parse(publishDate);
+            TimeSpan span = DateTime.Now - update;
+
+            if (24 < span.TotalHours) {
+                // 整数部だけ取得
+                return $"{(Int32)span.TotalDays.RoundDown(0)}日前";
+            }
+            else if (span.TotalHours < 1) {
+                // 整数部だけ取得
+                return $"{(Int32)span.TotalMinutes.RoundDown(0)}分前";
+            }
+            else {
+                // 整数部だけ取得
+                return $"{(Int32)span.TotalHours.RoundDown(0)}時間前";
             }
         }
 

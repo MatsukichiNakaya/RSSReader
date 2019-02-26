@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Navigation;
+using System.Windows.Media;
 using Project.IO;
 using RSSReader.Model;
 using RSSReader.Pages;
@@ -44,6 +45,12 @@ namespace RSSReader
             this.Page = -1;
             App.Configure = CommFunc.ConfigLoad();
             ButtonDeactivate(this.ListButton);
+
+            var fontfamily = new FontFamily("游ゴシック");
+            var style = new Style(typeof(Window));
+            style.Setters.Add(new Setter(Window.FontFamilyProperty, fontfamily));
+            FrameworkElement.StyleProperty.OverrideMetadata(typeof(Window),
+                                            new FrameworkPropertyMetadata(style));
         }
 
         /// <summary>
@@ -107,7 +114,8 @@ namespace RSSReader
         /// </summary>
         private void MinimumButton_Click(Object sender, RoutedEventArgs e)
         {
-            this.WindowState = WindowState.Minimized;
+            //this.WindowState = WindowState.Minimized;
+            this.Close();
         }
 
         /// <summary>
