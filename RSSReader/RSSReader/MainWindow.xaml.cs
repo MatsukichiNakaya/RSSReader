@@ -46,11 +46,11 @@ namespace RSSReader
             App.Configure = CommFunc.ConfigLoad();
             ButtonDeactivate(this.ListButton);
 
-            var fontfamily = new FontFamily("游ゴシック");
-            var style = new Style(typeof(Window));
-            style.Setters.Add(new Setter(Window.FontFamilyProperty, fontfamily));
-            FrameworkElement.StyleProperty.OverrideMetadata(typeof(Window),
-                                            new FrameworkPropertyMetadata(style));
+            //var fontfamily = new FontFamily("游ゴシック");
+            //var style = new Style(typeof(Window));
+            //style.Setters.Add(new Setter(Window.FontFamilyProperty, fontfamily));
+            //FrameworkElement.StyleProperty.OverrideMetadata(typeof(Window),
+            //                                new FrameworkPropertyMetadata(style));
         }
 
         /// <summary>

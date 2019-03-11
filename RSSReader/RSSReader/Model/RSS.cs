@@ -180,6 +180,7 @@ namespace RSSReader.Model
                         while (reader.MoveToNextAttribute()) {
                             att.Add(reader.Name, reader.Value);
                         }
+                        reader.Read();
                     }
                     else {
                         reader.Read();

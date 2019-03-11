@@ -37,6 +37,8 @@ namespace RSSReader.Pages
 
             // ピックアップアイテムの取得
             this.FeedList.ItemsSource = GetFeedPickItems();
+
+            this.ArticleBlock.Text = this.FeedList.Items.Count.ToString();
         }
 
         /// <summary>
@@ -80,6 +82,11 @@ namespace RSSReader.Pages
                     // アイテムを抽出
                     var sql = $"select * from log where (log_id) in ({String.Join(",", ret)})";
                     items = CommFunc.GetLogItems(db, sql)?.ToArray();
+
+                    foreach (var item in items) {
+                        var idRet = db.Select($"select * from rss_master where id={item.MasterID}");
+                        item.SiteName = idRet["site"][0];
+                    }
                 }
                 catch (Exception) {
                 }
@@ -121,6 +128,8 @@ namespace RSSReader.Pages
 
             // ピックアップアイテムの取得
             this.FeedList.ItemsSource = GetFeedPickItems();
+
+            this.ArticleBlock.Text = this.FeedList.Items.Count.ToString();
         }
 
         /// <summary>
@@ -135,6 +144,8 @@ namespace RSSReader.Pages
             CommFunc.DBCommit($"delete from pickup where log_id = {target.ID}");
 
             this.FeedList.ItemsSource = ExceptID(items, target.ID);
+
+            this.ArticleBlock.Text = this.FeedList.Items.Count.ToString();
         }
 
         /// <summary>

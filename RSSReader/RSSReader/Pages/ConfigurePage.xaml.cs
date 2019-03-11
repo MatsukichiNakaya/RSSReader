@@ -98,11 +98,11 @@ namespace RSSReader.Pages
                 return;
             }
 
-            // 画像ファイル削除
-            CashFileDelete();
-
             // DBの最適化
             DBMaintenance();
+            
+            // 画像ファイル削除
+            CashFileDelete();
         }
 
         /// <summary>

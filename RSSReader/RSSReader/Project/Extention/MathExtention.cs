@@ -129,6 +129,15 @@ namespace Project.Extention
         }
 
         /// <summary>
+        /// 整数精度の数値に四捨五入する
+        /// </summary>
+        /// <param name="value">元の値</param>
+        public static Int32 Round(this Double value)
+        {
+            return (Int32)Round(value, 0);
+        }
+
+        /// <summary>
         /// 指定した精度の数値に切捨てる
         /// </summary>
         /// <param name="value">元の値</param>
@@ -139,6 +148,15 @@ namespace Project.Extention
 
             return value > 0 ? Math.Floor(value * coef) / coef 
                              : Math.Ceiling(value * coef) / coef;
+        }
+
+        /// <summary>
+        /// 整数精度の数値に切捨てる
+        /// </summary>
+        /// <param name="value">元の値</param>
+        public static Int32 RoundDown(this Double value)
+        {
+            return (Int32)RoundDown(value, 0);
         }
 
         /// <summary>
@@ -155,42 +173,12 @@ namespace Project.Extention
         }
 
         /// <summary>
-        /// 整数にする為の四捨五入
+        /// 整数精度の数値に切上げる
         /// </summary>
         /// <param name="value">元の値</param>
-        /// <returns>整数値</returns>
-        public static Int32 Round(this Double value)
+        public static Int32 RoundUp(this Double value)
         {
-            Double coef = Math.Pow(10, 0); //変換用係数
-
-            return value > 0 ? (Int32)(Math.Floor((value * coef) + 0.5) / coef)
-                             : (Int32)(Math.Ceiling((value * coef) - 0.5) / coef);
-        }
-
-        /// <summary>
-        /// 整数にする為の端数切捨て
-        /// </summary>
-        /// <param name="value">元の値</param>
-        /// <returns>整数値</returns>
-        public static Int32 RoundDown(this Double value)
-        {
-            Double coef = Math.Pow(10, 0);
-
-            return value > 0 ? (Int32)(Math.Floor(value * coef) / coef)
-                             : (Int32)(Math.Ceiling(value * coef) / coef);
-        }
-
-        /// <summary>
-        /// 整数にする為の端数切上げ
-        /// </summary>
-        /// <param name="value">元の値</param>
-        /// <returns>整数値</returns>
-        public static Double RoundUp(this Double value)
-        {
-            Double coef = Math.Pow(10, 0);
-
-            return value > 0 ? (Int32)(Math.Ceiling(value * coef) / coef)
-                             : (Int32)(Math.Floor(value * coef) / coef);
+            return (Int32)RoundUp(value, 0);
         }
         #endregion
 

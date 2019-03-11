@@ -93,7 +93,20 @@ namespace Project.DataBase
         /// <summary>
         /// 射影コマンド
         /// </summary>
-        /// <param name="command"></param>
+        /// <param name="table">テーブル名</param>
+        /// <param name="colums">カラム名配列</param>
+        /// <param name="option">条件</param>
+        /// <returns></returns>
+        public Dictionary<String, List<String>> Select(String table, String[] colums = null,  String option = "")
+        {
+            String col = colums == null ? "*" : String.Join(",", colums);
+            return Select($"Select {col} from {table} {option}");
+        }
+
+        /// <summary>
+        /// 射影コマンド
+        /// </summary>
+        /// <param name="command">SQLコマンド</param>
         /// <returns></returns>
         public Dictionary<String, List<String>> Select(String command)
         {

@@ -20,8 +20,15 @@
             <RowDefinition Height="50"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" Text="Pickup Item List"/>
+        <StackPanel Margin="5">
+            <TextBlock Grid.Row="0" Text="Pickup Item List"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock x:Name="ArticleBlock" Text="0" Margin="0,0,5,0"/>
+                <TextBlock Text="articles"/>
+            </StackPanel>
+        </StackPanel>
         <Button x:Name="ReadReleaseButton" Grid.Row="0" Style="{StaticResource CommButtonKey}"
+                HorizontalAlignment="Right" Margin="5"
                 Width="150" Content="Read Release" Click="ReadReleaseButton_Click"/>
         <ListBox x:Name="FeedList" Grid.Row="1"
                  ItemsSource="{Binding}" Background="Transparent"
@@ -44,7 +51,12 @@
                                 </Style>
                             </TextBlock.Style>
                         </TextBlock>
-                        <TextBlock DockPanel.Dock="Top" Text="{Binding PublishDate}" FontSize="12" Foreground="DarkGray"/>
+                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                            <TextBlock Text="{Binding PublishDate}" FontSize="12" Foreground="DarkGray"/>
+                            <TextBlock Text="{Binding ElapsedTime}" FontSize="12" Foreground="DarkGray" Margin="10,0,0,0"/>
+                            <TextBlock Text="{Binding SiteName}" FontSize="12" Foreground="DarkGray" Margin="10,0,0,0"/>
+                            <TextBlock Text="{Binding Host}" FontSize="12" Foreground="DarkGray" Margin="10,0,0,0"/>
+                        </StackPanel>
                         <DockPanel Margin="5, 3, 5, 3">
                             <Border DockPanel.Dock="Left" BorderThickness="0" Margin="0,0,10,0" BorderBrush="Black"
                                     VerticalAlignment="Top" Height="90" Width="{Binding ThumbWidth}">

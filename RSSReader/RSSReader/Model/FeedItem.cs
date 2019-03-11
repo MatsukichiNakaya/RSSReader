@@ -58,6 +58,8 @@ namespace RSSReader.Model
         }
         /// <summary>記事元のホスト名</summary>
         public String Host { get { return this.Link.Host; } }
+        /// <summary>記事のサイト名</summary>
+        public String SiteName { get; set; }
         /// <summary>サムネイルのUrl</summary>
         public Uri ThumbUri { get; set; }
         /// <summary>サムネイル画像のソース</summary>
@@ -81,6 +83,7 @@ namespace RSSReader.Model
             this.Summary = null;
             this.Link = null;
             this.IsRead = false;
+            this.SiteName = null;
 
             this.ThumbUri = null;
             this.Thumbnail = null;

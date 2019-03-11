@@ -150,29 +150,6 @@ namespace RSSReader.Pages
             return items;
         }
 
-#if false
-        /// <summary>
-        /// サムネ画像をダウンロード、または、キャッシュから読み込む
-        /// </summary>
-        /// <param name="url">サムネイルのUrl</param>
-        /// <param name="masterID">DB上のマスターID</param>
-        /// <param name="host">webサイトのホスト名</param>
-        /// <returns>画像データ</returns>
-        private ImageSource GetImage(Uri url, Int32 masterID, String host)
-        {
-            String localPath = FeedItem.GetChashPath(url?.AbsoluteUri, masterID, host);
-
-            if (File.Exists(localPath)) {   
-                // chashから読み込み
-                return FeedItem.ReadChashThumb(localPath);
-            }
-            else {   
-                // ダウンロード
-                return FeedItem.DownloadThumb(url?.AbsoluteUri, masterID, host);
-            }
-        }
-#endif
-
         /// <summary>
         /// webからのデータとDBのログ情報をマージして返す。
         /// </summary>
