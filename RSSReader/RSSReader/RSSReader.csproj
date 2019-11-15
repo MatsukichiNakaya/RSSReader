@@ -78,6 +78,7 @@
     </Compile>
     <Compile Include="CommFunc.cs" />
     <Compile Include="Define.cs" />
+    <Compile Include="HotKeyHelper.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

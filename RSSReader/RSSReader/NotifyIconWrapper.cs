@@ -1,11 +1,18 @@
-﻿using System;
+﻿//#define HOTKEY
+
+using System;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Input;
+
 
 namespace RSSReader
 {
     public partial class NotifyIconWrapper : Component
     {
+#if HOTKEY
+        private HotKeyHelper _hotkey;
+#endif
         /// <summary>
         /// 
         /// </summary>
@@ -15,6 +22,13 @@ namespace RSSReader
 
             this.ToolStripMenuClose.Click += ToolStripMenuClose_Click;
             this.ToolStripMenuOpen.Click += ToolStripMenuOpen_Click;
+#if HOTKEY
+            // HotKeyの登録
+            this._hotkey = new HotKeyHelper(this);
+            this._hotkey.Register(ModifierKeys.Control | ModifierKeys.Shift,
+                                  Key.X,
+                                  (_, __) => { MessageBox.Show("HotKey"); });
+#endif
         }
 
         /// <summary>
@@ -47,6 +61,12 @@ namespace RSSReader
         /// <param name="e"></param>
         private void ToolStripMenuClose_Click(Object sender, EventArgs e)
         {
+#if HOTKEY
+            if (this._hotkey != null) {
+                // HotKeyの登録解除
+                this._hotkey.Dispose();
+            }
+#endif
             // 現在のアプリケーションを終了
             Application.Current.Shutdown();
         }

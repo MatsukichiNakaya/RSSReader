@@ -25,6 +25,8 @@ namespace RSSReader
 
         private const Double PROP_OPACITY = 0.2;
 
+        
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -51,6 +53,8 @@ namespace RSSReader
             //style.Setters.Add(new Setter(Window.FontFamilyProperty, fontfamily));
             //FrameworkElement.StyleProperty.OverrideMetadata(typeof(Window),
             //                                new FrameworkPropertyMetadata(style));
+
+           
         }
 
         /// <summary>

@@ -32,6 +32,11 @@ namespace RSSReader.Pages
 
             try {
                 this.ConfGrid.DataContext = App.Configure;
+
+                var list = (from brush in typeof(Brushes).GetProperties() select (Brush)brush.GetValue(null, null)).ToList();
+                list.Sort(delegate (Brush source, Brush target) { return source.ToString().CompareTo(target.ToString()); });
+
+                this.MainPicker.DataContext = list;
             }
             catch (Exception) {
             }

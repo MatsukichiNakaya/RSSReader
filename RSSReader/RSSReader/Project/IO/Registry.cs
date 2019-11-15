@@ -8,6 +8,7 @@ namespace Project.IO
         public static Object GetValue(String path, String key)
         {
             Object result = null;
+#if false
             try
             {
                 using (RegistryKey regKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(path))
@@ -18,7 +19,9 @@ namespace Project.IO
                 }
             }
             catch (Exception) { result = null; }
-
+#else
+            result = @"C:\Program Files (x86)\Google\Chrome Dev\Application\chrome.exe";
+#endif
             return result;
         }
     }

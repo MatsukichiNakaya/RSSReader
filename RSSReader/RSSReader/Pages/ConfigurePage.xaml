@@ -13,6 +13,30 @@
             <Setter Property="HorizontalAlignment" Value="Right"/>
             <Setter Property="Margin" Value="0,0,10,0"/>
         </Style>
+        <ControlTemplate x:Key="ToggleTemplate" TargetType="ToggleButton">
+            <ContentPresenter />
+        </ControlTemplate>
+        <Grid x:Key="SelectContent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal" Margin="4,0">
+                <TextBlock Text="選択色 :" />
+                <Border CornerRadius="6" Background="Orange" Width="60" Margin="4,0" />
+            </StackPanel>
+            <Grid x:Name="arrowGlyph" IsHitTestVisible="False" Margin="4,3,4,3" Grid.Column="1">
+                <Path x:Name="Arrow" Width="7" Height="4" Data="M 0,1 C0,1 0,0 0,0 0,0 3,0 3,0 3,0 3,1 3,1 3,1 4,1 4,1 4,1 4,0 4,0 4,0 7,0 7,0 7,0 7,1 7,1 7,1 6,1 6,1 6,1 6,2 6,2 6,2 5,2 5,2 5,2 5,3 5,3 5,3 4,3 4,3 4,3 4,4 4,4 4,4 3,4 3,4 3,4 3,3 3,3 3,3 2,3 2,3 2,3 2,2 2,2 2,2 1,2 1,2 1,2 1,1 1,1 1,1 0,1 0,1 z" Fill="#FF000000" />
+            </Grid>
+        </Grid>
+        <Style x:Key="ColorPickerStyle" TargetType="{x:Type Popup}">
+            <Setter Property="HorizontalOffset" Value="1"/>
+            <Setter Property="VerticalOffset" Value="1"/>
+            <Setter Property="AllowsTransparency" Value="True"/>
+            <Setter Property="StaysOpen" Value="False"/>
+            <Setter Property="Placement" Value="Bottom"/>
+            <Setter Property="Focusable" Value="False"/>
+        </Style>
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -25,11 +49,12 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
                 <RowDefinition Height="90"/>
                 <RowDefinition/>
-                <RowDefinition Height="150"/>
+                <RowDefinition/>
+                <RowDefinition/>
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource TextComm}" Text="Brower Options"/>
             <TextBox x:Name="BrowsBox" Grid.Row="0" Grid.Column="1"
@@ -40,7 +65,7 @@
                      Height="20" Width="50" Margin="10,0,10,0" HorizontalAlignment="Left"
                      Text="{Binding UpdateSpan}"/>
             <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource TextComm}" Text="Switch Options"/>
-            <StackPanel Grid.Row="2" Grid.Column="1">
+            <StackPanel Grid.Row="2" Grid.Column="1" VerticalAlignment="Center">
                 <CheckBox x:Name="CheckShowImage" IsChecked="{Binding IsShowImage}"
                       VerticalAlignment="Center" Margin="10,3" Content="Show Image"/>
                 <CheckBox x:Name="CheckKeepPage" IsChecked="{Binding IsKeepPage}"
@@ -55,16 +80,56 @@
                      Height="20" Margin="10,0,10,0"
                      Text="{Binding BackgroundImagePath}"/>
             <TextBlock Grid.Row="4" Grid.Column="0" Style="{StaticResource TextComm}" Text="Image Position"/>
-            <StackPanel x:Name="PosGrid" Grid.Row="4" Grid.Column="1" Orientation="Vertical">
-                <TextBlock Text="HorizontalAlignment" Margin="3,3,0,0"/>
-                <ComboBox x:Name="HAnchorBox" Style="{StaticResource ComboBoxFlatStyle}" Width="100"
-                          HorizontalAlignment="Left" Margin="3,0,0,10" SelectedIndex="{Binding ImagePosition.XAnchor, Mode=TwoWay}"/>
-                <TextBlock Text="VerticalAlignment" Margin="3,3,0,0"/>
-                <ComboBox x:Name="VAnchorBox" Style="{StaticResource ComboBoxFlatStyle}" Width="100"
-                          HorizontalAlignment="Left" Margin="3,0,0,10" SelectedIndex="{Binding ImagePosition.YAnchor, Mode=TwoWay}"/>
-                <TextBlock Text="Stretch" Margin="3,3,0,0"/>
-                <ComboBox x:Name="StretchBox" Style="{StaticResource ComboBoxFlatStyle}" Width="100"
-                          HorizontalAlignment="Left" Margin="3,0,0,10" SelectedIndex="{Binding ImagePosition.Stretch, Mode=TwoWay}"/>
+            <StackPanel x:Name="PosGrid" Grid.Row="4" Grid.Column="1" Orientation="Horizontal">
+                <StackPanel Margin="5" Height="50">
+                    <TextBlock Text="HorizontalAlignment" Margin="3,3,0,0" HorizontalAlignment="Center"/>
+                    <ComboBox x:Name="HAnchorBox" Style="{StaticResource ComboBoxFlatStyle}" Width="100"
+                              HorizontalAlignment="Center" Margin="3,0,0,10"
+                              SelectedIndex="{Binding ImagePosition.XAnchor, Mode=TwoWay}"/>
+                </StackPanel>
+                <StackPanel Margin="5" Height="50">
+                    <TextBlock Text="VerticalAlignment" Margin="3,3,0,0" HorizontalAlignment="Center"/>
+                    <ComboBox x:Name="VAnchorBox" Style="{StaticResource ComboBoxFlatStyle}" Width="100"
+                              HorizontalAlignment="Center" Margin="3,0,0,10"
+                              SelectedIndex="{Binding ImagePosition.YAnchor, Mode=TwoWay}"/>
+                </StackPanel>
+                <StackPanel Margin="5" Height="50">
+                    <TextBlock Text="Stretch" Margin="3,3,0,0" HorizontalAlignment="Center"/>
+                    <ComboBox x:Name="StretchBox" Style="{StaticResource ComboBoxFlatStyle}" Width="100"
+                              HorizontalAlignment="Center" Margin="3,0,0,10"
+                              SelectedIndex="{Binding ImagePosition.Stretch, Mode=TwoWay}"/>
+                </StackPanel>
+            </StackPanel>
+            <TextBlock Grid.Row="5" Grid.Column="0" Style="{StaticResource TextComm}" Text="Font Sytle"/>
+            <StackPanel x:Name="FontGrid" Grid.Row="5" Grid.Column="1" Orientation="Horizontal">
+                <StackPanel Margin="5">
+                    <TextBlock Text="Main Font Color"/>
+                    <ToggleButton x:Name="PART_ToggleButtonMain" Content="{StaticResource SelectContent}"
+                                  Template="{StaticResource ToggleTemplate}"/>
+                    <Popup PlacementTarget="{Binding ElementName=PART_ToggleButtonMain}"
+                           IsOpen="{Binding IsChecked, ElementName=PART_ToggleButtonMain}"
+                           Style="{StaticResource ColorPickerStyle}">
+                       <StackPanel Width="200">
+                            <Border BorderBrush="Gray" BorderThickness="1" Background="#FFE8EBED">
+                                <TabControl>
+                                    <TabItem x:Name="MainPicker" Header="Standerd">
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Width="150" Orientation="Horizontal" DataContext="{Binding}"/>
+                                        </ItemsPanelTemplate>
+                                    </TabItem>
+                                    <TabItem Header="Advanced">
+                                        <TextBlock Text="カラーパレットによるユーザ定義" />
+                                    </TabItem>
+                                </TabControl>
+                            </Border>
+                        </StackPanel>
+                    </Popup>
+                </StackPanel>
+                <!--<StackPanel Margin="10,5,5,5">
+                    <TextBlock Text="Sub Font Color"/>
+                    <ToggleButton x:Name="PART_ToggleButtonSub" Content="{StaticResource SelectContent}"
+                                  Template="{StaticResource ToggleTemplate}"/>
+                </StackPanel>-->
             </StackPanel>
         </Grid>
         <StackPanel Grid.Column="0" Grid.Row="1">
