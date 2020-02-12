@@ -1,16 +1,12 @@
-﻿using System;
+﻿using Project.IO;
+using RSSReader.Pages;
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
-using System.Windows.Navigation;
-using System.Windows.Media;
-using Project.IO;
-using RSSReader.Model;
-using RSSReader.Pages;
-
 using static RSSReader.Define;
 
 namespace RSSReader
@@ -78,6 +74,9 @@ namespace RSSReader
                     // 最小化
                     this.WindowState = System.Windows.WindowState.Minimized;
                     break;
+                case Define.BROWSING_URL_MESSAGE:
+                    NavigateBrowserPage();
+                    break;
                 default:
                     break;
             }
@@ -118,8 +117,8 @@ namespace RSSReader
         /// </summary>
         private void MinimumButton_Click(Object sender, RoutedEventArgs e)
         {
-            //this.WindowState = WindowState.Minimized;
-            this.Close();
+            this.WindowState = WindowState.Minimized;
+            //this.Close();
         }
 
         /// <summary>
@@ -179,6 +178,22 @@ namespace RSSReader
         }
 
         /// <summary>
+        /// クラウド画面へ
+        /// </summary>
+        private void CloudButton_Click(Object sender, RoutedEventArgs e)
+        {
+            //this.MainFrame.Navigate(new DriveManagePage());
+            //ButtonStateClear();
+            //ButtonDeactivate(this.CloudButton);
+        }
+
+        private void NavigateBrowserPage()
+        {
+            this.MainFrame.Navigate(new BrowsingPage());
+            ButtonStateClear();
+        }
+
+        /// <summary>
         /// ボタンの非活性化
         /// </summary>
         /// <param name="btn">対象のボタン</param>
@@ -201,8 +216,8 @@ namespace RSSReader
             this.SettingButton.Opacity = 1;
             this.PickupButton.IsEnabled = true;
             this.PickupButton.Opacity = 1;
+            this.CloudButton.IsEnabled = true;
+            this.CloudButton.Opacity = 1;
         }
-
-
     }
 }

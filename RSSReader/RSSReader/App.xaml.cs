@@ -16,6 +16,8 @@ namespace RSSReader
 
         private NotifyIconWrapper notifyIcon;
 
+        public static System.Uri BrowseURL;
+
         /// <summary>
         /// System.Windows.Application.Startup イベント を発生させます。
         /// </summary>

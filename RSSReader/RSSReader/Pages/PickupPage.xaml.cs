@@ -48,7 +48,8 @@ namespace RSSReader.Pages
         {
             if (sender is ListBoxItem item) {
                 if (item.Content is FeedItem feed) {
-                    CommFunc.StartBrowser(this.ChromePath, feed);
+                    //CommFunc.StartBrowser(this.ChromePath, feed);
+                    CommFunc.NavigateMyBrowser(feed);
                 }
             }
         }
@@ -62,7 +63,8 @@ namespace RSSReader.Pages
 
             if (sender is ListBox box) {
                 if (box.SelectedValue is FeedItem feed) {
-                    CommFunc.StartBrowser(this.ChromePath, feed);
+                    //CommFunc.StartBrowser(this.ChromePath, feed);
+                    CommFunc.NavigateMyBrowser(feed);
                 }
             }
         }

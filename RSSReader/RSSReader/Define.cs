@@ -86,6 +86,11 @@ namespace RSSReader
         public const Int32 BACKGROUND_READ_MESSAGE = 32772;
 
         /// <summary>
+        /// webページ遷移メッセージ
+        /// </summary>
+        public const Int32 BROWSING_URL_MESSAGE = 32773;
+
+        /// <summary>
         /// エラー時の返り値
         /// </summary>
         public const Int32 ERROR_RESULT = -1;

@@ -63,6 +63,15 @@
                             ToolTip="RSS feed Edit"
                             Style="{StaticResource PicMinButtonKey}"
                             Click="FabButton_Click"/>
+                    <Button x:Name="CloudButton" Margin="0,0,10,0"
+                            HorizontalAlignment="Right"
+                            ToolTip="RSS feed Edit"
+                            Style="{StaticResource PicMinButtonKey}"
+                            Click="CloudButton_Click">
+                        <Button.Background>
+                            <ImageBrush ImageSource="Resources/OneDrive.png"/>
+                        </Button.Background>
+                    </Button>
                 </StackPanel>
                 <StackPanel Grid.Row="0" VerticalAlignment="Top" HorizontalAlignment="Right" Orientation="Horizontal">
                     <Button x:Name="MinimumButton" Style="{StaticResource flatButtonCaptionStyle}" Content="0" Click="MinimumButton_Click" HorizontalAlignment="Center" VerticalAlignment="Center"/>

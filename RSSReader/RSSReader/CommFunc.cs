@@ -217,6 +217,18 @@ namespace RSSReader
             }
         }
 
+        public static void NavigateMyBrowser(FeedItem item)
+        {
+            item.IsRead = true;
+
+            // 既読履歴を更新
+            UpdateReadHistory(item);
+
+            App.BrowseURL = item.Link;
+            var bgw = WindowInfo.FindWindowByName(null, TITLE);
+            WinMessage.Send(bgw, BROWSING_URL_MESSAGE, IntPtr.Zero, IntPtr.Zero);
+        }
+
         /// <summary>
         /// 既読済みの設定を行う
         /// </summary>

@@ -8,7 +8,7 @@ namespace Project.IO
         public static Object GetValue(String path, String key)
         {
             Object result = null;
-#if false
+#if true
             try
             {
                 using (RegistryKey regKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(path))
